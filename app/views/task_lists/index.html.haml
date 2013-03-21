@@ -1,0 +1,20 @@
+%form{:action=>"/tasks",:method=>"post", :id=>"task_form"}
+  %table#task_lists{:cellspacing=>0,:cellpadding=>0}
+    %tfoot
+      %tr
+        %td.external
+        %td{:colspan=>3}
+        %td.grand_total
+          Total:
+        %td.grand_total{:id => "grand_total_earnings"}
+          = @task_lists.sum(&:earnings).to_money.format(:accurate)
+        %td.grand_total{:id => "grand_total_duration"}
+          = formatted_duration(@task_lists.sum(&:duration))
+      = render :partial=>"task_lists/footer"
+    %tbody
+      %tr
+        %td.external
+        %td#task_list_commands{:colspan=>6}
+          = link_to "New task list", new_task_list_url, :id=>"new_task_list"
+      = render :partial=>"task_lists/edit", :object=>TaskList.new
+      = render :partial=>@task_lists

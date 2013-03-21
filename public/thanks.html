@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>You're subscribed!</title>
+
+<link rel="stylesheet" href="home.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="javascripts/fancybox/fancybox.css" type="text/css" media="screen" />
+
+<script type="text/javascript" src="//use.typekit.net/ykv2cnc.js"></script>
+<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="javascripts/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript" src="javascripts/jq/jquery.overlabel.js"></script>
+<script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
+<script type="text/javascript" src="javascripts/jq/index.js"></script>
+</head>
+
+<body>
+<div id="header">
+   <div>
+     <h1><a href="http://trails.es/">Trails.</a></h1>
+        <ul class="links">
+		  <li class="current">Trails: time tracking</li>
+		<li><a href="http://twitter.com/trailstracks">Follow on Twitter</a></li>
+		  <li><a href="http://process.trails.es">Process Blog</a></li>
+	</ul>
+
+      <a href="http://problem.wufoo.com/forms/how-much-would-you-pay/" class="sticker iframe">How much would you pay?</a>
+		
+		
+      <form action="/session" method="post" id="loginform">
+        <input id="session_email" name="session[email]" size="20" type="text" value="Email" />
+        <div class="password"><label for="session_password" class="overlabel">Password</label><input id="session_password" name="session[password]" size="20" type="password" /></div>
+        <input type="image" name="commit" src="images/login.png" id="login-btn" />
+      </form>
+    </div>
+</div>
+
+<div id="page">
+   <div id="content">
+      <div class="box">
+        <h2>We'll let you know when we launch &mdash; thanks!</h2>
+
+        <h3><a href="/">Go back</a></h3>
+      </div>	
+     
+   </div>
+</div>
+
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-126438-26']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ga);
+})();
+</script>
+</body>
+</html>

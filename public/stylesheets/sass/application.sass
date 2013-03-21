@@ -1,0 +1,483 @@
+// /* reqs
+@import reset.css
+@import reset-fonts.css
+// end reqs */
+
+// /*  COLORS  */
+!black = #000
+!dark_grey = #333
+!medium_grey = #666666
+!light_grey = #AAAAAA
+!lighte_grey = #CCC
+!lighter_grey = #EEE
+
+!dark_green = #669933
+!green = #669966
+!light_green = #99CC99
+
+// Buttons
+!blue = #006699
+!turquoise = #339999
+!light_blue = #e3eeec
+
+//Alerts and things that need to stand out alot
+!magenta = #990000
+
+//
+!light_tan = #f6f6f6
+!tan = #F7F7E7
+
+!flat_gold = #999966
+  
+!bright_turquoise = #99cccc
+
+
+// /* TYPE	*/
+!main_font = Verdana
+!main_font_size = 11px
+!task_list_title_font_size = 18px
+
+ul
+  table
+    td
+      :border 0px solid blue
+
+table
+  td
+    :border 0px solid red
+ul
+  :min-height 10px
+ol
+  :min-height 10px
+  
+body
+  :font-family = !main_font
+  :font-size = !main_font_size
+  :margin-left 0px
+  :margin-top 20px
+
+
+// SETTINGS and SIGN OUT --------
+
+#utility_menu
+  :position absolute
+  :min-width 120px
+  :left 650px
+  :top 25px
+  :padding-bottom 20px
+  :color = !light_grey
+  :font-family = !main_font
+  a
+    :color = !dark_grey
+    :border 2px solid #FFF
+    &:hover
+      :color #FFF
+      :text-decoration none
+      :background-color = !dark_grey
+      :border = 2px solid !dark_grey
+    &:visited
+      :text-decoration underline
+
+
+
+  
+// TASK LISTS WITH AN 'S'  ------------
+#task_lists
+  
+  // The Big Table
+  
+  :left 10px
+  :top 150px
+
+  td, th
+    :padding 3px
+
+
+// TASK LIST COMMANDS ------------
+#task_list_commands
+  :text-align right
+  :margin-right 5px
+  :margin-bottom 10px
+  a
+    :color = !blue
+    :text-decoration underline
+    :border 2px solid #FFF
+    &:hover
+      :color #FFF
+      :text-decoration none
+      :background-color = !blue
+      :border = 2px solid !blue
+    &:visited
+      :text-decoration underline
+
+
+// GRAND $ TOTAL -----------------
+.grand_total
+  :background-color = !bright_turquoise
+  :color #FFF
+  :text-align right
+  .fade
+    :color = !lighte_grey
+  .colon
+    :color white
+    .fade
+      :color white
+
+// TASK LIST -----------
+.task_list
+  :background-color = !tan
+  .external
+    :background-color #fff
+  .toolbar *
+    :visibility hidden
+  &:hover 
+    .toolbar 
+      :background-color = !tan
+      * 
+        :visibility visible
+      a
+        :color = !magenta
+        
+tr.task_list
+  td
+    :height 40px
+
+th.title
+  :color = !black
+  :font-size = !task_list_title_font_size
+  :font-family Helvetica, Arial, Verdana, sans-serif
+  
+th.new_task
+  :text-align right
+  a
+    :color = !blue
+    :border = 2px solid !tan
+    :text-decoration underline
+    &:hover
+      :background-color = !blue
+      :border = 2px solid !blue
+      :text-decoration none
+      :color = !tan
+    &:visited
+      :text-decoration underline
+
+//.total
+.duration
+  :color = !medium_grey
+  :text-align right
+  .colonTick
+    :color white
+  
+.earnings
+  :color = !black
+
+tr.blank_list_footer
+  :height 18px
+
+tr.blank_task
+  :height 1px
+  :font-size 1px
+  :line-height 0px
+  :margin 0
+  :padding 0
+  td
+    :height 1px
+    :padding 0px
+
+    
+
+
+// TASK -------
+tr.task
+  td
+    :height 25px
+  td.border
+    :border-bottom = 1px solid !lighter_grey
+  .task_submit
+    :text-align right
+    :height 30px
+  
+.task
+  :font = !main_font
+  :size = !main_font_size
+  :cursor pointer
+  .toolbar *
+    :visibility hidden
+  .toolbar  
+    a
+      :vertical-align top
+      :color = !magenta
+      :border = 2px solid !tan
+      &:hover
+        :color = !tan
+        :border = 2px solid !magenta
+        :background-color = !magenta
+    .edit
+      a
+        :color = !magenta
+        :border = 2px solid !tan
+        &:hover
+          :color = !tan
+          :border = 2px solid !magenta
+          :background-color = !magenta
+  &:hover 
+    :background-color = !light_tan
+    .toolbar * 
+      :visibility visible
+  a
+    :text-decoration underline
+    &:hover
+      :color #FFF
+      :text-decoration none
+      :background-color = !green
+    &:visited
+      :text-decoration underline
+
+// Delete rollover for trash can
+.delete
+  :padding-top 15px
+  :height 0px
+  :width 15px
+  :display block
+  :float left
+  :background
+    :image url('/images/Trash.png')
+    :repeat no-repeat
+    :position top left
+  :overflow hidden
+  :border none !important
+  :font-size 1px
+  :background-color none
+  &:hover
+    :background-position bottom left
+    :background-color none
+
+td.status
+  :min-width 18px
+
+//Start button ----
+.start
+  :min-width 32px
+  a
+    :color = !dark_grey
+    :border 2px solid #FFF
+    .task:hover  &
+      :color #FFF
+      :text-decoration none
+      :background-color = !green
+      :border 2px solid #669966
+    &:visited
+      :text-decoration underline
+
+  .stop_task 
+    a
+      :color = !magenta
+      .task:hover &
+        :color #FFF
+        :text-decoration none
+        :background-color = !black
+      &:visited
+        :text-decoration underline
+.task_list_container_row
+  td
+    :text-align center
+    hr
+      :height 1px
+      :border 0
+      :color #cccccc
+      :background-color = #cccccc
+      :width 95%
+  
+.task_form_container
+  :border-bottom 1px solid #cdcdcd
+  :min-width 416px 
+  *
+    :padding 0px
+    .submit
+      :background-color = !light_blue       
+.task_form
+  :background-color = !light_blue
+  .description
+    :min-width 325px
+  .title
+    :width 270px
+  .task_title
+    :min-width 308px
+    #task_description
+      :margin-left 11px
+  .rate
+    :width 139px
+  .toolbar, .status
+    :background-color white
+  input[name='task[description]']
+    :width 250px
+    :height 18px
+  &:hover 
+    :background-color = !light_blue
+    
+.external_bars, .submit
+  :background-color white
+  :text-align left
+  
+    
+.external_bars
+  :width 1000px
+  
+.description
+  :min-width 200px
+
+.rate
+  :min-width 40px
+  :color = !medium_grey
+  :text-align right
+
+.default_rate
+  :text-align right
+  
+.earnings
+  :min-width 55px
+  :text-align right
+
+.fade
+  :color = !light_grey
+
+.duration
+  :min-width 40px
+  :color = !medium_grey
+
+.toolbar  
+  :width 60px
+  :min-width 60px
+    
+.active
+  :color = !dark_green
+  .description
+    :font-weight italic
+  .external_bars
+    .duration_bar
+      :height 2px
+      :background-color = !light_green
+.stopped
+  .external_bars
+    .duration_bar
+      :height 2px
+      :background-color = !medium_grey
+            
+.complete
+  *
+    :color = !light_grey
+.default_rate_check
+  :margin-left 50px
+  span
+    :text-decoration underline
+
+.slider_handle
+  :background url(../images/slider_handle.png)
+  :background-repeat no-repeat
+  :width 15px 
+  :height 15px
+  :cursor move
+  :position absolute
+  :top 3px
+
+.slider_handle_hour
+  :background url(../images/slider_handle_hour.png)
+  :background-repeat no-repeat
+  
+.slider_track
+  :background url(../images/bg-fader.gif)
+  :height 28px 
+  :margin-left 40px
+  :position relative
+  
+// Task form fields
+input[name='task[rate]'], input[name='task_list[default_rate]']
+  :width 50px
+  :height 18px
+input[name='task[description]']
+  :width 150px
+  :height 18px
+input[name='task_list[title]']
+  :width 250px
+  :height 18px
+input[type='text']
+  :border 1px solid #ccc
+  :height 18px
+input[type='checkbox']
+  :vertical-align middle  
+
+// LOGIN FORM --------------
+#login
+  :width 290px
+  :height 200px
+  :background-color = !light_tan
+  :border-color #CCC
+  :border-width 1px 1px 0 0
+  :border-style solid none none solid
+#signup
+  :width 300px
+  :height 300px
+  :background-color = !light_tan
+  :border-color #CCC
+  :border-width 1px 1px 0 0
+  :border-style solid none none solid
+
+#login form
+  :margin 0
+  :padding 0
+  :width 280px
+  fieldset
+    :padding 10px
+    :margin 0 0 0 0
+    legend
+      :margin 10px 0 0 33px
+      :font-size 14px
+      :color = !light_grey
+    label
+      :display block
+      :width 100px
+      :float left
+      :text-align right
+      :margin-right 20px
+    input, select, textarea
+      :padding 2px
+      :height 20px
+      :color = !dark_grey
+    li
+      :text-align right
+      :display block
+      :margin 10px 0px 0 0px
+      #session_email
+        :margin-left 10px
+      #session_password
+        :border = 1px solid !lighte_grey
+        :margin-left 10px
+      #submit
+        :display block
+        :float right
+      #user_unencrypted_password
+        :border = 1px solid !lighte_grey
+        :margin-left 10px  
+      #user_unencrypted_password_confirmation
+        :border = 1px solid !lighte_grey
+        :margin-left 10px
+
+// Notice box that informs the user of cool 
+// stuff some of the time and errors most of the time
+#notice
+  :float left
+  :display block
+  :margin-top -100px
+  :margin-left 310px
+  :color = !magenta
+  :line-height 15px
+  :border-color = !light_grey
+  :border-width 1px 1px 1px 1px
+  :border-style dotted none dotted none  
+  :padding 2px 0 2px
+  :width 130px
+  .please
+    color = !dark_grey
+
+
+    
