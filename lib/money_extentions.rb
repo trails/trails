@@ -31,4 +31,12 @@ class Money
       super(*rules)
     end
   end
+
+  def currency_as_string
+    currency.to_s
+  end
+
+  def currency_as_string=(value)
+    currency = Currency.wrap(value)
+  end
 end
