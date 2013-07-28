@@ -1,22 +1,22 @@
 module TaskHelper
   def task_status(task)
     case (status = task.status)
-    when :stopped:
+    when :stopped
       tag :input, :type=>"checkbox", :value=>status, :id=>dom_id(task, status), :class=>dom_class(task, status)
-    when :complete:
+    when :complete
       tag :input, :type=>"checkbox", :value=>status, :id=>dom_id(task, status), :class=>dom_class(task, status), :checked=>true
-    when :active:
+    when :active
       link_to image_tag("task_in_progress.gif", :id=>dom_id(task, status), :class=>dom_class(task, status))
     end
   end
   
   def task_action_button(task)
     case (status = task.status)
-    when :stopped:
+    when :stopped
       link_to "Start", '#', :id=>dom_id(task, :start), :class=>dom_class(task, :start)
-    when :active:
+    when :active
       link_to "Stop", '#', :id=>dom_id(task, :stop), :class=>dom_class(task, :stop)
-    when :complete:
+    when :complete
       "&nbsp;"
     end
   end

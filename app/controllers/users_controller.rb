@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   skip_filter :authenticate
+  protect_from_forgery :except => :create
   
   def new
     @user = flash[:user] || User.new

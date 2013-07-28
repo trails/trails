@@ -1,5 +1,7 @@
 class SessionsController < ApplicationController
   skip_filter :authenticate
+  protect_from_forgery :except => :create
+  
   
   def create
     info = params[:session]
@@ -10,7 +12,7 @@ class SessionsController < ApplicationController
     else
       session[:user_id] = nil
       flash[:notice] = "Incorrect user name<br />or password. <br /><span class='please'>Please try again.</span>"
-      redirect_to :controller => "session", :action => "new"
+      redirect_to :controller => "sessions", :action => "new"
     end
   end
   
