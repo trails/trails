@@ -1,4 +1,4 @@
-- fields_for edit do |form|
+= fields_for edit do |form|
   %tr.task_form{:class=>"form #{edit.new_record? ? 'new' : 'edit'}",:id=>(edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit"), :style=>"display:none"}[edit]
     %td.toolbar.external
     %td.task_form_container{:colspan=>6,:style=>"padding:0px;"}
@@ -15,7 +15,7 @@
             %td.earnings
               = edit.task_earnings
             %td.duration
-              = edit.task_duration
+              = raw edit.task_duration
         %tr.task_form
           %td.task_title
             = "$"
@@ -43,7 +43,7 @@
             - if edit.new_record?
               = form.submit "Create task" , :action => task_list_tasks_path(edit.task_list.id),:method=>"post", :disabled=>true
             - else
-              = form.submit "Save this task", :action => task_path(edit), :method=>"put", :disabled=>true
+              = form.submit "Save this task", :action => task_path(edit.id) + '/update', :method=>"put", :disabled=>true
             = "or "
             = link_to "Cancel", "#cancel"
     %td.external_bars

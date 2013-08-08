@@ -7,7 +7,7 @@
     %td.status
       = task_status(content)
     %td.start.border
-      = task_action_button(content)
+      = raw task_action_button(content)
     %td.description.border
       = content.description
     %td.rate.border
@@ -15,7 +15,7 @@
     %td.earnings.border
       = content.task_earnings
     %td.duration.border
-      = content.task_duration
+      = raw content.task_duration
     %td.external_bars
-      = content.task_duration_bar
+      = raw content.task_duration_bar
   = render :partial=>"tasks/edit", :object=>content

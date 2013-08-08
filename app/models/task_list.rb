@@ -1,13 +1,24 @@
 class TaskList < ActiveRecord::Base
-  has_many    :tasks, :dependent=>:destroy, :after_add=>:update_ordering_for_new_task
-  belongs_to  :owner, :class_name => "User"
-  composed_of :actual_default_rate, :class_name => "Money", :mapping => [%w(default_rate_cents cents), %w(default_currency currency)], :allow_nil=>true
+  has_many :tasks, 
+    :dependent  => :destroy, 
+    :after_add  => :update_ordering_for_new_task
+    
+  belongs_to :owner, 
+    :class_name => "User"
+    
+  composed_of :actual_default_rate, 
+    :class_name => "Money", 
+    :mapping    => [%w(default_rate_cents cents), %w(default_currency currency_as_string)], 
+    :allow_nil  => true
+    
   validates_presence_of :title, :actual_default_rate
   before_save :save_task_order
+  attr_accessible :title, :default_rate, :owner_id, :task_order
+  
   include ApplicationHelper
   
   def default_rate
-    actual_default_rate or ((last_list = TaskList.find(:first, :order=>"updated_at DESC")) and last_list.default_rate) or 0.to_money
+    actual_default_rate.to_s or ((last_list = TaskList.find(:first, :order=>"updated_at DESC")) and last_list.default_rate) or 0.to_money
   end
   
   def default_rate=(rate)

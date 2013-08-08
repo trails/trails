@@ -5,9 +5,11 @@ class LogEntry < ActiveRecord::Base
   
   after_save :update_duration_cache
   
+  attr_accessible :action
+  
   def update_duration_cache
     case action
-    when "stop":
+    when "stop"
       task.duration_cache = task.duration + (created_at - task.last_start.created_at) 
       task.save!
     end

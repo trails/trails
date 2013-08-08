@@ -2,12 +2,13 @@
 %html{html_attrs}
   %head
     %title Trails
-    = stylesheet_link_tag("application")
-    = javascript_include_tag :all
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
   %body{:class=>page_class}
     - if session[:user_id]
       #utility_menu
         = link_to "Settings", "settings"
         |
-        = link_to "Sign out", { :controller => "session" }, :method => :delete
+        = link_to "Sign out", :controller => "sessions", :action => 'destroy'
     = yield

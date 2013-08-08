@@ -54,6 +54,8 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.21)
+    money (5.1.1)
+      i18n (~> 0.6.0)
     multi_json (1.7.1)
     pg (0.14.1)
     polyglot (0.3.3)
@@ -111,6 +113,7 @@ DEPENDENCIES
   haml
   jquery-rails
   json
+  money
   pg
   rails (= 3.2.13)
   sass-rails (~> 3.2.3)

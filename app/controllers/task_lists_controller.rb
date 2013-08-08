@@ -6,7 +6,7 @@ class TaskListsController < ApplicationController
   end
   
   def create
-    @task_list = TaskList.create!(params[:task_list].merge(:owner_id=>session[:user_id]))
+    @task_list = TaskList.create!(params[:task_list].merge(:owner_id => session[:user_id]))
     render :partial => @task_list
   end
   
@@ -39,7 +39,7 @@ class TaskListsController < ApplicationController
     @task_list = TaskList.find(params[:id])
     #modify task_list task_order
     @task_list.update_attributes("task_order" => @tasks)
-    render(:update) do |page|
+    render :partial => 'task_lists/header', :object => @task_list do |page|
       page["task_list_earnings_#{@task_list.id}"].replace_html @task_list.earnings.format(:accurate)
       page["task_list_duration_#{@task_list.id}"].replace_html formatted_duration(@task_list.duration)
     end

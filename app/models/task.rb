@@ -1,8 +1,22 @@
 class Task < ActiveRecord::Base
-  composed_of :specific_rate, :class_name => "Money", :mapping => [%w(rate_cents cents), %w(currency currency)], :allow_nil=>true
-  has_many    :log_entries, :order=>"created_at DESC",  :dependent=>:destroy
-  has_one     :last_start, :class_name=>"LogEntry", :order=>"created_at DESC", :conditions=>"action = 'start'"
-  belongs_to  :task_list
+  composed_of :specific_rate, 
+    :class_name => "Money", 
+    :mapping    => [%w(rate_cents cents), %w(currency currency_as_string)], 
+    :allow_nil  => true
+  
+  has_many :log_entries, 
+    :order      => "created_at DESC",  
+    :dependent  => :destroy
+  
+  has_one :last_start, 
+    :class_name => "LogEntry", 
+    :order      => "created_at DESC", 
+    :conditions => "action = 'start'"
+  
+  belongs_to :task_list
+  
+  attr_accessible :description, :rate, :duration_cache, :task_list_id
+  
   include ApplicationHelper
   
   validates_presence_of :task_list_id, :description
@@ -19,9 +33,9 @@ class Task < ActiveRecord::Base
     #do nothing if the new action won't change our status
     return if STATUS_MAP[action_name] == status
     case status
-    when :active:
-    when :stopped:
-    when :complete:
+    when :active
+    when :stopped
+    when :complete
     end
     log_entries.create(action)
     reload
@@ -81,7 +95,7 @@ class Task < ActiveRecord::Base
   end
   
   def earnings?
-    earnings.cents > 0
+    earnings > 0
   end
   
   def running_time
@@ -93,7 +107,7 @@ class Task < ActiveRecord::Base
   end
   
   def updateDiffTime(difftime)
-    new_time = duration + difftime*60
+     new_time = duration + difftime*60
     if(new_time < 0)
       new_time = 0
     end
