@@ -63,7 +63,7 @@ class TaskList < ActiveRecord::Base
   end
   
   def task_list_earnings
-    earnings.format(:accurate)
+    earnings.format(:no_cents_if_whole => true, :symbol => "$")
   end
   
   def task_list_duration
