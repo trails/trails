@@ -40,7 +40,7 @@ class TaskListsController < ApplicationController
     #modify task_list task_order
     @task_list.update_attributes("task_order" => @tasks)
     render :partial => 'task_lists/header', :object => @task_list do |page|
-      page["task_list_earnings_#{@task_list.id}"].replace_html @task_list.earnings.format(:accurate)
+      page["task_list_earnings_#{@task_list.id}"].replace_html @task_list.earnings.format(:no_cents_if_whole => true, :symbol => "$")
       page["task_list_duration_#{@task_list.id}"].replace_html formatted_duration(@task_list.duration)
     end
   end
@@ -56,7 +56,7 @@ class TaskListsController < ApplicationController
       end
     end
     total_duration = formatted_duration(@task_lists.sum(&:duration))
-    total_earnings = @task_lists.sum(&:earnings).to_money.format(:accurate)
+    total_earnings = @task_lists.sum(&:earnings).to_money.format(:no_cents_if_whole => true, :symbol => "$")
     json_tasks = @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
     json_task_lists = @task_lists.to_json(:only=>:id,:methods=>[:task_list_duration,:task_list_earnings])
     render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => total_duration,:total_earnings => total_earnings}
