@@ -22,7 +22,7 @@ module TaskHelper
   end
   
   def task_rate(task)
-    content_tag :span, task.rate.format(:minimal) + "/h", :class=>(task.specific_rate? ? "specfic" : "inherited")
+    content_tag :span, task.rate.format(:no_cents_if_whole => true, :symbol => "$") + "/h", :class=>(task.specific_rate? ? "specfic" : "inherited")
   end
   
   
@@ -35,7 +35,7 @@ module TaskHelper
   #end
   
   def task_earnings(task)
-     task.earnings.format(:accurate) if task.earnings?
+     task.earnings.format(:no_cents_if_whole => true, :symbol => "$") if task.earnings?
   end
   
 end

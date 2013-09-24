@@ -1,3 +1,4 @@
+=begin
 class Money
   CURRENCY_SYMBOLS = {
     "USD" => "$",
@@ -40,3 +41,4 @@ class Money
     currency = Currency.wrap(value)
   end
 end
+=end

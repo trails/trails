@@ -72,9 +72,9 @@ class Task < ActiveRecord::Base
   def rate
     if(specific_rate?)
       if(rate_cents < 0)
-        task_list.default_rate
+        task_list.default_rate.to_money
       else
-        specific_rate
+        specific_rate.to_money
       end
     else
       Money.new(0, "USD")
@@ -127,7 +127,7 @@ class Task < ActiveRecord::Base
   
   #same for task_earnings (see task_duration)   
   def task_earnings
-     earnings.format(:accurate) if earnings?
+     earnings.format(:no_cents_if_whole => true, :symbol => "$") if earnings?
   end
  
   def task_duration_bar
