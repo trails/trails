@@ -2,18 +2,22 @@ common: &common
   adapter: postgresql
   encoding: unicode
   pool: 5
-  username: trails
-  password: trails
   host: localhost
 
 development:
   <<: *common
+  username: trails_development
+  password: trails_development_password
   database: trails_development
 
 test:
   <<: *common
+  username: trails_test
+  password: trails_test_password
   database: trails_test
 
 production:
   <<: *common
+  username: trails_production
+  password: trails_production_password
   database: trails_production
