@@ -13,7 +13,7 @@ ol {
   min-height: 10px; }
 
 body {
-  font-family: Verdana;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-size: 11px;
   margin-left: 0px;
   margin-top: 20px; }
@@ -25,7 +25,7 @@ body {
   top: 25px;
   padding-bottom: 20px;
   color: #aaaaaa;
-  font-family: Verdana; }
+  font-family: "Helvetica Neue", Helvetica, Arial; }
   #utility_menu a {
     color: #333333;
     border: 2px solid #FFF; }
@@ -89,7 +89,7 @@ tr.task_list td {
 th.title {
   color: black;
   font-size: 18px;
-  font-family: Helvetica, Arial, Verdana, sans-serif; }
+  font-family: "Helvetica Neue", Helvetica, Arial; }
 
 th.new_task {
   text-align: right; }
@@ -136,7 +136,7 @@ tr.task .task_submit {
   height: 30px; }
 
 .task {
-  font: Verdana;
+  font: "Helvetica Neue", Helvetica, Arial;
   size: 11px;
   cursor: pointer; }
   .task .toolbar * {
