@@ -4,7 +4,7 @@
 }
 
 body {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   font-size: 14px;
   line-height: 160%;
   color: #666;
@@ -16,7 +16,7 @@ body {
 #content h3,
 #subForm input,
 #subForm label {
-  font-family:"futura-pt", "Helvetica Neue", Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial;
   line-height: 120%;
   color: #333;
 } 
