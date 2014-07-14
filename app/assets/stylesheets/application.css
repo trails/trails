@@ -151,8 +151,6 @@ tr.task .task_submit {
       border: 2px solid #f7f7e7;
       background-color: #f7f7e7; }
 
-  .task:hover {
-    background-color: #f6f6f6; }
     .task:hover .toolbar * {
       visibility: visible; }
   .task a {
