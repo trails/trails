@@ -34,7 +34,7 @@ $bright_turquoise: #99cccc
 
 
 // /* TYPE	*/
-$main_font: Verdana
+$main_font: "Helvetica Neue", Helvetica, Arial
 $main_font_size: 11px
 $task_list_title_font_size: 18px
 
@@ -146,7 +146,7 @@ tr.task_list
 th.title
   :color $black
   :font-size $task_list_title_font_size
-  :font-family Helvetica, Arial, Verdana, sans-serif
+  :font-family $main_font
   
 th.new_task
   :text-align right
@@ -222,7 +222,6 @@ tr.task
           :border 2px solid $magenta
           :background-color $magenta
   &:hover 
-    :background-color $light_tan
     .toolbar * 
       :visibility visible
   a
