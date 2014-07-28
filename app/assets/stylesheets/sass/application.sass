@@ -330,6 +330,11 @@ td.status
   :min-width 40px
   :color $medium_grey
   :text-align right
+  .task:not(.task_form):hover  &
+    :color #FFF
+    :text-decoration none
+    :background-color $green
+    :border 2px solid #669966
 
 .default_rate
   :text-align right
@@ -344,6 +349,12 @@ td.status
 .duration
   :min-width 40px
   :color $medium_grey
+  span
+    .task:not(.task_form):hover  &
+      :color #FFF
+      :text-decoration none
+      :background-color $green
+      :border 2px solid #669966
 
 .toolbar  
   :width 60px

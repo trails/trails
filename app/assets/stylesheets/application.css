@@ -253,7 +253,14 @@ td.status {
 .rate {
   min-width: 40px;
   color: #666666;
-  text-align: right; }
+  text-align: right;
+}
+.task:not(.task_form):hover .rate > span {
+  color: #FFF;
+  text-decoration: none;
+  background-color: #669966;
+  border: 2px solid #669966;
+}
 
 .default_rate {
   text-align: right; }
@@ -267,7 +274,14 @@ td.status {
 
 .duration {
   min-width: 40px;
-  color: #666666; }
+  color: #666666;
+}
+.task:not(.task_form):hover .duration > span {
+  color: #FFF;
+  text-decoration: none;
+  background-color: #669966;
+  border: 2px solid #669966;
+}
 
 .toolbar {
   width: 60px;
