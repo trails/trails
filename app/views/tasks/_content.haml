@@ -15,8 +15,7 @@
     %td.earnings.border
       = content.task_earnings
     %td.duration.border
-      %span
-        = raw content.task_duration
+      = raw content.task_duration
     %td.external_bars
       = raw content.task_duration_bar
   = render :partial=>"tasks/edit", :object=>content

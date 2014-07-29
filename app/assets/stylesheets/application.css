@@ -255,11 +255,8 @@ td.status {
   color: #666666;
   text-align: right;
 }
-.task:not(.task_form):hover .rate > span {
-  color: #FFF;
-  text-decoration: none;
-  background-color: #669966;
-  border: 2px solid #669966;
+.task:not(.task_form):not(.complete):hover .rate {
+  color: #669966;
 }
 
 .default_rate {
@@ -276,11 +273,8 @@ td.status {
   min-width: 40px;
   color: #666666;
 }
-.task:not(.task_form):hover .duration > span {
-  color: #FFF;
-  text-decoration: none;
-  background-color: #669966;
-  border: 2px solid #669966;
+.task:not(.task_form):not(.complete):hover .duration {
+  color: #669966;
 }
 
 .toolbar {
