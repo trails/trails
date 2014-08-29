@@ -5,40 +5,29 @@
 //= require scriptaculous
 //= require slider
 
-//===== [ DISABLE TEXT SELECT ] =====
-if(/MSIE/.test(navigator.userAgent)) {
-  document.onselectstart = function(event) {
-    if(!/input|textarea/i.test(Event.element(event).tagName))
-      return false;
-  };
-  } else { // assume DOM
-  document.onmousedown = function(event) {
-    if(!/input|textarea/i.test(Event.element(event).tagName))
-      return false;
-  };
-}
-//===== [ /DISABLE ] =====
-//gitTest
-
 Element.addMethods({
   recordID: function(element) {
     do {
       element = element.parentNode;
-    } while(!element.id && !element.href)
-    
-    
+    } while(!element.id && !element.href)  
+
     if(element.id) {
       var match = element.id.match(/\d+/);
       if(!match) return "new";
       return  parseInt(match[0]);
     }
-    
-    if(element.href) return  parseInt(element.href.match(/\d+/).last());
+
+    if(element.href) {
+      return  parseInt(element.href.match(/\d+/).last());
+    }
   },
+
   fadeDelete: function(element) { //fades element, then deletes it
-  	element.fade({afterFinish:function(){
-		element.remove();
-	}});
+  	element.fade({
+      afterFinish: function() {
+		    element.remove();
+	     }
+    });
   }
 });
 
