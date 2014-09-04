@@ -14,7 +14,7 @@ controller("task_form",{
       // inherit the default rate from the one set by the task list
       var task_list_form = this.task_list.task_list_form();
       var task_rate = this.element().down("input#task_rate");
-      task_rate.value = task_list_form.element().down('input#task_list_default_rate').value
+      task_rate.value = task_list_form.element().down('input#task_list_default_rate').value;
     }
     title_input.focus();
     title_input.select();
