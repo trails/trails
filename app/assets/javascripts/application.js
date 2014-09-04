@@ -31,14 +31,14 @@ $S('th.title').observe('click', function(event) {
   newTaskLink = currentTitleTr.down(('.new_task')).innerHTML;
   addTotalTo = currentTitleTr.down(('.new_task'));
   currentList.toggle();
-  if(currentList.visible()) {
-      $(currentTh).down().update("-");
-      addTotalTo.down('span').remove();
-      currentTotal.show();
+  if (currentList.visible()) {
+    $(currentTh).down().update("-");
+    addTotalTo.down('span').remove();
+    currentTotal.show();
   } else {
-      $(currentTh).down().update("+");
-      addTotalTo.update('<span>' + currentEarnings + ' ' + currentDuration + '</span> ' + newTaskLink);
-      currentTotal.hide();
+    $(currentTh).down().update("+");
+    addTotalTo.update('<span>' + currentEarnings + ' ' + currentDuration + '</span> ' + newTaskLink);
+    currentTotal.hide();
   }
 });
 
@@ -66,50 +66,48 @@ $S(".task_list .toolbar .delete").observe("click", action(task_list, "remove"));
 $S(".new.task.form .submit a").observe("click", action(task_list,"task_form", "hide"));
 $S(".edit.task.form .submit a").observe("click", action(task,"task_form", "hide"));
 
-$S(".task.new .submit input[type=submit]").observe("click", function(event){
+$S(".task.new .submit input[type=submit]").observe("click", function(event) {
   var element = event.element();
-  element.form.responder = task_list(element.recordID()).task_form()
+  element.form.responder = task_list(element.recordID()).task_form();
 });
 
-$S(".task.edit .submit input[type=submit]").observe("click", function(event){
+$S(".task.edit .submit input[type=submit]").observe("click", function(event) {
   var element = event.element();
-  element.form.responder = task(element.recordID()).task_form()
+  element.form.responder = task(element.recordID()).task_form();
 });
 
 $S("#new_task_list").observe("click", action(task_list_form, "show"));
 $S(".new.task_list.form .submit a").observe("click", action(task_list_form, "hide"));
 $S(".edit.task_list.form .submit a").observe("click", action(task_list,"task_list_form", "hide"));
 
-$S(".task_list.new .submit input[type=submit]").observe("click", function(event){
+$S(".task_list.new .submit input[type=submit]").observe("click", function(event) {
   var element = event.element();
-  element.form.responder = task_list_form()
+  element.form.responder = task_list_form();
 });
 
-$S(".task_list.edit .submit input[type=submit]").observe("click", function(event){
+$S(".task_list.edit .submit input[type=submit]").observe("click", function(event) {
   var element = event.element();
-  element.form.responder = task_list(element.recordID()).task_list_form()
+  element.form.responder = task_list(element.recordID()).task_list_form();
 });
 
-$S("input[type=submit][action]").observe("click", function(event){
+$S("input[type=submit][action]").observe("click", function(event) {
   var element = event.element();
   element.form.overrideAction = element.readAttribute("action");
 });
 
-$S("input[type=submit][method]").observe("click", function(event){
+$S("input[type=submit][method]").observe("click", function(event) {
   var element = event.element();
   element.form.overrideMthod = element.readAttribute("method");
 });
 
-document.observe("dom:loaded", function(){
- 
+document.observe("dom:loaded", function() {
   $("task_form").observe("submit", mainFormSubmitHandler);
   initDragAndDrop();
   initSliders();
-  setInterval ( "updateACtiveTasks()", 10000 );
-  
+  setInterval(updateACtiveTasks, 10000);
   //Initialize clockTicking
   $showTick = false;
-  setInterval ( "clockTick()", 500 );
+  setInterval(clockTick, 500);
   
   //check if totals need to be shown for each list
   toggleTotals();

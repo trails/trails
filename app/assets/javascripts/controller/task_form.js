@@ -5,7 +5,7 @@ controller("task_form",{
     this.element().show();
     //focus on title input when form appears
     var title_input = this.element().down(".task_title").down("input");
-    if(!this.task){
+    if (!this.task) {
       //if this is not an existing task, reset input value.
       title_input.value = '';
       var slider_row = this.element().down(".slider_row");
@@ -18,30 +18,28 @@ controller("task_form",{
     var elem = this.element();
     $A(elem.getElementsByTagName("INPUT")).invoke("disable");
     elem.hide();
-    if(this.task) this.task.element().show();
+    if(this.task) {
+      this.task.element().show();
+    }
   },
   onSuccess: function(transport) {
     //call back method on update for Tasks
     var element = this.element();
-    if(this.task){
+    if (this.task) {
       //update existing task
       var taskContainer = this.task.taskContainer();
       taskContainer.update(transport.responseText);
       taskContainer.highlight();
       this.task.initSlider();
-    }else{
+    } else {
       //insert newly created task
       var listContainer = this.task_list.listContainer();
       listContainer.insert({top:transport.responseText});
-        var newTask = listContainer.firstChild;
+      var newTask = listContainer.firstChild;
       newTask.highlight();
       //the content of the list has changed so we need to re-init
       initDragAndDrop();
       this.task_list.checkIfTotalNeeded();
-    }
-    if (this.task) {
-      //no need to remove anymore. the content is just updated
-    } else {
       //get new task id
       var newTaskId = strip_id(newTask);
       task(newTaskId).initSlider();
@@ -50,9 +48,6 @@ controller("task_form",{
     }
   },
   element: function() {
-    if (this.task_list)
-      return $("task_list_"+this.task_list.id+"_task_new");
-    if (this.task)
-      return $("edit_task_"+ this.task.id);
+    return this.task_list ? $("task_list_" + this.task_list.id + "_task_new") : (this.task ? $("edit_task_" + this.task.id) : null);
   }
 });
