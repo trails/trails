@@ -123,7 +123,6 @@ $S('.task.form .default_rate_check > input[type="checkbox"]').observe('change', 
   } else {
     task_rate_input.writeAttribute('readonly', null);
     if (element.checked) {
-      event.preventDefault();
       return false;
     }
   }
