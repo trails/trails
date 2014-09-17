@@ -230,6 +230,10 @@ td.status {
     min-width: 308px; }
     .task_form .task_title #task_description {
       margin-left: 11px; }
+    .task_form .task_title #task_rate[readonly] {
+      background-color: #CCC;
+      color: #999;
+    }
   .task_form .rate {
     width: 139px; }
   .task_form .toolbar, .task_form .status {

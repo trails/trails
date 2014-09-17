@@ -208,7 +208,7 @@ function initSliders() {
   });
 }
 
-function formattedTime(t){
+function formattedTime(t) {
   var res = (total < 0) ? '-' : '+';
   var mins = Math.abs(t % 60);
   if(mins < 10) {
@@ -218,7 +218,7 @@ function formattedTime(t){
   return res;
 }
 
-function toggleTotals(){
+function toggleTotals() {
   $sortable_containers =  $$(".list_container");
   $sortable_containers.each(function (s) {
     var l = task_list(strip_id(s));
@@ -226,7 +226,7 @@ function toggleTotals(){
   });
 }
 
-function initDragAndDrop(){
+function initDragAndDrop() {
   //This code will eventually need to be changed.
   //on some operations, only single lists need to be re-initialized
 

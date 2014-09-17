@@ -112,3 +112,19 @@ document.observe("dom:loaded", function() {
   //check if totals need to be shown for each list
   toggleTotals();
 });
+
+$S('.task.form .default_rate_check > input[type="checkbox"]').observe('change', function(event) {
+  var element = event.element();
+  var task_rate_input = $(element).up(2).down('input#task_rate');
+  var list_default_rate = task_rate_input.readAttribute('default_rate');
+  if (element.checked && typeof list_default_rate != 'undefined' && parseFloat(list_default_rate) > 0.00) {
+    task_rate_input.value = list_default_rate;
+    task_rate_input.writeAttribute('readonly', true);
+  } else {
+    task_rate_input.writeAttribute('readonly', null);
+    if (element.checked) {
+      event.preventDefault();
+      return false;
+    }
+  }
+});

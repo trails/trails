@@ -13,8 +13,14 @@ controller("task_form",{
 
       // inherit the default rate from the one set by the task list
       var task_list_form = this.task_list.task_list_form();
-      var task_rate = this.element().down("input#task_rate");
-      task_rate.value = task_list_form.element().down('input#task_list_default_rate').value;
+      var task_rate_input = this.element().down("input#task_rate");
+      var list_default_rate = task_list_form.element().down('input#task_list_default_rate').value;
+      var default_rate_checkbox = this.element().down('.default_rate_check > input');
+      task_rate_input.value = list_default_rate;
+      task_rate_input.writeAttribute('default_rate', list_default_rate);
+      default_rate_checkbox.checked = (parseFloat(list_default_rate) > 0.00);
+      task_rate_input.writeAttribute('readonly', default_rate_checkbox.checked ? true : null);
+      default_rate_checkbox.writeAttribute('disabled', (parseFloat(list_default_rate) > 0.00) ? null : true);
     }
     title_input.focus();
     title_input.select();
