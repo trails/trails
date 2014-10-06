@@ -7,7 +7,7 @@ class TasksController < ApplicationController
     task_list.save!
     diffTime = params[:diffTime].to_i
     if diffTime
-       new_duration = @task.updateDiffTime(diffTime)
+      new_duration = @task.updateDiffTime(diffTime)
       @task.update_attributes(:duration_cache => new_duration.to_s)
     end
     render :partial=>@task
