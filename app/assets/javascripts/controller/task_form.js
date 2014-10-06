@@ -21,9 +21,35 @@ controller("task_form",{
       default_rate_checkbox.checked = (parseFloat(list_default_rate) > 0.00);
       task_rate_input.writeAttribute('readonly', default_rate_checkbox.checked ? true : null);
       default_rate_checkbox.writeAttribute('disabled', (parseFloat(list_default_rate) > 0.00) ? null : true);
+
+      this.initSlider();
+      this.getSlider().setValue(0, 0);
+      this.getSlider().setValue(0, 1);
     }
     title_input.focus();
     title_input.select();
+  },
+  initSlider: function() {
+    this.slider = new Control.Slider($('track_').select(".slider_handle"), 'track_', {
+      range: $R(0,120),
+      sliderValue: [0.03,0.03],
+      myId: 0,
+      onSlide: function(values) {
+        var hours = values[0];
+        var mins = Math.floor(values[1]);
+        if (hours) {
+          hours /= 10;
+        }
+        var diffTime = $("diffTime_");
+        var diffTimeInput = $("diffTime_input_");
+        total = Math.floor(hours)*60  + mins;
+        diffTime.innerHTML = formattedTime(total);
+        diffTimeInput.value=total;
+      }
+    });
+  },
+  getSlider: function() {
+    return this.slider;
   },
   hide: function() {
     var elem = this.element();

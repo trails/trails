@@ -32,8 +32,7 @@
           %td{:colspan=>3}
             %hr 
             %b
-              Adjust
-            the total time of this task:
+              Adjust the #{edit.new_record? ? 'initial' : 'total'} time of this task:
             %div.slider_track{:style=>"width:330px", :id=>"track_#{edit.id}"}
               %div.slider_handle.slider_handle_hour
               %div.slider_handle
