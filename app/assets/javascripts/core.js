@@ -144,7 +144,7 @@ var Controller = Class.create({
   afterAjaxAction: function (name, transport) {
     this.element().replace(transport.responseText);
   }
-})
+});
 
 function strip_id(element) {
   //some_element_12 => 12
