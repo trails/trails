@@ -26,7 +26,6 @@ controller("task_list_form",{
       after: transport.responseText
     });
     var tList = element.next(".task_list");
-    tList.highlight();
     //get newly created TaskList's Id
     var newId = strip_id(tList);
     if (this.task_list) {

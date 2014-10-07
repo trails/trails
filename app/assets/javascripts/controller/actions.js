@@ -17,7 +17,6 @@ controller("actions",
       var listContainer = task_list.listContainer();
       this.task.taskContainer().remove();
       listContainer.insert({bottom: transport.responseText});
-      this.task.taskContainer().highlight();
     },
     afterReopen: function (transport) {
     /*
@@ -35,7 +34,6 @@ controller("actions",
       var listContainer = task_list.listContainer();
       this.task.taskContainer().remove();
       listContainer.insert({top: transport.responseText});
-      this.task.taskContainer().highlight();
       //when a task is reOpened, it should be allowed to start moving again
       initDragAndDrop();
       this.task.initSlider();

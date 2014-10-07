@@ -66,14 +66,12 @@ controller("task_form",{
       //update existing task
       var taskContainer = this.task.taskContainer();
       taskContainer.update(transport.responseText);
-      taskContainer.highlight();
       this.task.initSlider();
     } else {
       //insert newly created task
       var listContainer = this.task_list.listContainer();
       listContainer.insert({top:transport.responseText});
       var newTask = listContainer.firstChild;
-      newTask.highlight();
       //the content of the list has changed so we need to re-init
       initDragAndDrop();
       this.task_list.checkIfTotalNeeded();
