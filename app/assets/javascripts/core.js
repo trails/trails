@@ -276,7 +276,6 @@ function updateACtiveTasks_callback(transport) {
     t.earnings().update(jsonTasks[i].task_earnings);
     t.duration().update(jsonTasks[i].task_duration);
     t.durationBar().replace(jsonTasks[i].task_duration_bar);
-    t.durationBar().highlight();
   }
 
   //update taskLists
