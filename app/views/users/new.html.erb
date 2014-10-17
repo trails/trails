@@ -1,81 +1,8 @@
 <!DOCTYPE html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Trails is a process.</title>
-<%= stylesheet_link_tag "home.css" %>
-<%= stylesheet_link_tag "fancybox/fancybox.css" %>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-<%= javascript_include_tag "fancybox/jquery.fancybox.pack.js" %>
-<%= javascript_include_tag "jq/jquery.overlabel.js" %>
-<script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery.validate/1.5.5/jquery.validate.min.js"></script>
-<%= javascript_include_tag "jq/signup.js" %>
-<%= csrf_meta_tags %>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Trails is a process.</title>
+  <%= csrf_meta_tags %>
 </head>
-
-<body class="signup">
-<div id="header"><div>
-		<h1><a href="http://trails.es">Trails</a></h1>
-		<ul class="links">
-		  <li class=""><a href="http://trails.es">Trails tracks time</a></li>
-		  <li>Signup for the Alpha</li>
-		  <li><a href="http://process.trails.es">The Process Blog</a></li>
-		</ul>
-
-		<a href="http://problem.wufoo.com/forms/how-much-would-you-pay/" class="sticker iframe">How much would you pay?</a>
-		
-      <form action="/session" method="post" id="loginform">
-      	
-        <input id="session_email" name="session[email]" size="20" type="text" value="Email" />
-        <div class="password"><label for="session_password" class="overlabel">Password</label><input id="session_password" name="session[password]" size="20" type="password" /></div>
-		<%= image_submit_tag 'login.png', :name => 'commit', :id => 'login-btn' %>
-      </form>
-   
-    
-</div></div>
-<div class="bg-lines">
-<div id="slogan">
-  <h1>Signup for the Trails Alpha</h1>
-  <h2>Let's make an amazing tool together.</h2>
-</div>
-
-<div id="page">
-<form action="/users" class="new_user" id="new_user" method="post">
-  <div class="content input-fields">
-  <input id="user_email" name="user[email]" size="20" type="text" value="Email (used for login)" class="" />
-  <div class="password"><label for="user_unencrypted_password" class="overlabel">Password</label><input id="user_unencrypted_password" name="user[unencrypted_password]" size="20" type="password" /></div>
-  <div class="password"><label for="user_unencrypted_password_confirmation" class="overlabel">Password Again</label><input id="user_unencrypted_password_confirmation" name="user[unencrypted_password_confirmation]" size="20" type="password" rel="Password again" class="last" /></div>
-        
-  </div>
-
-	<div class="content agreement" id="errorbox"><ul></ul></div>
-    <% if flash[:notice] -%> 
-        <div class="content agreement errorbox">
-            <%= errors_for :user %>
-        </div> 
-    <% end -%>
-	
-	<div class="content agreement">
-  <input type="checkbox" name="agreement-checkbox" />
-    <p>	  
-<strong>Agree to our simple terms of use:</strong>
-I understand that this is Alpha (pre-Beta) 
-software and could break at any time 
-without any warning, and that it is only 
-tested in Firefox 2+ and Safari 2+.</p>      
- </div> 
-  <input name="commit" type="image" src="images/create.png" class="create-btn" />
-</form>
-
-	<div id="footer">
-    <p>
-<strong>Privacy &amp; Email Policy:</strong> we will never sell your informaton; we will do our absolute best to keep your information secure.
-We will not annoy you with incessant emails.    
-    </p>
-    <p class="">Copyright &copy;2009</p>
-  </div>
-
-
-
-</div>
+<body>
 </body>
-</html>
