@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   
   def new
     @user = flash[:user] || User.new
-    render :layout => false
+    render :layout => 'yosemite'
   end
   
   def create
@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     else
       flash[:user] = @user
       flash[:notice] = "Error creating user"
-      redirect_to :controller => "users", :action => "new"
+      redirect_to '/signup'
     end
   end
 end

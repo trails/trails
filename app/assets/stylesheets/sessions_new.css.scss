@@ -1,0 +1,67 @@
+@import 'yosemite-base';
+
+$form_width: 356px;
+$form_font: Arial, Helvetica, sans-serif;
+$form_input_bgcolor: #f2f2f2;
+$form_invalid_input_bgcolor: #f2eded;
+$form_input_color: #036698;
+$form_label_color: #666666;
+$form_submit_bgcolor: #5f9b81;
+$form_submit_color: #ffffff;
+
+#login {
+    text-align: center;
+    padding-top: 50px;
+}
+
+#login > form {
+    width: $form_width;
+    margin: 0 auto;
+    text-align: left;
+    background-color: $third;
+    padding: 30px 32px;
+}
+
+#login > form fieldset,
+#login > form label + input {
+    border: 0 none;
+}
+
+#login > form label + input {
+    width: $form_width - 20px;
+    background-color: $form_input_bgcolor;
+    padding: 5px 10px;
+    color: $form_input_color;
+}
+
+#login > form label + input:invalid {
+    box-shadow: 0 0 0 0;
+}
+
+#login > form label + input:invalid {
+    background-color: $form_invalid_input_bgcolor;
+}
+
+#login > form fieldset {
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+#login > form label,
+#login > form label + input {
+    display: block;
+    font-family: $form_font;
+}
+
+#login > form label {
+    color: $form_label_color;
+}
+
+#login > form input[type="submit"] {
+    background-color: $form_submit_bgcolor;
+    color: $form_submit_color;
+    border-radius: 3px;
+    border: 0 none;
+    padding: 3px 10px 5px;
+    font-weight: bold;
+}

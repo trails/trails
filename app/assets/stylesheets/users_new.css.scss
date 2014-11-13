@@ -1,0 +1,97 @@
+@import 'yosemite-base';
+
+$form_width: 450px;
+$form_font: Arial, Helvetica, sans-serif;
+$form_input_bgcolor: #f2f2f2;
+$form_invalid_input_bgcolor: #f2eded;
+$form_input_color: #036698;
+$form_label_color: #666666;
+$form_submit_bgcolor: #5f9b81;
+$form_submit_color: #ffffff;
+
+#signup {
+    text-align: center;
+    padding-top: 50px;
+}
+
+#signup > form {
+    width: $form_width;
+    margin: 0 auto;
+    text-align: left;
+    background-color: $third;
+    padding: 30px 32px;
+}
+
+#signup > form fieldset,
+#signup > form fieldset > input {
+    border: 0 none;
+}
+
+#signup > form fieldset > input {
+    background-color: $form_input_bgcolor;
+    padding: 5px 10px;
+    color: $form_input_color;
+}
+
+#signup > form input[type="email"] {
+    width: $form_width - 20px;    
+}
+
+#signup > form input[type="password"] {
+    width: ($form_width - 40px) / 2 - 3px;
+}
+
+#signup > form fieldset > input:invalid {
+    box-shadow: 0 0 0 0;
+}
+
+#signup > form label + input:focus:invalid {
+    background-color: $form_invalid_input_bgcolor;
+}
+
+#signup > form fieldset {
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+#signup > form,
+#signup > form label,
+#signup > form label + input {
+    font-family: $form_font;
+}
+
+#signup > form label,
+#signup > form label + input[type="email"] {
+    display: block;
+}
+
+#signup > form label {
+    color: $form_label_color;
+}
+
+#signup > form input[type="checkbox"] {
+    display: none;
+}
+
+#signup > form input[type="checkbox"] + label {
+    font-size: .8em;
+}
+
+#signup > form input[type="checkbox"] + label:before {
+    content: '\f0c8';
+    display: inline-block;
+    font-family: FontAwesome;
+}
+
+#signup > form input[type="checkbox"]:checked + label:before {
+    content: '\f14a';
+}
+
+#signup > form input[type="submit"] {
+    background-color: $form_submit_bgcolor;
+    color: $form_submit_color;
+    border-radius: 3px;
+    border: 0 none;
+    padding: 3px 10px 5px;
+    font-weight: bold;
+}
