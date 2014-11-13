@@ -1,0 +1,18 @@
+<section id="login">
+  <form method="post" action="/session">
+    <% if flash[:notice] -%> 
+      <%= flash[:notice] %>
+    <% end -%>    
+    <fieldset>
+      <label>Email</label>
+      <input type="email" name="session[email]" 
+        placeholder="your@emailaddress.com" required />
+    </fieldset>
+    <fieldset>
+      <label>Password</label>
+      <input type="password" name="session[password]" 
+        placeholder="yourpassword" required />
+    </fieldset>
+    <input type="submit" value="Login" />
+  </form>
+</section>

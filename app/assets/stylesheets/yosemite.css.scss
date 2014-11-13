@@ -1,0 +1,52 @@
+@import 'font-awesome';
+@import 'yosemite-base';
+
+@font-face {
+  font-family: SalomeFine;
+  src:url('Salome_Fine.otf') format('opentype');
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: DroidSerif;
+  src:url('DroidSerif.ttf') format('truetype');
+  font-weight: normal;
+}
+
+html body {
+    padding: 0;
+    margin: 0;
+    background: $third_rgba;
+    background: -moz-linear-gradient(top, $third_rgba 0%, $primary_rgba 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, $third_rgba), color-stop(100%, $primary_rgba));
+    background: -webkit-linear-gradient(top, $third_rgba 0%, $primary_rgba 100%);
+    background: -o-linear-gradient(top, $third_rgba 0%, $primary_rgba 100%);
+    background: -ms-linear-gradient(top, $third_rgba 0%, $primary_rgba 100%);
+    background: linear-gradient(to bottom, $third_rgba 0%, $primary_rgba 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$third', endColorstr='$primary', GradientType=0);
+    position: relative;
+    text-align: center;
+}
+
+html body,
+body:before {
+    height: 1627px;
+}
+
+body:before {
+    content: '\00a0';
+    position: absolute;
+    background: transparent url(yosemite-background.jpg) no-repeat center center;
+    width: 100%;
+    margin: 0;
+    left: 0;
+    z-index: -1;
+}
+
+body > * {
+    text-align: initial;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+}
+

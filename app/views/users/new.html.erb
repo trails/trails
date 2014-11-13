@@ -1,8 +1,32 @@
-<!DOCTYPE html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Trails is a process.</title>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-</body>
+<section id="signup">
+  <form method="post" action="/users">
+    <h1>Signup for the Trails Alpha</h1>
+    <p>Let's make an amazing tool together.</p>
+    <% if flash[:notice] -%> 
+      <p>
+        <%= errors_for :user %>
+      </p> 
+    <% end -%>
+    <fieldset>
+      <label>Email</label>
+      <input type="email" name="user[email]" 
+        placeholder="your@emailaddress.com" required />
+    </fieldset>
+    <fieldset>
+      <label>Password</label>
+      <input type="password" name="user[unencrypted_password]" 
+        placeholder="yourpassword" required />
+      <input type="password" name="user[unencrypted_password_confirmation]" 
+        placeholder="yourpassword (again)" required />
+    </fieldset>
+    <fieldset>
+      <input type="checkbox" name="agreement" id="agreement" />
+      <label for="agreement">
+        <strong>Agree to our simple terms of use:</strong>
+        I understand that this is Alpha (pre-Beta) software and 
+        could break at any time without any warning.
+      </p>
+    </fieldset>
+    <input type="submit" value="Create my account" />
+  </form>
+</section>
