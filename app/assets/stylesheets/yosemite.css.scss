@@ -26,6 +26,17 @@ html body {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$third', endColorstr='$primary', GradientType=0);
     position: relative;
     text-align: center;
+    font-size: 1em;
+}
+@media screen and (max-width: 1024px) {
+    html body {
+        font-size: .8em;
+    }
+}
+@media screen and (max-width: 640px) {
+    html body {
+        font-size: .6em;
+    }
 }
 
 html body,
@@ -46,7 +57,17 @@ body:before {
 
 body > * {
     text-align: initial;
-    max-width: 920px;
+    width: 920px;
     margin-left: auto;
     margin-right: auto;
+}
+@media screen and (max-width: 1024px) {
+    body > * {
+        width: 550px;
+    }
+}
+@media screen and (max-width: 640px) {
+    body > * {
+        width: 300px;
+    }
 }

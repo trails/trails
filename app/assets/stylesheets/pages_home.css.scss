@@ -1,5 +1,7 @@
 @import 'yosemite-base';
 
+$form_invalid_input_bgcolor: #f2eded;
+
 /* custom top right navigation bar */
 body > header > nav ul {
     list-style-type: none;
@@ -53,15 +55,16 @@ body > header > nav ul > li:last-child > a:before {
     margin-right: 2em;
 }
 
+/* logo + top level header */
 h1 {
     font-family: SalomeFine;
     font-weight: normal;
     font-size: 3.2em;
     color: $secondary;
-    padding: 18px 110px 8px;
+    padding: .1em 0 .05em 1.3em;
     background: url('trails-logo.svg') left center no-repeat;
     vertical-align: middle;
-    margin-bottom: 35px;
+    margin-bottom: .4em;
 }
 
 h1 + p {
@@ -78,35 +81,40 @@ body > form + p {
 
 h1 + p,
 body > form > label {
-    font-size: 1.8em;
+    font-size: 1.7em;
 }
 
 body > form {
-    margin-top: 15px;
+    margin-top: 3em;
 }
 
 body > form > label {
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: .3em;
 }
 
 body > form > input {
     font-size: 1.5em;
     border: 1px solid $secondary;
-    line-height: 35px;
-    padding: 8px 10px;
+    line-height: 1.5em;
+    padding: .3em .5em;
     vertical-align: top;
 }
 
-body > form > input[type="email"]:focus {
-    outline: none;
+body > form > input[type="email"]:focus,
+body > form > input[type="email"]:invalid {
+    box-shadow: none;
+}
+
+body > form > input[type="email"]:invalid {
+    background-color: $form_invalid_input_bgcolor;
 }
 
 body > form > input[type="submit"] {
     color: $third;
     background-color: $secondary;
     font-family: SalomeFine;
-    margin-left: -.4em;
+    margin-left: -1.5em;
 }
 
 /*
