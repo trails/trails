@@ -3,13 +3,13 @@
 
 @font-face {
   font-family: SalomeFine;
-  src:url('Salome_Fine.otf') format('opentype');
+  src: url('Salome_Fine.otf') format('opentype');
   font-weight: normal;
 }
 
 @font-face {
   font-family: DroidSerif;
-  src:url('DroidSerif.ttf') format('truetype');
+  src: url('DroidSerif.ttf') format('truetype');
   font-weight: normal;
 }
 
@@ -37,6 +37,7 @@ body:before {
     content: '\00a0';
     position: absolute;
     background: transparent url(yosemite-background.jpg) no-repeat center center;
+    background-size: cover;
     width: 100%;
     margin: 0;
     left: 0;
@@ -49,4 +50,3 @@ body > * {
     margin-left: auto;
     margin-right: auto;
 }
-
