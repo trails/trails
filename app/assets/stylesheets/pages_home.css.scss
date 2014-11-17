@@ -93,12 +93,9 @@ body > form > label {
 body > form > input {
     font-size: 1.5em;
     border: 1px solid $secondary;
-    font-size: 1.5em;
     line-height: 35px;
-}
-
-body > form > input[type="email"] {
     padding: 8px 10px;
+    vertical-align: top;
 }
 
 body > form > input[type="email"]:focus {
@@ -106,11 +103,18 @@ body > form > input[type="email"]:focus {
 }
 
 body > form > input[type="submit"] {
-    padding: 11px 20px 5px;
     color: $third;
     background-color: $secondary;
     font-family: SalomeFine;
     margin-left: -.4em;
+}
+
+/*
+ * Removes line-height inconsistency between text input and
+ * submit button on firefox and safari
+ */
+body > form > input[type="submit"]::-moz-focus-inner {
+    border: 0;
 }
 
 body > form + p {
