@@ -1,6 +1,6 @@
 @import 'yosemite-base';
 
-$form_width: 356px;
+$form_width: 240px;
 $form_font: Arial, Helvetica, sans-serif;
 $form_input_bgcolor: #f2f2f2;
 $form_invalid_input_bgcolor: #f2eded;
@@ -35,10 +35,7 @@ $form_submit_color: #ffffff;
 }
 
 #login > form label + input:invalid {
-    box-shadow: 0 0 0 0;
-}
-
-#login > form label + input:invalid {
+    box-shadow: none;
     background-color: $form_invalid_input_bgcolor;
 }
 

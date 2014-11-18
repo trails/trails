@@ -3,13 +3,13 @@
 
 @font-face {
   font-family: SalomeFine;
-  src:url('Salome_Fine.otf') format('opentype');
+  src: url('Salome_Fine.otf') format('opentype');
   font-weight: normal;
 }
 
 @font-face {
   font-family: DroidSerif;
-  src:url('DroidSerif.ttf') format('truetype');
+  src: url('DroidSerif.ttf') format('truetype');
   font-weight: normal;
 }
 
@@ -26,6 +26,17 @@ html body {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$third', endColorstr='$primary', GradientType=0);
     position: relative;
     text-align: center;
+    font-size: 1em;
+}
+@media screen and (max-width: 1024px) {
+    html body {
+        font-size: .8em;
+    }
+}
+@media screen and (max-width: 640px) {
+    html body {
+        font-size: .6em;
+    }
 }
 
 html body,
@@ -37,16 +48,27 @@ body:before {
     content: '\00a0';
     position: absolute;
     background: transparent url(yosemite-background.jpg) no-repeat center center;
+    background-size: cover;
     width: 100%;
     margin: 0;
     left: 0;
+    top: 0;
     z-index: -1;
 }
 
 body > * {
     text-align: initial;
-    max-width: 920px;
+    width: 920px;
     margin-left: auto;
     margin-right: auto;
 }
-
+@media screen and (max-width: 1024px) {
+    body > * {
+        width: 550px;
+    }
+}
+@media screen and (max-width: 640px) {
+    body > * {
+        width: 300px;
+    }
+}

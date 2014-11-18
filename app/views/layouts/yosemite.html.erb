@@ -3,6 +3,17 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <title>Trails: a time tracking tool for designers</title>
   <%= stylesheet_link_tag 'yosemite.css' %>
+  <%= javascript_include_tag 'yosemite.js' %>
+  <script>
+    (function() {
+      window.onload = function() {
+        Yosemite.init({
+          controller: '<%= params[:controller] %>',
+          action: '<%= params[:action] %>'
+        });
+      };
+    })();
+  </script>
   <%= javascript_include_tag view_specific_js if view_specific_js_exist %>
   <%= stylesheet_link_tag view_specific_css if view_specific_css_exist %>
 </head>
