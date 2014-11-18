@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<head>
+<title>Trails</title>
+<%= stylesheet_link_tag "application" %>
+<%= javascript_include_tag "application" %>
+<%= csrf_meta_tags %>
+</head>
+<body class="<%= page_class %>">
+<% if session[:user_id] %>
+  <div id="utility_menu">
+    <%= link_to "Settings", "settings" %>
+    |
+    <%= link_to "Sign out", :controller => "sessions", :action => 'destroy' %>
+  </div>
+<% end %>
+<%= yield %>
+</body>

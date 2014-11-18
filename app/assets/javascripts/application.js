@@ -4,6 +4,7 @@
 //= require _libs
 //= require scriptaculous
 //= require slider
+//= require angular/angular
 
 //= require core
 //= require controller/task

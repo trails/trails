@@ -61,6 +61,11 @@ module TheApp
 
     config.assets.precompile += %w(*.css *.js)
 
+    config.assets.paths << Rails.root.join("vendor","assets","bower_components")
+    config.assets.paths << Rails.root.join("vendor","assets","bower_components","bootstrap-sass-official","assets","fonts")
+
+    config.assets.precompile << %r(.*.(?:eot|svg|ttf|woff)$)
+
     config.generators do |g|
       g.template_engine :haml
     end

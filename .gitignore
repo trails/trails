@@ -17,3 +17,8 @@
 /log/*.log
 /tmp
 /public/assets/*
+
+# 3rd party / vendor areas
+/vendor/*
+Gemfile.lock
+/node_modules
