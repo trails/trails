@@ -1,0 +1,31 @@
+<table>
+  <tr class="<%= content.status.to_s %>">
+    <td class="toolbar external">
+      <%= link_to "Delete", "#delete",:class=>"delete" %>
+      <%= link_to "Edit", "#edit", :class=>"edit" %>
+      <img class="taskhandle" src="images/task_handle.png"/>
+    </td>
+    <td class="status">
+      <%= task_status(content) %>
+    </td>
+    <td class="start border">
+      <%= raw task_action_button(content) %>
+    </td>
+    <td class="description border">
+      <%= content.description %>
+    </td>
+    <td class="rate border">
+      <%= task_rate(content) %>
+    </td>
+    <td class="earnings border">
+      <%= content.task_earnings %>
+    </td>
+    <td class="duration border">
+      <%= raw content.task_duration %>
+    </td>
+    <td class="external_bars">
+      <%= raw content.task_duration_bar %>
+    </td>
+  </tr>
+  <%= render :partial=>"tasks/edit", :object=>content %>
+</table>
