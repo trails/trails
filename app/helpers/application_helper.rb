@@ -39,4 +39,8 @@ module ApplicationHelper
     end
     html
   end 
+
+  def page_class
+    return params[:controller] + ' ' + params[:action]
+  end
 end
