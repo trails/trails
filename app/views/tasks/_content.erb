@@ -1,5 +1,5 @@
 <table>
-  <tr class="<%= content.status.to_s %>">
+  <tr class="<%= content.class.name.underscore %>" id="<%= content.class.name.underscore << '_' << content.id.to_s %>">
     <td class="toolbar external">
       <%= link_to "Delete", "#delete",:class=>"delete" %>
       <%= link_to "Edit", "#edit", :class=>"edit" %>
