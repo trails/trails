@@ -59,8 +59,7 @@ module TheApp
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.assets.precompile = %w(*.css *.js)
-    config.assets.precompile += %w[*.svg *.png *.jpg *.jpeg *.gif] 
+    config.assets.precompile = %w(*.css *.js *.svg *.png *.jpg *.jpeg *.gif)
 
     config.assets.paths << Rails.root.join("vendor","assets","bower_components")
     config.assets.paths << Rails.root.join("vendor","assets","bower_components","assets","fonts")
