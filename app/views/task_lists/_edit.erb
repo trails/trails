@@ -1,7 +1,7 @@
 <%= fields_for edit do |form| %>
   <tr style="display:none"
-    id="<%= (edit.new_record? ? nil : "edit") %>"
-    class="form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %> <%= edit.id.to_s %>">
+    id="<%= (edit.new_record? ? '' : "edit_") << edit.class.name.underscore << '_' << (edit.new_record? ? 'new' : edit.id.to_s) %>"
+    class="form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %> task_form">
     <td class="external"></td>
     <td class="title" colspan="3">
       <%= form.text_field   :title, :disabled=>true %>

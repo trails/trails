@@ -1,5 +1,7 @@
 <%= fields_for edit do |form| %>
-  <tr class="form <%= edit.new_record? ? 'new' : 'edit' %> task_form" id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") %>" style="display:none">
+  <tr
+    class="form task_form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %>"
+    id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>" style="display:none">
     <td class="toolbar external"></td>
     <td class="task_form_container" colspan="6" style="padding:0px;">
       <table>
@@ -29,7 +31,7 @@
             <%= form.text_field :rate, :disabled=>true %>
             <%= "/hour" %>
             <span class="default_rate_check">
-              <input type="checkbox"></input>
+              <input type="checkbox">
               <span>
                 Use default rate
               </span>
@@ -37,14 +39,14 @@
           </td>
           <td colspan="2">
             <div class="duration" id="diffTime_<%= edit.id %>"></div>
-            <input type="text_field" name="diffTime" style="display:none" id="diffTime_input_#{edit.id}" disabled="disabled">
+            <input type="text_field" name="diffTime" style="display:none" id="diffTime_input_<%= edit.id %>" disabled="disabled">
           </td>
         </tr>
         <tr class="task_list_container_row slider_row">
           <td colspan="3">
             <hr/>
             <b>
-              Adjust the #{edit.new_record? ? 'initial' : 'total'} time of this task:
+              Adjust the <%= "#{edit.new_record? ? 'initial' : 'total'}" %> time of this task:
             </b>
             <div class="slider_track" id="track_<%= edit.id %>" style="width:330px">
               <div class="slider_handle slider_handle_hour"></div>
