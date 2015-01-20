@@ -1,6 +1,10 @@
-controller("task_form",{
+var TaskForm = Class.create(Controller);
+TaskForm.prototype.className = 'task_form';
+TaskForm.cache = {};
+
+TaskForm.addMethods({
   show: function() {
-    hideTaskForms();
+    Application.hideTaskForms();
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     //focus on title input when form appears
@@ -43,8 +47,8 @@ controller("task_form",{
         var diffTime = $("diffTime_");
         var diffTimeInput = $("diffTime_input_");
         total = Math.floor(hours)*60  + mins;
-        diffTime.innerHTML = formattedTime(total);
-        diffTimeInput.value=total;
+        diffTime.innerHTML = Application.formattedTime(total);
+        diffTimeInput.value = total;
       }
     });
   },
@@ -73,10 +77,10 @@ controller("task_form",{
       listContainer.insert({top:transport.responseText});
       var newTask = listContainer.firstChild;
       //the content of the list has changed so we need to re-init
-      initDragAndDrop();
+      Application.initDragAndDrop();
       this.task_list.checkIfTotalNeeded();
       //get new task id
-      var newTaskId = strip_id(newTask);
+      var newTaskId = Application.strip_id(newTask);
       task(newTaskId).initSlider();
       //hide new_task_form
       this.hide();
@@ -86,3 +90,13 @@ controller("task_form",{
     return this.task_list ? $("task_list_" + this.task_list.id + "_task_new") : (this.task ? $("edit_task_" + this.task.id) : null);
   }
 });
+
+var task_form = function (id) {
+  var instance = TaskForm.cache[id];
+  if (!instance) {
+    instance = new TaskForm();
+    instance.id = id;
+    TaskForm.cache[id] = instance;
+  }
+  return instance;
+};

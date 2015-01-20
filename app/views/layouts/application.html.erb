@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <head>
 <title>Trails</title>
-<%= stylesheet_link_tag "application" %>
-<%= javascript_include_tag "application" %>
-<%= csrf_meta_tags %>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <script>
+    (function() {
+      window.onload = function() {
+        Application.init({
+          controller: '<%= params[:controller] %>',
+          action: '<%= params[:action] %>'
+        });
+      };
+    })();
+  </script>
 </head>
 <body class="<%= page_class %>">
 <% if session[:user_id] %>
