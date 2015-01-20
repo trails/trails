@@ -11,6 +11,7 @@ Task.addMethods({
     }
     return this[cachedName];
   },
+
   task_form: function() {
     var cachedName = "_task_form";
     if (!this[cachedName]) {
@@ -19,18 +20,21 @@ Task.addMethods({
     }
     return this[cachedName];
   },
+
   edit: function() {
     this.task_form().show();
     this.element().hide();
     this.getSlider().setValue(0, 0);
     this.getSlider().setValue(0, 1);
   },
+
   remove: function() {
     var response = confirm("Are you sure you want to delete task?");
     if (response) {
       this.ajaxAction("remove",{method:"delete"});
     }
   },
+
   afterRemove: function(name, transport) {
     ///remove whole container instead of single task element
     //this.element().fadeDelete();
@@ -43,6 +47,7 @@ Task.addMethods({
       }
     });
   },
+
   initSlider: function() {
     this.slider = new Control.Slider($('track_'+this.id).select(".slider_handle"), 'track_' + this.id, {
       range: $R(-60,60),
@@ -62,23 +67,29 @@ Task.addMethods({
       }
     });
   },
+
   getSlider: function() {
     return this.slider;
   },
+
   taskContainer: function() {
     //LI task_container
     return $("task_container_" + this.id);
   },
+
   taskList: function() {
     var elem = this.element().up(".list_container");
     return task_list(Application.strip_id(elem));
   },
+
   durationBar: function() {
     return this.element().down(".duration_bar");
   },
+
   earnings: function() {
     return this.element().down(".earnings");
   },
+
   duration: function() {
     return this.element().down(".duration");
   }

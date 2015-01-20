@@ -11,6 +11,7 @@ TaskList.addMethods({
     }
     return this[cachedName];
   },
+
   task_list_form: function() {
     var cachedName = "_task_list_form";
     if (!this[cachedName]) {
@@ -19,6 +20,7 @@ TaskList.addMethods({
     }
     return this[cachedName];
   },
+
   setTaskSequence: function(seq) {
     var options = {
       method: "put",
@@ -32,16 +34,20 @@ TaskList.addMethods({
     };
     new Ajax.Request(this.url() + "setsequence", options);
   },
+
   listContainer: function() {
     return $("task_list_container_" + this.id);
   },
+
   edit: function() {
     this.task_list_form().show();
     this.element().hide();
   },
+
   remove: function() {
     this.ajaxAction("remove",{method:"delete"});
   },
+
   afterRemove: function(name, transport) {
     //remy: replaced remove() with fadeDelete() for consistency
     var oldElement, element = this.element();
@@ -54,28 +60,36 @@ TaskList.addMethods({
     } while(!element.match(".blank_list_footer"));
     element.fadeDelete();
   },
+
   afterSetTaskSequence: function(transport) {
     //update list earnings and duration after task_reordering
     eval(transport.responseText);
   },
+
   earnings: function() {
     return $("task_list_earnings_" + this.id);
   },
+
   duration: function() {
     return $("task_list_duration_" + this.id);
   },
+
   numTasks: function() {
     return this.listContainer().childNodes.length;
   },
+
   hideTotal: function() {
     this.total().hide();
   },
+
   showTotal: function() {
     this.total().show();
   },
+
   total: function() {
     return $("total_" + this.id);
   },
+
   checkIfTotalNeeded: function() {
     var n = this.numTasks();
     if (n < 2){

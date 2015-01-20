@@ -33,6 +33,7 @@ TaskForm.addMethods({
     title_input.focus();
     title_input.select();
   },
+
   initSlider: function() {
     this.slider = new Control.Slider($('track_').select(".slider_handle"), 'track_', {
       range: $R(0,120),
@@ -52,9 +53,11 @@ TaskForm.addMethods({
       }
     });
   },
+
   getSlider: function() {
     return this.slider;
   },
+
   hide: function() {
     var elem = this.element();
     $A(elem.getElementsByTagName("INPUT")).invoke("disable");
@@ -63,6 +66,7 @@ TaskForm.addMethods({
       this.task.element().show();
     }
   },
+
   onSuccess: function(transport) {
     //call back method on update for Tasks
     var element = this.element();
@@ -86,6 +90,7 @@ TaskForm.addMethods({
       this.hide();
     }
   },
+
   element: function() {
     return this.task_list ? $("task_list_" + this.task_list.id + "_task_new") : (this.task ? $("edit_task_" + this.task.id) : null);
   }

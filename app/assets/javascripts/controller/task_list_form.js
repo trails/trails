@@ -12,6 +12,7 @@ TaskListForm.addMethods({
     titleInput.focus();
     titleInput.select();
   },
+
   hide: function() {
     $A(this.element().getElementsByTagName("INPUT")).invoke("disable");
     this.element().hide();
@@ -19,6 +20,7 @@ TaskListForm.addMethods({
       this.task_list.element().show();
     }
   },
+
   onSuccess: function(transport) {
     //call back method on update for Tasks_Lists
     //also handles task_list creation
@@ -42,6 +44,7 @@ TaskListForm.addMethods({
       task_list(newId).checkIfTotalNeeded();
     }
   },
+
   element: function() {
     return this.task_list ? $("edit_task_list_"+this.task_list.id) : $("task_list_new");
   }
