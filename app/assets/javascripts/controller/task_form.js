@@ -1,6 +1,10 @@
-controller("task_form",{
+var TaskForm = Class.create(Controller);
+TaskForm.prototype.className = 'task_form';
+TaskForm.cache = {};
+
+TaskForm.addMethods({
   show: function() {
-    hideTaskForms();
+    Application.hideTaskForms();
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     //focus on title input when form appears
@@ -29,6 +33,7 @@ controller("task_form",{
     title_input.focus();
     title_input.select();
   },
+
   initSlider: function() {
     this.slider = new Control.Slider($('track_').select(".slider_handle"), 'track_', {
       range: $R(0,120),
@@ -43,14 +48,16 @@ controller("task_form",{
         var diffTime = $("diffTime_");
         var diffTimeInput = $("diffTime_input_");
         total = Math.floor(hours)*60  + mins;
-        diffTime.innerHTML = formattedTime(total);
-        diffTimeInput.value=total;
+        diffTime.innerHTML = Application.formattedTime(total);
+        diffTimeInput.value = total;
       }
     });
   },
+
   getSlider: function() {
     return this.slider;
   },
+
   hide: function() {
     var elem = this.element();
     $A(elem.getElementsByTagName("INPUT")).invoke("disable");
@@ -59,6 +66,7 @@ controller("task_form",{
       this.task.element().show();
     }
   },
+
   onSuccess: function(transport) {
     //call back method on update for Tasks
     var element = this.element();
@@ -73,16 +81,27 @@ controller("task_form",{
       listContainer.insert({top:transport.responseText});
       var newTask = listContainer.firstChild;
       //the content of the list has changed so we need to re-init
-      initDragAndDrop();
+      Application.initDragAndDrop();
       this.task_list.checkIfTotalNeeded();
       //get new task id
-      var newTaskId = strip_id(newTask);
+      var newTaskId = Application.strip_id(newTask);
       task(newTaskId).initSlider();
       //hide new_task_form
       this.hide();
     }
   },
+
   element: function() {
     return this.task_list ? $("task_list_" + this.task_list.id + "_task_new") : (this.task ? $("edit_task_" + this.task.id) : null);
   }
 });
+
+var task_form = function (id) {
+  var instance = TaskForm.cache[id];
+  if (!instance) {
+    instance = new TaskForm();
+    instance.id = id;
+    TaskForm.cache[id] = instance;
+  }
+  return instance;
+};

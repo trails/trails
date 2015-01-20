@@ -24,7 +24,10 @@ TheApp::Application.routes.draw do
   #   resources :products
   resource :session
   
-  resources :users
+  resources :users,
+            :clients,
+            :invoices
+
   # Sample resource route with options:
   #   resources :products do
   #     member do
