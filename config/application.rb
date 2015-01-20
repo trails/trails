@@ -61,9 +61,6 @@ module TheApp
 
     config.assets.precompile = %w(*.css *.js *.svg *.png *.jpg *.jpeg *.gif *.eot *.ttf *.woff *.otf)
 
-    config.assets.paths << Rails.root.join("vendor","assets","bower_components")
-    config.assets.paths << Rails.root.join("vendor","assets","bower_components","assets","fonts")
-
     config.generators do |g|
       g.template_engine :erb
     end
