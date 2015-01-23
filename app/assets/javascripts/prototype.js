@@ -1201,7 +1201,7 @@ Ajax.Request = Class.create(Ajax.Base, {
     this.method = this.options.method;
     var params = Object.clone(this.options.parameters);
 
-    if (!['get', 'post', 'delete', 'head'].include(this.method)) {
+    if (!['get', 'post', 'put', 'delete', 'head'].include(this.method)) {
       // simulate other verbs over post
       params['_method'] = this.method;
       this.method = 'post';
