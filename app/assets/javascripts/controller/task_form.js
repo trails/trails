@@ -81,7 +81,8 @@ TaskForm.addMethods({
       listContainer.insert({top:transport.responseText});
       var newTask = listContainer.firstChild;
       //the content of the list has changed so we need to re-init
-      Application.initDragAndDrop();
+      this.task_list.sortable.destroy();
+      Application.dragAndDropTaskList($('task_list_container_' + this.task_list.id));
       this.task_list.checkIfTotalNeeded();
       //get new task id
       var newTaskId = Application.strip_id(newTask);

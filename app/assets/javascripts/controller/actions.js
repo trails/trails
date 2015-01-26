@@ -24,17 +24,6 @@ Actions.addMethods({
   },
 
   afterComplete: function(transport) {
-    /*
-     * apparently, this piece of code tries to insert the closed task at the proper index.
-     * for the sake of simplicity, I think it is better to just
-     * append it to the bottom of the list and let the user move it around.
-     *
-     * > var nexts = [this.task.element().next(".total"),this.task.element().next(".complete.task")].compact().pluck("rowIndex");
-     * > var targetRowIndex = Math.min.apply(Math,nexts)-1;
-     * > this.task.element().remove();
-     * > var newRow = $("task_lists").insertRow(targetRowIndex);
-     * > $(newRow).replace(transport.responseText);
-     */
     var task_list = this.task.taskList();
     var listContainer = task_list.listContainer();
     this.task.taskContainer().remove();
@@ -46,23 +35,13 @@ Actions.addMethods({
   },
 
   afterReopen: function (transport) {
-  /*
-   * apparently, this piece of code tries to insert the reopened task at the proper index.
-   * for the sake of simplicity, I think it is better to just
-   * insert it at the top of the list and let the user move it around.
-   *
-   * > var prevs = [this.task.element().previous(".task_list"), this.task.element().previous(".stopped.task")].compact().pluck("rowIndex");
-   * > var targetRowIndex = Math.max.apply(Math, prevs)+1;
-   * > this.task.element().remove();
-   * > var newRow = $("task_lists").insertRow(targetRowIndex);
-   * > $(newRow).replace(transport.responseText);
-   */
     var task_list = this.task.taskList();
     var listContainer = task_list.listContainer();
     this.task.taskContainer().remove();
     listContainer.insert({top: transport.responseText});
-    //when a task is reOpened, it should be allowed to start moving again
-    Application.initDragAndDrop();
+    // reopened task should be allowed to DnD again
+    task_list.sortable.destroy();
+    Application.dragAndDropTaskList($('task_list_container_' + task_list.id));
     this.task.initSlider();
   },
 

@@ -39,9 +39,11 @@ TaskListForm.addMethods({
     } else {
       this.hide();
       //new task list needs to be DnD enabled
-      Application.initDragAndDrop();
+      newTaskList = task_list(newId);
+      newTaskList.sortable.destroy();
+      Application.dragAndDropTaskList($('task_list_container_' + newId));
       //new list needs to hide total
-      task_list(newId).checkIfTotalNeeded();
+      newTaskList.checkIfTotalNeeded();
     }
   },
 

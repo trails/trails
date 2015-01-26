@@ -1,9 +1,9 @@
 //= require prototype
 //= require effects
-//= require dragdrop
 //= require _libs
 //= require scriptaculous
 //= require slider
+//= require Sortable
 
 //= require controller
 //= require controller/task
@@ -53,6 +53,17 @@ var Application = {
             element.remove();
            }
         });
+      },
+
+      findChildren: function(element, tagName) {
+        if(!element.hasChildNodes()) return null;
+        tagName = tagName.toUpperCase();
+        var elements = [];
+        $A(element.childNodes).each(function(e) {
+          if(e.tagName && e.tagName.toUpperCase()==tagName)
+              elements.push(e);
+        });
+        return (elements.length>0 ? elements.flatten() : []);
       }
     });
   },
@@ -264,27 +275,116 @@ var Application = {
     //get sortable_containers element by className
     $sortable_containers =  $$(".list_container");
 
-    //get sortable_containers' ids
-    $sortable_containers_ids = $sortable_containers.pluck("id");
-
     //make each container Sortable
-    $sortable_containers_ids.each(function (s) {
-      Sortable.create(s, {
-        tag: 'li',
-        dropOnEmpty: true,
-        handle: "taskhandle",
-        constraint: false,
-        onUpdate: Application.updateTasksOrder,
-        containment: $sortable_containers_ids
+    $sortable_containers.each(function (container) {
+      Application.dragAndDropTaskList(container);
+    });
+
+    //Application.initDropAreaDnD();
+  },
+
+  /*
+  initDropAreaDnD: function() {
+    $$(".drop-only-area .droppable").each(function (container) {
+      Sortable.create(container, {
+        group: {
+          name: 'dropArea',
+          pull: false,
+          put: ['taskList']
+        },
+        sort: false,
+        onAdd: function(evt) {
+          console.log('dsai', evt);
+        }
       });
+    });
+  },
+  */
+
+  dragAndDropTaskList: function(task_list_container) {
+    var task_list_id = task_list_container.identify().replace(/task_list_container_/gi, '');
+    var tl = task_list(task_list_id);
+    tl.sortable =  Sortable.create(task_list_container, {
+      draggable: 'li.task_container',
+      group: 'taskList',
+      animation: 100,
+      onEnd: function(evt) {
+        /*
+        var afterDropFn = function() {
+          $$('body')[0].removeClassName('drag-active');
+          $$('.drop-only-area').each(function (element) {
+            element.removeClassName('show');
+          });
+        };
+
+        clearTimeout(Application.dropAreaTimeout);
+        Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
+        */
+      },
+      onStart: function(evt) {
+        var item = evt.item;
+        var parent = item.parentNode;
+        var id = item.identify().replace(/task_container_/gi, '');
+        var list_id = parent.identify().replace(/task_list_container_/gi, '');
+        var t = task(id);
+        t.taskListBeforeDnD = list_id;
+
+        $$('body')[0].addClassName('drag-active');
+        /*
+        $$('.drop-only-area').each(function (element) {
+          element.addClassName('show');
+        });
+        clearTimeout(Application.dropAreaTimeout);
+        */
+      },
+      onAdd: function(evt) {
+        Application.updateTasksOrder(evt.target.parentNode);
+      },
+      onUpdate: function(evt) {
+        Application.updateTasksOrder(evt.target);
+      },
+      onRemove: function(evt) {
+        var item = evt.item,
+            parent = item.parentNode,
+            id = item.identify().replace(/task_container_/gi, '');
+            tl = task(id).taskListBeforeDnD;
+            tl_selector = '#task_list_container_' + tl;
+        if (parent.hasClassName('list_container')) {
+          // task was moved to another list, let's update changes
+          Application.updateTasksOrder(evt.target);
+        }
+        /*
+        if (parent.hasClassName('droppable')) {
+          // moved to the drop area, let's revert moving the
+          // task in the DOM for the moment, we'll run the proper
+          // action from drop area sortable's onAdd event
+          var siblingsCount = $$(tl_selector + ' > li').length;
+          if (0 == siblingsCount || evt.oldIndex >= siblingsCount) {
+            $$(tl_selector)[0].appendChild(item);
+          } else {
+            var before = $$(tl_selector + ' > li:nth-child(' + (evt.oldIndex +1) + ')')[0];
+            before.parentNode.insertBefore(item, before);
+          }
+          task(id).taskListBeforeDnD = null;
+        }
+        */
+      }
     });
   },
 
   updateTasksOrder: function(container) {
     var task_list_id = container.identify().replace(/task_list_container_/gi, '');
     var tl = task_list(task_list_id);
-    var seq = Sortable.sequence(container.identify());
+    var seq = Application.getSequence(container.identify());
     tl.setTaskSequence(seq);
+  },
+
+  getSequence: function(element) {
+    element = $(element);
+    return $(Element.findChildren(element, 'li') || []).map( function(item) {
+      var matchre = /^[^_\-](?:[A-Za-z0-9\-\_]*)[_](.*)$/;
+      return item.id.match(matchre) ? item.id.match(matchre)[1] : '';
+    });
   },
 
   initSliders: function() {
