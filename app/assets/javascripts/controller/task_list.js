@@ -24,7 +24,6 @@ TaskList.addMethods({
   setTaskSequence: function(seq) {
     var options = {
       method: "put",
-      onSuccess:this["afterSetTaskSequence"].bind(this),
       parameters: {
         tasks: seq.toString()
       },
@@ -59,11 +58,6 @@ TaskList.addMethods({
       oldElement.fadeDelete();
     } while(!element.match(".blank_list_footer"));
     element.fadeDelete();
-  },
-
-  afterSetTaskSequence: function(transport) {
-    //update list earnings and duration after task_reordering
-    eval(transport.responseText);
   },
 
   earnings: function() {
