@@ -57,6 +57,7 @@ Actions.addMethods({
     //call back for all actions (start, stop ...)
     this.task.taskContainer().update(transport.responseText);
     this.task.initSlider();
+    document.title = ($$('.active_task').length ? '*' : '') + 'Trails';
   }
 });
 
