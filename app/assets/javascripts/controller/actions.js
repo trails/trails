@@ -55,7 +55,7 @@ Actions.addMethods({
 
   afterAjaxAction: function(name, transport) {
     //call back for all actions (start, stop ...)
-    this.task.taskContainer().update(transport.responseText);
+    this.task.taskContainer().replace(transport.responseText);
     this.task.initSlider();
     document.title = ($$('.active_task').length ? '*' : '') + 'Trails';
   }
