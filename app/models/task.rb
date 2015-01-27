@@ -120,7 +120,7 @@ class Task < ActiveRecord::Base
   def task_duration
     if status == :active
       formatted_duration(running_time) 
-    elsif status == :stopped
+    else
       formatted_duration(duration)
     end
   end
