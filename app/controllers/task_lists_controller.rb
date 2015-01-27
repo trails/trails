@@ -1,9 +1,6 @@
 class TaskListsController < ApplicationController
   before_filter :check_rights, :only => [:update, :destroy]
   include ApplicationHelper
-  def index
-    @task_lists = TaskList.find(:all, :conditions=> {:owner_id=>session[:user_id]}, :order=>"updated_at DESC")
-  end
   
   def create
     @task_list = TaskList.create!(params[:task_list].merge(:owner_id => session[:user_id]))

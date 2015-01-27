@@ -1,5 +1,8 @@
 class TasksController < ApplicationController
   before_filter :check_rights, :only => [:update, :destroy]
+  def index
+    @task_lists = TaskList.find(:all, :conditions=> {:owner_id=>session[:user_id]}, :order=>"updated_at DESC")
+  end
   
   def create
     task_list = TaskList.find(params[:task_list_id])
