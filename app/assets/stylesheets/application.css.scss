@@ -403,17 +403,20 @@ td.status {
 .active .description {
   font-weight: italic;
 }
-.active .external_bars .duration_bar {
+
+.external_bars .duration_bar  {
   height: 2px;
+  width: 0px;
+}
+
+.active .external_bars .duration_bar {
   background-color: #99cc99;
 }
 
-.stopped .external_bars .duration_bar{
-  height: 2px;
+.stopped .external_bars .duration_bar {
   background-color: #666666;
 }
 .complete .external_bars .duration_bar  {
-  height: 2px;
   background-color: #999999;
 }
 

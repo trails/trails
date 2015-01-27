@@ -131,7 +131,7 @@ class Task < ActiveRecord::Base
   end
  
   def task_duration_bar
-    %Q|<div class="duration_bar" style="width:#{[700,running_time/60].min.ceil}px"></div>|
+    %Q|<div class="duration_bar" duration="#{running_time}"></div>|
   end
   
 end

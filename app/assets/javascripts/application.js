@@ -18,7 +18,7 @@ var Application = {
 
     Application.initDragAndDrop();
     Application.initSliders();
-    setInterval(Application.updateActiveTasks, 10000);
+    Application.updateTasks();
     //Initialize clockTicking
     $showTick = false;
     setInterval(Application.clockTick, 500);
@@ -294,7 +294,6 @@ var Application = {
         },
         sort: false,
         onAdd: function(evt) {
-          console.log('dsai', evt);
         }
       });
     });
@@ -316,7 +315,6 @@ var Application = {
             element.removeClassName('show');
           });
         };
-
         clearTimeout(Application.dropAreaTimeout);
         Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
         */
@@ -399,10 +397,7 @@ var Application = {
     });
   },
 
-  updateActiveTasks: function() {
-    if ($$(".active").length <= 0) {
-      return;
-    }
+  updateTasks: function() {
     var options = {
       method: "put",
       onSuccess: function (transport) {
@@ -419,6 +414,19 @@ var Application = {
           t.duration().update(jsonTasks[i].task_duration);
           t.durationBar().replace(jsonTasks[i].task_duration_bar);
         }
+        var maxDuration = 0;
+        $$('.duration_bar').each(function (element) {
+          var duration = parseInt(element.readAttribute('duration'));
+          if (duration > maxDuration) {
+            maxDuration = duration;
+          }
+        });
+        $$('.duration_bar').each(function (element) {
+          var duration = parseInt(element.readAttribute('duration'));
+          element.setStyle({
+            width: (duration * 100 / maxDuration) + '%'
+          });
+        });
 
         //update taskLists
         for (var i = 0; i < jsonTaskLists.length; i++) {
@@ -431,12 +439,14 @@ var Application = {
         //update grand total
         $("grand_total_earnings").update(json.total_earnings);
         $("grand_total_duration").update(json.total_duration);
+
+        setTimeout(Application.updateTasks, 10000);
       },
       requestHeaders: {
         "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
     };
-    new Ajax.Request("/task_lists/refreshactivetasks", options);
+    new Ajax.Request("/task_lists/refresh", options);
   },
 
   //this method called every 1000ms to show/hide clock colons.
