@@ -24,10 +24,8 @@ Actions.addMethods({
   },
 
   afterComplete: function(transport) {
-    var task_list = this.task.taskList();
-    var listContainer = task_list.listContainer();
-    this.task.taskContainer().remove();
-    listContainer.insert({bottom: transport.responseText});
+    this.task.taskContainer().replace(transport.responseText);
+    this.task.initSlider();
   },
 
   reopen: function (options) {
@@ -35,13 +33,7 @@ Actions.addMethods({
   },
 
   afterReopen: function (transport) {
-    var task_list = this.task.taskList();
-    var listContainer = task_list.listContainer();
-    this.task.taskContainer().remove();
-    listContainer.insert({top: transport.responseText});
-    // reopened task should be allowed to DnD again
-    task_list.sortable.destroy();
-    Application.dragAndDropTaskList($('task_list_container_' + task_list.id));
+    this.task.taskContainer().replace(transport.responseText);
     this.task.initSlider();
   },
 
