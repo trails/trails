@@ -6,7 +6,7 @@ TheApp::Application.routes.draw do
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
-  match 'task_lists/refreshactivetasks' => 'task_lists#refreshActiveTasks'
+  match 'task_lists/refresh' => 'task_lists#refresh'
   match 'signup' => 'users#new'
 
   match 'thanks' => 'pages#thanks'

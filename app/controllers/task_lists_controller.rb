@@ -42,21 +42,23 @@ class TaskListsController < ApplicationController
     end
   end
   
-  def refreshActiveTasks
+  def refresh
     @jsonTasks = []
     @task_lists = TaskList.find(:all, :conditions=> {:owner_id=>session[:user_id]}, :order=>"updated_at DESC")
+    total_duration = 0
+    total_earnings = Money.new(0, "USD")
     @task_lists.each do |task_list_id|
       @task_list = TaskList.find(task_list_id)
-      @tasks = @task_list.running_tasks
+      @tasks = @task_list.sorted_tasks
       @tasks.each do |task|
         @jsonTasks << task
+        total_duration += task.duration
+        total_earnings += task.earnings
       end
     end
-    total_duration = formatted_duration(@task_lists.sum(&:duration))
-    total_earnings = @task_lists.sum(&:earnings).to_money.format(:no_cents_if_whole => true, :symbol => "$")
     json_tasks = @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
     json_task_lists = @task_lists.to_json(:only=>:id,:methods=>[:task_list_duration,:task_list_earnings])
-    render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => total_duration,:total_earnings => total_earnings}
+    render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => formatted_duration(total_duration),:total_earnings => total_earnings.to_money.format(:no_cents_if_whole => true, :symbol => "$")}
     #render :json => @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
   end
   
