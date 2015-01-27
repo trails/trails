@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
     user = User.authenticate(info[:email], info[:password])
     if user
       session[:user_id] = user.id
-      redirect_to :controller => "task_lists"
+      redirect_to :controller => 'tasks'
     else
       session[:user_id] = nil
       flash[:notice] = "Incorrect user name or password."
