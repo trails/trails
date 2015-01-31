@@ -32,13 +32,11 @@ body > header > nav ul > li > a:before {
 }
 
 /* twitter icons */
-body > header > nav ul > li:first-child > a:before,
-body > header > nav ul > li:first-child + li > a:before {
+body > header > nav ul > li:first-child > a:before {
     content: '\f099\00a0';
 }
 
 body > header > nav ul > li:first-child + li {
-    margin-right: 50px;
     background-color: $secondary;
 }
 
