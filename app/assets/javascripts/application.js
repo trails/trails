@@ -14,7 +14,7 @@
 
 var Application = {
   init: function() {
-    Application.extendElementMethods();
+    Application.extendElement();
 
     Application.initDragAndDrop();
     Application.initSliders();
@@ -29,7 +29,7 @@ var Application = {
     Application.attachEventHandlers();
   },
 
-  extendElementMethods: function() {
+  extendElement: function() {
     Element.addMethods({
       recordID: function (element) {
         do {
@@ -254,6 +254,7 @@ var Application = {
     if (this.responder) {
       if(this.responder.onSuccess) options.onSuccess = this.responder.onSuccess.bind(this.responder)
     }
+
     // Perform request!
     this.request(options);
 
@@ -280,10 +281,9 @@ var Application = {
       Application.dragAndDropTaskList(container);
     });
 
-    //Application.initDropAreaDnD();
+    Application.initDropAreaDnD();
   },
 
-  /*
   initDropAreaDnD: function() {
     $$(".drop-only-area .droppable").each(function (container) {
       Sortable.create(container, {
@@ -298,7 +298,6 @@ var Application = {
       });
     });
   },
-  */
 
   dragAndDropTaskList: function(task_list_container) {
     var task_list_id = task_list_container.identify().replace(/task_list_container_/gi, '');
@@ -308,16 +307,14 @@ var Application = {
       group: 'taskList',
       animation: 100,
       onEnd: function(evt) {
-        /*
         var afterDropFn = function() {
           $$('body')[0].removeClassName('drag-active');
-          $$('.drop-only-area').each(function (element) {
+          $$('.drop-area').each(function (element) {
             element.removeClassName('show');
           });
         };
         clearTimeout(Application.dropAreaTimeout);
         Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
-        */
       },
       onStart: function(evt) {
         var item = evt.item;
@@ -328,12 +325,10 @@ var Application = {
         t.taskListBeforeDnD = list_id;
 
         $$('body')[0].addClassName('drag-active');
-        /*
-        $$('.drop-only-area').each(function (element) {
+        $$('.drop-area').each(function (element) {
           element.addClassName('show');
         });
         clearTimeout(Application.dropAreaTimeout);
-        */
       },
       onAdd: function(evt) {
         Application.updateTasksOrder(evt.target.parentNode);
