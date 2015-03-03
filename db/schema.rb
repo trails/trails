@@ -55,4 +55,27 @@ ActiveRecord::Schema.define(:version => 9) do
     t.integer  "last_command_id"
   end
 
+  create_table "clients", :force => true do |t|
+    t.integer  "id"
+    t.string   "name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "country"
+    t.string   "email"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
+  create_table "invoices", :force => true do |t|
+    t.integer  "id"
+    t.string   "description"
+    t.string   "client_id"
+    t.string   "created"
+    t.string   "due"
+    t.datetime "created_at",       :null => false
+    t.datetime "updated_at",       :null => false
+  end
+
 end
