@@ -11,7 +11,7 @@ class UsersController < ApplicationController
     @user = User.create(params[:user])
     if @user.valid?
       session[:user_id] = @user.id
-      redirect_to :controller => "task_lists"
+      redirect_to :controller => "tasks"
     else
       flash[:user] = @user
       flash[:notice] = "Error creating user"
