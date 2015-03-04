@@ -2,7 +2,11 @@
   <td></td>
 </tr>
 <%= render :partial=>"task_lists/header", :object=>task_list %>
-<%= render :partial=>"tasks/edit", :object=>task_list.tasks.build %>
+<tr>
+  <td colspan="8">
+    <%= render :partial=>"tasks/edit", :object=>task_list.tasks.build %>
+  </td>
+</tr>
 <tr>
   <td colspan="8" style="padding: 0px">
     <ul class="list_container" id="task_list_container_<%= task_list.id %>">

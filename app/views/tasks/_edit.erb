@@ -1,10 +1,8 @@
 <%= fields_for edit do |form| %>
-  <tr
+  <section
    class="form task_form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %>"
    id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>"
    style="display:none">
-    <td class="toolbar external"></td>
-    <td colspan="6" style="padding:0px;">
       <fieldset class="task_title">
         <%= form.text_field   :description, :disabled=>true %>
         <span class="earnings"><%= edit.new_record? ? "$00.00" : edit.task_earnings %></span>
@@ -36,7 +34,5 @@
         <% end %>
         or <%= link_to "Cancel", "#cancel" %>
       </fieldset>
-    </td>
-    <td class="external_bars"></td>
-  </tr>
+  </section>
 <% end %>

@@ -79,7 +79,9 @@ nav a#pull {
   left: 10px;
   top: 150px;
 }
-#task_lists td, #task_lists th, tr.task td {
+#task_lists td,
+#task_lists th,
+.task > span {
   padding: 3px;
 }
 
@@ -193,15 +195,18 @@ tr.blank_task td {
   padding: 0px;
 }
 
-tr.task td {
-  height: 25px;
+.task > span {
+  height: 1.8em;
+  padding-top: 1em;
+  display: inline-block;
+  vertical-align: bottom;
 }
-tr.task td.border {
+.task > span.border {
   border-bottom: 1px solid #eeeeee;
 }
-tr.task .task_submit {
+.task .task_submit {
   text-align: right;
-  height: 30px;
+  padding-bottom: 1em;
 }
 
 .task {
@@ -301,17 +306,11 @@ td.status {
   width: 95%;
 }
 
-.task_form {
-  background-color: #e3eeec;
-}
 .task_form .description {
   min-width: 325px;
 }
 .task_form .title {
   width: 270px;
-}
-.task_form .task_title {
-  min-width: 308px;
 }
 .task_form .task_title #task_description {
   margin-left: 1em;
@@ -331,9 +330,6 @@ td.status {
   width: 250px;
   height: 18px;
 }
-.task_form:hover {
-  background-color: #e3eeec;
-}
 
 .task_container.sortable-ghost {
   background-color: #E4F7CF;
@@ -344,20 +340,19 @@ td.status {
   text-align: left;
 }
 
-/*
 .external_bars {
-  width: 1000px;
+  width: 0;
 }
-*/
 
-.task_form > td:nth-child(2) {
+.task_form {
   border-bottom: 1px solid #cdcdcd;
-  min-width: 421px;
+  background-color: #e3eeec;
+  margin-left: 66px;
 }
-.task_form > td:nth-child(2) > fieldset {
+.task_form > fieldset {
   padding: 5px 10px;
 }
-.task_form > td:nth-child(2) .submit {
+.task_form .submit {
   background-color: #e3eeec;
 }
 
