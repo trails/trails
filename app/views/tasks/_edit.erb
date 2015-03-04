@@ -1,72 +1,41 @@
 <%= fields_for edit do |form| %>
   <tr
-    class="form task_form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %>"
-    id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>" style="display:none">
+   class="form task_form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %>"
+   id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>"
+   style="display:none">
     <td class="toolbar external"></td>
-    <td class="task_form_container" colspan="6" style="padding:0px;">
-      <table>
-        <tr class="task_form">
-          <td class="task_title">
-            <%= form.text_field   :description, :disabled=>true %>
-          </td>
-          <% if edit.new_record? %>
-            <td class="earnings">
-              00.00$
-            </td>
-            <td class="duration">
-              0s
-            </td>
-          <% else %>
-            <td class="earnings">
-              <%= edit.task_earnings %>
-            </td>
-            <td class="duration">
-              <%= raw edit.task_duration %>
-            </td>
-          <% end %>
-        </tr>
-        <tr class="task_form">
-          <td class="task_title">
-            <%= "$" %>
-            <%= form.text_field :rate, :disabled=>true %>
-            <%= "/hour" %>
-            <span class="default_rate_check">
-              <input type="checkbox">
-              <span>
-                Use default rate
-              </span>
-            </span>
-          </td>
-          <td colspan="2">
-            <div class="duration" id="diffTime_<%= edit.id %>"></div>
-            <input type="text_field" name="diffTime" style="display:none" id="diffTime_input_<%= edit.id %>" disabled="disabled">
-          </td>
-        </tr>
-        <tr class="task_list_container_row slider_row">
-          <td colspan="3">
-            <hr/>
-            <b>
-              Adjust the <%= "#{edit.new_record? ? 'initial' : 'total'}" %> time of this task:
-            </b>
-            <div class="slider_track" id="track_<%= edit.id %>" style="width:330px">
-              <div class="slider_handle slider_handle_hour"></div>
-              <div class="slider_handle"></div>
-            </div>
-            <hr/>
-          </td>
-        </tr>
-        <tr class="task_form">
-          <td class="task_submit submit" colspan="3">
-            <% if edit.new_record? %>
-              <%= form.submit "Create task" , :action => task_list_tasks_path(edit.task_list.id),:method=>"post", :disabled=>true %>
-            <% else %>
-              <%= form.submit "Save this task", :action => task_path(edit.id) + '/update', :method=>"put", :disabled=>true %>
-            <% end %>
-            <%= "or " %>
-            <%= link_to "Cancel", "#cancel" %>
-          </td>
-        </tr>
-      </table>
+    <td colspan="6" style="padding:0px;">
+      <fieldset class="task_title">
+        <%= form.text_field   :description, :disabled=>true %>
+        <span class="earnings"><%= edit.new_record? ? "$00.00" : edit.task_earnings %></span>
+        <span class="duration"><%= raw edit.new_record? ? "0s" : edit.task_duration %></span>
+      </fieldset>
+      <fieldset>
+        $ <%= form.text_field :rate, :disabled=>true %> /hour
+        <span class="default_rate_check">
+          <input type="checkbox">
+          <span>Use default rate</span>
+        </span>
+        <span class="duration" id="diffTime_<%= edit.id %>"></span>
+        <input type="text_field" name="diffTime" style="display:none" id="diffTime_input_<%= edit.id %>" disabled="disabled">
+      </fieldset>
+      <fieldset class="slider_row">
+        <b>
+          Adjust the <%= "#{edit.new_record? ? 'initial' : 'total'}" %> time of this task:
+        </b>
+        <div class="slider_track" id="track_<%= edit.id %>" style="width:330px">
+          <div class="slider_handle slider_handle_hour"></div>
+          <div class="slider_handle"></div>
+        </div>
+      </fieldset>
+      <fieldset class="task_submit submit">
+        <% if edit.new_record? %>
+          <%= form.submit "Create task" , :action => task_list_tasks_path(edit.task_list.id),:method=>"post", :disabled=>true %>
+        <% else %>
+          <%= form.submit "Save this task", :action => task_path(edit.id) + '/update', :method=>"put", :disabled=>true %>
+        <% end %>
+        or <%= link_to "Cancel", "#cancel" %>
+      </fieldset>
     </td>
     <td class="external_bars"></td>
   </tr>

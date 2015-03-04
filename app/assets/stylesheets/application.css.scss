@@ -301,17 +301,6 @@ td.status {
   width: 95%;
 }
 
-.task_form_container {
-  border-bottom: 1px solid #cdcdcd;
-  min-width: 416px;
-}
-.task_form_container * {
-  padding: 0px;
-}
-.task_form_container * .submit {
-  background-color: #e3eeec;
-}
-
 .task_form {
   background-color: #e3eeec;
 }
@@ -325,7 +314,8 @@ td.status {
   min-width: 308px;
 }
 .task_form .task_title #task_description {
-  margin-left: 11px;
+  margin-left: 1em;
+  width: 287px;
 }
 .task_form .task_title #task_rate[readonly] {
   background-color: #CCC;
@@ -360,6 +350,17 @@ td.status {
 }
 */
 
+.task_form > td:nth-child(2) {
+  border-bottom: 1px solid #cdcdcd;
+  min-width: 421px;
+}
+.task_form > td:nth-child(2) > fieldset {
+  padding: 5px 10px;
+}
+.task_form > td:nth-child(2) .submit {
+  background-color: #e3eeec;
+}
+
 .description {
   min-width: 200px;
 }
@@ -377,6 +378,11 @@ td.status {
   text-align: right;
 }
 
+.task_form .earnings,
+.task_form .duration {
+  display: inline-block;
+}
+
 .earnings {
   min-width: 55px;
   text-align: right;
@@ -392,6 +398,10 @@ td.status {
 }
 .task:not(.task_form):not(.complete):hover .duration {
   color: #669966;
+}
+.task_form .duration {
+  float: right;
+  margin-top: .3em
 }
 
 .toolbar {
@@ -428,9 +438,14 @@ td.status {
 
 .default_rate_check {
   margin-left: 50px;
+  display: inline-block
 }
 .default_rate_check span {
   text-decoration: underline;
+}
+
+.slider_row {
+   text-align: center;
 }
 
 .slider_handle {
@@ -451,7 +466,7 @@ td.status {
 .slider_track {
   background: url(bg-fader.gif);
   height: 28px;
-  margin-left: 40px;
+  margin: 0 auto;
   position: relative;
 }
 
