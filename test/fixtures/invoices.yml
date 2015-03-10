@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  id: 1
+  description: MyString
+  client_id: 1
+  created: 2015-01-13 15:13:32
+  due: 2015-01-13 15:13:32
+
+two:
+  id: 1
+  description: MyString
+  client_id: 1
+  created: 2015-01-13 15:13:32
+  due: 2015-01-13 15:13:32

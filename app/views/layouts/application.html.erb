@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<head>
+<title>Trails</title>
+  <%= stylesheet_link_tag "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <script>
+    (function() {
+      window.onload = function() {
+        Application.init({
+          controller: '<%= params[:controller] %>',
+          action: '<%= params[:action] %>'
+        });
+      };
+    })();
+  </script>
+</head>
+<body class="<%= page_class %>">
+  <nav class="clearfix">
+    <ul class="clearfix">
+      <li>
+        <%=
+          link_to "Settings", "settings"
+        %>
+      </li>
+      <li>
+        <%=
+          link_to "Sign out",
+            :controller => "sessions",
+            :action => 'destroy'
+        %>
+      </li>
+    </ul>
+    <a href="#" id="pull">Menu</a>
+  </nav>
+  <%= yield %>
+  <!--
+  <div class="drop-only-area">
+    <div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+      <div class="droppable"><div class="dummy"></div></div>
+    </div>
+  </div>
+  -->
+</body>

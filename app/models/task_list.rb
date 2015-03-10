@@ -35,15 +35,13 @@ class TaskList < ActiveRecord::Base
   end
   
   def sorted_tasks
-    active = []
-    completed = []
+    ret = []
     task_order.each do |task_id|
       task = tasks.find(task_id)
       next if task.new_record?
-      active << task if task.active?
-      completed << task if task.completed?
+      ret << task
     end
-    active + completed
+    ret
   end
   
   def earnings

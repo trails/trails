@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Trails: a time tracking tool for designers</title>
+  <%= stylesheet_link_tag 'yosemite.css' %>
+  <%= javascript_include_tag 'yosemite.js' %>
+  <script>
+    (function() {
+      window.onload = function() {
+        Yosemite.init({
+          controller: '<%= params[:controller] %>',
+          action: '<%= params[:action] %>'
+        });
+      };
+    })();
+  </script>
+  <%= javascript_include_tag view_specific_js if view_specific_js_exist %>
+  <%= stylesheet_link_tag view_specific_css if view_specific_css_exist %>
+</head>
+<body>
+  <%= yield %>
+</body>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-126438-26']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = 
+      ('https:' == document.location.protocol ? 'https://ssl' : 'http://www')
+      + '.google-analytics.com/ga.js';
+    (
+      document.getElementsByTagName('head')[0] ||
+      document.getElementsByTagName('body')[0]
+    ).appendChild(ga);
+  })();
+</script>

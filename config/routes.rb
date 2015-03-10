@@ -6,21 +6,28 @@ TheApp::Application.routes.draw do
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
-  match 'task_lists/refreshactivetasks' => 'task_lists#refreshActiveTasks'
+  match 'task_lists/refresh' => 'task_lists#refresh'
   match 'signup' => 'users#new'
+
+  match 'thanks' => 'pages#thanks'
+
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
   match 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
   
+  match 'login' => 'sessions#new'
   match 'session/destroy' => 'sessions#destroy'
 
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
   resource :session
   
-  resources :users
+  resources :users,
+            :clients,
+            :invoices
+
   # Sample resource route with options:
   #   resources :products do
   #     member do
@@ -71,8 +78,7 @@ TheApp::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   # root :to => 'welcome#index'
-  #root :to => "home#index"
-  root :to => "home#index"
+  root :to => "pages#home"
 
   # See how all your routes lay out with "rake routes"
 

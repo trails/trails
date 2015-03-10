@@ -1,0 +1,26 @@
+@import 'yosemite-base';
+
+html > body {
+    padding: 50px;
+}
+
+h1 {
+    font-size: 2em;
+    color: $secondary;
+    padding: .1em;
+    vertical-align: middle;
+    margin-bottom: .4em;
+}
+
+p {
+    color: $primary;
+}
+
+h1 + p {
+    font-family: DroidSerif;
+    font-size: 1.2em;
+}
+
+a {
+    color: darken($primary, 30);
+}

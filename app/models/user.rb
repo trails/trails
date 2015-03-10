@@ -1,6 +1,13 @@
 class User < ActiveRecord::Base
-  has_many    :task_lists, :foreign_key => "owner_id",  :dependent=>:destroy
-  belongs_to  :last_command, :class_name => "Command"
+  has_many :task_lists,
+    :foreign_key => "owner_id",
+    :dependent=>:destroy
+
+  has_many :clients,
+    :foreign_key => "user_id"
+
+  belongs_to :last_command,
+    :class_name => "Command"
   
   validates_presence_of     :email #, :display_name
   validates_uniqueness_of   :email, :case_sensitive => false

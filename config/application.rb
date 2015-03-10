@@ -59,10 +59,10 @@ module TheApp
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
-    config.assets.precompile += %w(*.css *.js)
+    config.assets.precompile = %w(*.css *.js *.svg *.png *.jpg *.jpeg *.gif *.eot *.ttf *.woff *.otf)
 
     config.generators do |g|
-      g.template_engine :haml
+      g.template_engine :erb
     end
   end
 end
