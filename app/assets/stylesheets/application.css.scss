@@ -884,8 +884,6 @@ input[type='checkbox'] {
 
 #invoices .task_container:first-child .earnings:before {
   content: 'Total';
-  width: 5em;
-  margin-left: -5em;
 }
 
 #invoices .task_container:first-child .duration:before {
@@ -895,6 +893,13 @@ input[type='checkbox'] {
 #invoices .task .earnings,
 #invoices .task .duration {
   width: 23%;
+}
+
+#invoices .task_container:first-child .duration:before,
+#invoices .task_container:first-child .earnings:before {
+  width: 5em;
+  margin-left: -5em;
+  right: 0;
 }
 
 #invoices .task .earnings {
