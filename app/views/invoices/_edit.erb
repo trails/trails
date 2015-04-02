@@ -1,0 +1,29 @@
+<li class="<%= edit.new_record? ? 'new' : '' %>">
+  <header>
+    <details><summary>Please fill required fields</summary></details>
+    <h3><%= edit.new_record? ? 'New invoice' : 'Invoice ' + invoice.id %></h3>
+    <p><%= edit.new_record? ? ' ' : invoice.description %></p>
+  </header>
+  <section>
+    <h4><em>Attention</em>
+    Client</h4>
+    <p>Address
+    City, State, Zip
+    Country</p>
+  </section>
+  <section>
+    <h4><em>Pay to the order of</em>
+    <%= user.display_name %></h4>
+    <p><%= user.address %>
+    <%= user.city %>, <%= user.state %>, <%= user.zip %>
+    <%= user.country %></p>
+  </section>
+  <main>
+    <ul>
+    </ul>
+  </main>
+  <footer>
+    <p>Total time <span>0:00</span></p>
+    <p>Total due <span>$0</span></p>
+  </footer>
+</li>

@@ -11,12 +11,35 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 20150402184003) do
+
+  create_table "clients", :force => true do |t|
+    t.string   "name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "state"
+    t.string   "zip"
+    t.string   "country"
+    t.string   "email"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "user_id"
+  end
 
   create_table "commands", :force => true do |t|
     t.string   "undo_message"
     t.text     "original_object"
     t.datetime "created_at"
+  end
+
+  create_table "invoices", :force => true do |t|
+    t.string   "description"
+    t.integer  "client_id"
+    t.datetime "created"
+    t.datetime "due"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.integer  "number"
   end
 
   create_table "log_entries", :force => true do |t|
@@ -42,6 +65,7 @@ ActiveRecord::Schema.define(:version => 9) do
     t.string   "currency"
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
+    t.integer  "invoice_id"
   end
 
   create_table "users", :force => true do |t|
@@ -53,29 +77,11 @@ ActiveRecord::Schema.define(:version => 9) do
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
     t.integer  "last_command_id"
-  end
-
-  create_table "clients", :force => true do |t|
-    t.integer  "id"
-    t.string   "name"
     t.string   "address"
     t.string   "city"
     t.string   "state"
     t.string   "zip"
     t.string   "country"
-    t.string   "email"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
-  end
-
-  create_table "invoices", :force => true do |t|
-    t.integer  "id"
-    t.string   "description"
-    t.string   "client_id"
-    t.string   "created"
-    t.string   "due"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
   end
 
 end

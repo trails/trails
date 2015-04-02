@@ -1,0 +1,30 @@
+<li id='<%= "#{invoice.class.name.underscore}_#{invoice.id}" %>'>
+  <header>
+    <details><summary>totaling $<%= invoice.total %></summary>
+    &amp; due <%= invoice.due.strftime('%b %d, %Y') %></details>
+    <h3>Invoice <%= invoice.number %></h3>
+    <p><%= invoice.description %></p>
+  </header>
+  <section>
+    <h4><em>Attention</em>
+    <%= invoice.client.name %></h4>
+    <p><%= invoice.client.address %>
+    <%= invoice.client.city %>, <%= invoice.client.state %>, <%= invoice.client.zip %>
+    <%= invoice.client.country %></p>
+  </section>
+  <section>
+    <h4><em>Pay to the order of</em>
+    <%= user.display_name %></h4>
+    <p><%= user.address %>
+    <%= user.city %>, <%= user.state %>, <%= user.zip %>
+    <%= user.country %></p>
+  </section>
+  <main>
+    <ul>
+    </ul>
+  </main>
+  <footer>
+    <p>Total time <span>0:00</span></p>
+    <p>Total due <span>$0</span></p>
+  </footer>
+</li>

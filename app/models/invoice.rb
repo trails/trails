@@ -12,4 +12,8 @@ class Invoice < ActiveRecord::Base
   validates_presence_of :description,
                         :client_id,
                         :created
+
+  def total
+    tasks.to_a.sum(&:earnings).to_money
+  end
 end

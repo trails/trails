@@ -1,31 +1,33 @@
 <form action="/tasks" id="task_form" method="post">
-  <table cellpadding="0" cellspacing="0" id="task_lists">
-    <tfoot>
-      <tr>
-        <td class="external"></td>
-        <td colspan="3"></td>
-        <td class="grand_total">
-          Total:
-        </td>
-        <td class="grand_total" id="grand_total_earnings">
-          <%= @task_lists.sum(&:earnings).to_money.format(:no_cents_if_whole => true, :symbol => "$") %>
-        </td>
-        <td class="grand_total" id="grand_total_duration">
-          <%= raw formatted_duration(@task_lists.sum(&:duration)) %>
-        </td>
-      </tr>
-      <%= render :partial=>"task_lists/footer" %>
-    </tfoot>
-    <tbody>
-      <tr>
-        <td class="external"></td>
-        <td colspan="6" id="task_list_commands">
-          <%= link_to "New task list", new_task_list_url, :id=>"new_task_list" %>
-        </td>
-      </tr>
+  <section id="task_lists">
+    <div>
+      <span class="external"></span>
+      <span id="task_list_commands">
+        <%= link_to "New task list", new_task_list_url, :id=>"new_task_list" %>
+      </span>
+    </div>
+    <div>
       <%= render :partial=>"task_lists/edit", :object=>TaskList.new %>
       <%= render :partial=>@task_lists %>
-    </tbody>
-  </table>
+    </div>
+    <div id="totals">
+      <span class="grand_total">
+        Total:
+      </span>
+      <span class="grand_total" id="grand_total_earnings">
+        <%= @task_lists.sum(&:earnings).to_money.format(:no_cents_if_whole => true, :symbol => "$") %>
+      </span>
+      <span class="grand_total" id="grand_total_duration">
+        <%= raw formatted_duration(@task_lists.sum(&:duration)) %>
+      </span>
+    </div>
+    <%= render :partial=>"task_lists/footer" %>
+  </section>
 </form>
-
+<div id="invoices">
+  <h2>Invoices</h2>
+  <ul>
+    <%= render :partial => 'invoices/edit', :object => Invoice.new %>
+    <%= render :partial => @invoices %>
+  </ul>
+</div>

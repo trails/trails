@@ -11,6 +11,7 @@
 //= require controller/task_list
 //= require controller/task_form
 //= require controller/task_list_form
+//= require controller/invoice
 
 var Application = {
   init: function() {
@@ -27,6 +28,8 @@ var Application = {
     Application.toggleTotals();
 
     Application.attachEventHandlers();
+
+    Application.invoiceZoomOut();
   },
 
   extendElement: function() {
@@ -69,7 +72,7 @@ var Application = {
   },
 
   attachEventHandlers: function() {
-    $$("th.title").each(function(element) {
+    $$('section.task_list > .title').each(function(element) {
       element.insert(" <small>-</small>");
     });
     $("task_form").observe("submit", Application.formSubmitHandler);
@@ -87,7 +90,7 @@ var Application = {
       task(id).remove(event);
     });
 
-    $S('th.title').observe('click', function(event) {
+    $S('.task_list > .title').observe('click', function(event) {
       var currentTh = $(Event.element(event));
       trTitleId = currentTh.up().identify();
       currentList = $(trTitleId).next(2);
@@ -233,6 +236,60 @@ var Application = {
         }
       }
     });
+    $S('#invoices > h2').observe('click', function(event) {
+      Application.invoiceZoomOut();
+      $('invoices').toggleClassName('show');
+    });
+    $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
+      var element =
+        event.element().match('#invoices > ul > li')
+          ? event.element()
+          : event.element().up('#invoices > ul > li');
+      Application.invoiceZoomIn(element);
+    });
+    $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom)').observe('click', function(event) {
+      Application.invoiceZoomOut();
+    });
+    window.addEventListener('resize', Application.handleResize, false);
+  },
+
+  INVOICES_CSS_SCALE: .2,
+  invoiceZoomIn: function (element) {
+    var listWidth = $$('#invoices > ul')[0].getLayout().get('width');
+    var listHeight = $$('#invoices > ul')[0].getLayout().get('height');
+    var scaleX = listWidth / element.getLayout().get('margin-box-width');
+    var scaleY = listHeight / element.getLayout().get('margin-box-height');
+    var width = element.getLayout().get('margin-box-width');
+    var height = element.getLayout().get('margin-box-height');
+    var scale = scaleX < scaleY ? scaleX : scaleY;
+    var realScale = scale * Application.INVOICES_CSS_SCALE;
+    var offsetX = ((listWidth - width * scale) / 2 - element.offsetLeft * scale) * Application.INVOICES_CSS_SCALE;
+    var offsetY = ((listHeight - height * scale) / 2 - element.offsetTop * scale) * Application.INVOICES_CSS_SCALE;
+    $$('#invoices > ul')[0].addClassName('zoomed').setStyle({
+      transform:
+        'translate(' + offsetX.toString() + 'px, ' + offsetY.toString() + 'px) ' +
+        'scale(' + realScale.toString() + ')'
+    });
+    element.addClassName('zoom');
+  },
+  invoiceZoomOut: function () {
+    var zoomItem = $$('#invoices > ul > li.zoom');
+    if (zoomItem.length) {
+      zoomItem[0].removeClassName('zoom');
+    }
+    $$('#invoices > ul')[0].removeClassName('zoomed').setStyle({
+      transform: 'translate(0, 0) scale(' + Application.INVOICES_CSS_SCALE + ')'
+    });
+  },
+
+  handleResize: function () {
+    if (!$('invoices').match('.show')) {
+      return;
+    }
+    if ($$('#invoices > ul')[0].match('.zoomed')) {
+      var element = $$('#invoices > ul > li.zoom')[0];
+      Application.invoiceZoomIn(element);
+    }
   },
 
   formSubmitHandler: function (event) {
@@ -281,15 +338,15 @@ var Application = {
       Application.dragAndDropTaskList(container);
     });
 
-    Application.initDropAreaDnD();
+    Application.initInvoicesDnD();
   },
 
-  initDropAreaDnD: function() {
-    $$(".drop-only-area .droppable").each(function (container) {
+  initInvoicesDnD: function() {
+    $$("#invoices li main > ul").each(function (container) {
       Sortable.create(container, {
         group: {
-          name: 'dropArea',
-          pull: false,
+          name: 'invoices',
+          pull: true,
           put: ['taskList']
         },
         sort: false,
@@ -304,17 +361,21 @@ var Application = {
     var tl = task_list(task_list_id);
     tl.sortable =  Sortable.create(task_list_container, {
       draggable: 'li.task_container',
-      group: 'taskList',
+      group: {
+        name: 'taskList',
+        pull: true,
+        put: ['invoices']
+      },
       animation: 100,
       onEnd: function(evt) {
         var afterDropFn = function() {
           $$('body')[0].removeClassName('drag-active');
-          $$('.drop-area').each(function (element) {
-            element.removeClassName('show');
-          });
+          if (!Application.invoicesShownBeforeDnD) {
+            $('invoices').removeClassName('show');
+          }
         };
-        clearTimeout(Application.dropAreaTimeout);
-        Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
+        clearTimeout(Application.invoicesDnDTimeout);
+        Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
       },
       onStart: function(evt) {
         var item = evt.item;
@@ -325,10 +386,9 @@ var Application = {
         t.taskListBeforeDnD = list_id;
 
         $$('body')[0].addClassName('drag-active');
-        $$('.drop-area').each(function (element) {
-          element.addClassName('show');
-        });
-        clearTimeout(Application.dropAreaTimeout);
+        Application.invoicesShownBeforeDnD = $('invoices').hasClassName('show');
+        $('invoices').addClassName('show');
+        clearTimeout(Application.invoicesDnDTimeout);
       },
       onAdd: function(evt) {
         Application.updateTasksOrder(evt.target.parentNode);
@@ -345,22 +405,8 @@ var Application = {
         if (parent.hasClassName('list_container')) {
           // task was moved to another list, let's update changes
           Application.updateTasksOrder(evt.target);
+        } else if (parent.match('#invoices > ul > li:not(.new) > ul')) {
         }
-        /*
-        if (parent.hasClassName('droppable')) {
-          // moved to the drop area, let's revert moving the
-          // task in the DOM for the moment, we'll run the proper
-          // action from drop area sortable's onAdd event
-          var siblingsCount = $$(tl_selector + ' > li').length;
-          if (0 == siblingsCount || evt.oldIndex >= siblingsCount) {
-            $$(tl_selector)[0].appendChild(item);
-          } else {
-            var before = $$(tl_selector + ' > li:nth-child(' + (evt.oldIndex +1) + ')')[0];
-            before.parentNode.insertBefore(item, before);
-          }
-          task(id).taskListBeforeDnD = null;
-        }
-        */
       }
     });
   },
