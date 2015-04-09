@@ -1,23 +1,15 @@
-<tr class="spacer_row">
-  <td></td>
-</tr>
 <%= render :partial=>"task_lists/header", :object=>task_list %>
 <%= render :partial=>"tasks/edit", :object=>task_list.tasks.build %>
-<tr>
-  <td colspan="8" style="padding: 0px">
-    <ul class="list_container" id="task_list_container_<%= task_list.id %>">
-      <%= render :partial=>task_list.sorted_tasks %>
-    </ul>
-  </td>
-</tr>
-<tr class="total" id="total_<%= task_list.id %>">
-  <td class="external"></td>
-  <td colspan="4"></td>
-  <td class="earnings" id="task_list_earnings_<%= task_list.id %>">
+<ul class="list_container" id="task_list_container_<%= task_list.id %>">
+  <%= render :partial=>task_list.sorted_tasks %>
+</ul>
+<div class="total" id="total_<%= task_list.id %>">
+  <span class="external"></span>
+  <span class="earnings" id="task_list_earnings_<%= task_list.id %>">
     <%= task_list.earnings.format(:no_cents_if_whole => true, :symbol => "$") %>
-  </td>
-  <td class="duration" id="task_list_duration_<%= task_list.id %>">
+  </span>
+  <span class="duration" id="task_list_duration_<%= task_list.id %>">
     <%= raw formatted_duration(task_list.duration) %>
-  </td>
-</tr>
+  </span>
+</div>
 <%= render :partial=>"task_lists/footer" %>

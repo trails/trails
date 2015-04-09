@@ -1,4 +1,13 @@
 class ClientsController < ApplicationController
+  def show
+    if (true if Float params[:id] rescue false)
+      @client = Client.find(params[:id], :conditions=> {:user_id => current_user.id})
+    else
+      @client = Client.find_by_email(params[:id], :conditions=> {:user_id => current_user.id})
+    end
+    render json: @client
+  end
+
   def index
     @clients = Client.find(:all, :conditions=> {:user_id=>current_user.id}, :order=>"id ASC")
     render json: @clients

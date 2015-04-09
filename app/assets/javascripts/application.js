@@ -4,6 +4,7 @@
 //= require scriptaculous
 //= require slider
 //= require Sortable
+//= require stepsForm
 
 //= require controller
 //= require controller/task
@@ -11,10 +12,11 @@
 //= require controller/task_list
 //= require controller/task_form
 //= require controller/task_list_form
+//= require controller/invoice
 
 var Application = {
   init: function() {
-    Application.extendElementMethods();
+    Application.extendElement();
 
     Application.initDragAndDrop();
     Application.initSliders();
@@ -25,11 +27,12 @@ var Application = {
     
     //check if totals need to be shown for each list
     Application.toggleTotals();
-
     Application.attachEventHandlers();
+    Application.invoiceZoomOut();
+    Application.initClientForms();
   },
 
-  extendElementMethods: function() {
+  extendElement: function() {
     Element.addMethods({
       recordID: function (element) {
         do {
@@ -69,7 +72,7 @@ var Application = {
   },
 
   attachEventHandlers: function() {
-    $$("th.title").each(function(element) {
+    $$('section.task_list > .title').each(function(element) {
       element.insert(" <small>-</small>");
     });
     $("task_form").observe("submit", Application.formSubmitHandler);
@@ -87,7 +90,7 @@ var Application = {
       task(id).remove(event);
     });
 
-    $S('th.title').observe('click', function(event) {
+    $S('.task_list > .title').observe('click', function(event) {
       var currentTh = $(Event.element(event));
       trTitleId = currentTh.up().identify();
       currentList = $(trTitleId).next(2);
@@ -233,6 +236,142 @@ var Application = {
         }
       }
     });
+    $S('#invoices > h2').observe('click', function(event) {
+      Application.invoiceZoomOut();
+      $('invoices').toggleClassName('show');
+    });
+    $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
+      var element =
+        event.element().match('#invoices > ul > li')
+          ? event.element()
+          : event.element().up('#invoices > ul > li');
+      Application.invoiceZoomIn(element);
+    });
+    $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom)').observe('click', function(event) {
+      Application.invoiceZoomOut();
+    });
+    window.addEventListener('resize', Application.handleResize, false);
+  },
+
+  INVOICES_CSS_SCALE: .2,
+  invoiceZoomIn: function (element) {
+    var listWidth = $$('#invoices > ul')[0].getLayout().get('width');
+    var listHeight = $$('#invoices > ul')[0].getLayout().get('height');
+    var scaleX = listWidth / element.getLayout().get('margin-box-width');
+    var scaleY = listHeight / element.getLayout().get('margin-box-height');
+    var width = element.getLayout().get('margin-box-width');
+    var height = element.getLayout().get('margin-box-height');
+    var scale = scaleX < scaleY ? scaleX : scaleY;
+    var realScale = scale * Application.INVOICES_CSS_SCALE;
+    var offsetX = ((listWidth - width * scale) / 2 - element.offsetLeft * scale) * Application.INVOICES_CSS_SCALE;
+    var offsetY = ((listHeight - height * scale) / 2 - element.offsetTop * scale) * Application.INVOICES_CSS_SCALE;
+    $$('#invoices > ul')[0].addClassName('zoomed').setStyle({
+      transform:
+        'translate(' + offsetX.toString() + 'px, ' + offsetY.toString() + 'px) ' +
+        'scale(' + realScale.toString() + ')'
+    });
+    element.addClassName('zoom');
+  },
+  invoiceZoomOut: function () {
+    var zoomItem = $$('#invoices > ul > li.zoom');
+    if (zoomItem.length) {
+      zoomItem[0].removeClassName('zoom');
+    }
+    $$('#invoices > ul')[0].removeClassName('zoomed').setStyle({
+      transform: 'translate(0, 0) scale(' + Application.INVOICES_CSS_SCALE + ')'
+    });
+  },
+
+  fillClientData: function (form, client) {
+    form.elements['client[id]'].value = client ? client.id : '';
+    form.elements['client[name]'].value = client ? client.name : '';
+    form.elements['client[country]'].value = client ? client.country : '';
+    form.elements['client[state]'].value = client ? client.state : '';
+    form.elements['client[city]'].value = client ? client.city : '';
+    form.elements['client[zip]'].value = client ? client.zip : '';
+    form.elements['client[address]'].value = client ? client.address : '';
+    var clientLayout = form.next('span');
+    clientLayout.down('h4').innerHTML = client ? client.name : '';
+    clientLayout.down('p').innerHTML =
+      client
+        ?
+          client.address + "\n" +
+          client.city + ', ' + client.state + ', ' + client.zip + "\n" +
+          client.country
+        : '';
+  },
+
+  showClientForm: function (stepForm) {
+    var form = stepForm.el;
+    var clientLayout = form.next('span');
+    clientLayout.removeClassName('show');
+    form.removeClassName('hide');
+  },
+  showClientView: function (stepForm) {
+    var form = stepForm.el;
+    var clientLayout = form.next('span');
+    clientLayout.addClassName('show');
+    form.addClassName('hide');
+    stepForm.reset();
+  },
+  initClientForms: function() {
+    $$('#invoices li > header + section > form').each(function (theForm) {
+      var stepForm = new stepsForm(theForm, {
+        onSubmit: function (form) {
+          var form_client = theForm.readAttribute('state');
+          if (form_client == 'new') {
+            // @TODO: create new client
+          } else {
+            Application.showClientView(stepForm);
+          }
+        },
+        onInput: function (ev) {
+          var input = ev.target;
+          if (input.match('form.edit_client:not([state="edit"]) input[type="email"]')) {
+            new Ajax.Request("/clients/" + input.value, {
+              method: 'get',
+              requestHeaders: {
+                "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
+              },
+              onSuccess: function (transport) {
+                var client = transport.responseJSON;
+                theForm.writeAttribute('state', client ? client.id : 'new');
+                Application.fillClientData(theForm, client);
+              }
+            });
+          }
+        },
+        beforeNextQuestion: function () {
+          var form_client = theForm.readAttribute('state');
+          if (form_client == 'new' || form_client == 'edit') {
+            return true;
+          }
+          Application.showClientView(stepForm);
+          return false;
+        }
+      });
+      theForm.next('span').down('button.edit').observe('click', function(ev) {
+        theForm.writeAttribute('state', 'edit');
+        Application.showClientForm(stepForm);
+      });
+      theForm.next('span').down('button.change').observe('click', function(ev) {
+        theForm.writeAttribute('state', 'select');
+        Application.showClientForm(stepForm);
+      });
+      if (parseInt(theForm.readAttribute('state'))) {
+        Application.showClientView(stepForm);
+      }
+    });
+  },
+
+  handleResize: function () {
+    if (!$('invoices').match('.show')) {
+      return;
+    }
+    if ($$('#invoices > ul')[0].match('.zoomed')) {
+      var element = $$('#invoices > ul > li.zoom')[0];
+      Application.invoiceZoomIn(element);
+    }
   },
 
   formSubmitHandler: function (event) {
@@ -254,6 +393,7 @@ var Application = {
     if (this.responder) {
       if(this.responder.onSuccess) options.onSuccess = this.responder.onSuccess.bind(this.responder)
     }
+
     // Perform request!
     this.request(options);
 
@@ -280,46 +420,53 @@ var Application = {
       Application.dragAndDropTaskList(container);
     });
 
-    //Application.initDropAreaDnD();
+    Application.initInvoicesDnD();
   },
 
-  /*
-  initDropAreaDnD: function() {
-    $$(".drop-only-area .droppable").each(function (container) {
+  initInvoicesDnD: function () {
+    $$("#invoices li main > ul").each(function (container) {
       Sortable.create(container, {
+        draggable: 'li.task_container',
         group: {
-          name: 'dropArea',
-          pull: false,
+          name: 'invoices',
+          pull: true,
           put: ['taskList']
         },
-        sort: false,
-        onAdd: function(evt) {
+        onAdd: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
+        },
+        onUpdate: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
+        },
+        onRemove: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
         }
       });
     });
   },
-  */
 
-  dragAndDropTaskList: function(task_list_container) {
-    var task_list_id = task_list_container.identify().replace(/task_list_container_/gi, '');
+  updateInvoiceTasksOrder: function (container) {
+    var invoice_id = Application.strip_id(container);
+    if (!invoice_id) {
+      return;
+    }
+    var inv = invoice(invoice_id);
+    var seq = Application.getSequence(container.down('ul'));
+    inv.setTaskSequence(seq);
+  },
+
+  dragAndDropTaskList: function (task_list_container) {
+    var task_list_id = Application.strip_id(task_list_container);
     var tl = task_list(task_list_id);
     tl.sortable =  Sortable.create(task_list_container, {
       draggable: 'li.task_container',
-      group: 'taskList',
-      animation: 100,
-      onEnd: function(evt) {
-        /*
-        var afterDropFn = function() {
-          $$('body')[0].removeClassName('drag-active');
-          $$('.drop-only-area').each(function (element) {
-            element.removeClassName('show');
-          });
-        };
-        clearTimeout(Application.dropAreaTimeout);
-        Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
-        */
+      group: {
+        name: 'taskList',
+        pull: true,
+        put: ['invoices']
       },
-      onStart: function(evt) {
+      animation: 100,
+      onStart: function (evt) {
         var item = evt.item;
         var parent = item.parentNode;
         var id = item.identify().replace(/task_container_/gi, '');
@@ -327,58 +474,45 @@ var Application = {
         var t = task(id);
         t.taskListBeforeDnD = list_id;
 
-        $$('body')[0].addClassName('drag-active');
-        /*
-        $$('.drop-only-area').each(function (element) {
-          element.addClassName('show');
-        });
-        clearTimeout(Application.dropAreaTimeout);
-        */
+        Application.invoicesShownBeforeDnD = $('invoices').hasClassName('show');
+        $('invoices').addClassName('show');
+        clearTimeout(Application.invoicesDnDTimeout);
       },
-      onAdd: function(evt) {
-        Application.updateTasksOrder(evt.target.parentNode);
-      },
-      onUpdate: function(evt) {
-        Application.updateTasksOrder(evt.target);
-      },
-      onRemove: function(evt) {
-        var item = evt.item,
-            parent = item.parentNode,
-            id = item.identify().replace(/task_container_/gi, '');
-            tl = task(id).taskListBeforeDnD;
-            tl_selector = '#task_list_container_' + tl;
-        if (parent.hasClassName('list_container')) {
-          // task was moved to another list, let's update changes
-          Application.updateTasksOrder(evt.target);
-        }
-        /*
-        if (parent.hasClassName('droppable')) {
-          // moved to the drop area, let's revert moving the
-          // task in the DOM for the moment, we'll run the proper
-          // action from drop area sortable's onAdd event
-          var siblingsCount = $$(tl_selector + ' > li').length;
-          if (0 == siblingsCount || evt.oldIndex >= siblingsCount) {
-            $$(tl_selector)[0].appendChild(item);
-          } else {
-            var before = $$(tl_selector + ' > li:nth-child(' + (evt.oldIndex +1) + ')')[0];
-            before.parentNode.insertBefore(item, before);
+      onEnd: function (evt) {
+        var afterDropFn = function() {
+          if (!Application.invoicesShownBeforeDnD) {
+            $('invoices').removeClassName('show');
           }
-          task(id).taskListBeforeDnD = null;
+        };
+        clearTimeout(Application.invoicesDnDTimeout);
+        Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
+      },
+      onAdd: function (evt) {
+        Application.updateListTasksOrder(evt.target.parentNode);
+      },
+      onUpdate: function (evt) {
+        Application.updateListTasksOrder(evt.target);
+      },
+      onRemove: function (evt) {
+        var parent = evt.item.parentNode;
+        if (parent.hasClassName('list_container')) {
+          // task was moved to another list
+          Application.updateListTasksOrder(evt.target);
+        } else if (parent.match('#invoices > ul > li:not(.new) main > ul')) {
+          // task was moved to an invoice
         }
-        */
       }
     });
   },
 
-  updateTasksOrder: function(container) {
-    var task_list_id = container.identify().replace(/task_list_container_/gi, '');
+  updateListTasksOrder: function(container) {
+    var task_list_id = Application.strip_id(container);
     var tl = task_list(task_list_id);
-    var seq = Application.getSequence(container.identify());
+    var seq = Application.getSequence(container);
     tl.setTaskSequence(seq);
   },
 
   getSequence: function(element) {
-    element = $(element);
     return $(Element.findChildren(element, 'li') || []).map( function(item) {
       var matchre = /^[^_\-](?:[A-Za-z0-9\-\_]*)[_](.*)$/;
       return item.id.match(matchre) ? item.id.match(matchre)[1] : '';
@@ -440,6 +574,8 @@ var Application = {
         $("grand_total_earnings").update(json.total_earnings);
         $("grand_total_duration").update(json.total_duration);
 
+        Application.toggleTotals();
+
         setTimeout(Application.updateTasks, 10000);
       },
       requestHeaders: {
@@ -473,8 +609,7 @@ var Application = {
   },
 
   toggleTotals: function() {
-    $sortable_containers =  $$(".list_container");
-    $sortable_containers.each(function (s) {
+    $$(".list_container").each(function (s) {
       var l = task_list(Application.strip_id(s));
       l.checkIfTotalNeeded();
     });

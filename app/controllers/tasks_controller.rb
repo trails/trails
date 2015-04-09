@@ -1,7 +1,20 @@
 class TasksController < ApplicationController
   before_filter :check_rights, :only => [:update, :destroy]
   def index
-    @task_lists = TaskList.find(:all, :conditions=> {:owner_id=>session[:user_id]}, :order=>"updated_at DESC")
+    @task_lists = TaskList.find(:all,
+      :conditions => {
+        :owner_id=>session[:user_id]
+      },
+      :order=>"updated_at DESC"
+    )
+    @invoices = Invoice.find(:all,
+      :include => [:client],
+      :conditions=> {
+        "clients.user_id" => session[:user_id]
+      },
+      :order=>"invoices.updated_at DESC"
+    )
+    @user = User.find(session[:user_id])
   end
   
   def create
