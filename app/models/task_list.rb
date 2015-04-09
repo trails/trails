@@ -38,7 +38,7 @@ class TaskList < ActiveRecord::Base
     ret = []
     task_order.each do |task_id|
       task = tasks.find(task_id)
-      next if task.new_record?
+      next if (task.new_record? or task.invoice_id?)
       ret << task
     end
     ret

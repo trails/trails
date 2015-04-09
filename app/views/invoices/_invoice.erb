@@ -1,26 +1,21 @@
-<li id='<%= "#{invoice.class.name.underscore}_#{invoice.id}" %>'>
+<li id='<%= "#{invoice.class.name.underscore}_" + (invoice.id ? "#{invoice.id}" : 'new') %>'>
   <header>
     <details><summary>totaling $<%= invoice.total %></summary>
-    &amp; due <%= invoice.due.strftime('%b %d, %Y') %></details>
-    <h3>Invoice <%= invoice.number %></h3>
-    <p><%= invoice.description %></p>
+    &amp; due <%= invoice.due.strftime('%b %d, %Y') if invoice.due %></details>
+    <h3><%= invoice.id ? "Invoice #{invoice.number}" : 'New invoice' %></h3>
+    <p><%= invoice.id ? invoice.description : 'Drop tasks here' %></p>
   </header>
+  <%= render :partial => invoice.client ? invoice.client : Client.new,
+    :locals => {prefix: 'invoice_' + (invoice.id ? "#{invoice.id}" : 'new') } %>
   <section>
-    <h4><em>Attention</em>
-    <%= invoice.client.name %></h4>
-    <p><%= invoice.client.address %>
-    <%= invoice.client.city %>, <%= invoice.client.state %>, <%= invoice.client.zip %>
-    <%= invoice.client.country %></p>
-  </section>
-  <section>
-    <h4><em>Pay to the order of</em>
-    <%= user.display_name %></h4>
+    <h4><%= user.display_name %></h4>
     <p><%= user.address %>
     <%= user.city %>, <%= user.state %>, <%= user.zip %>
     <%= user.country %></p>
   </section>
   <main>
     <ul>
+      <%= render :partial=>invoice.sorted_tasks %>
     </ul>
   </main>
   <footer>

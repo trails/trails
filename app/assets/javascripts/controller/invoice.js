@@ -3,7 +3,18 @@ Invoice.prototype.className = 'invoice';
 Invoice.cache = {};
 
 Invoice.addMethods({
-
+  setTaskSequence: function(seq) {
+    var options = {
+      method: "put",
+      parameters: {
+        tasks: seq.toString()
+      },
+      requestHeaders: {
+        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
+      }
+    };
+    new Ajax.Request(this.url() + "setSequence", options);
+  }
 });
 
 var invoice = function (id) {

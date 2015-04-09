@@ -4,6 +4,7 @@
 //= require scriptaculous
 //= require slider
 //= require Sortable
+//= require stepsForm
 
 //= require controller
 //= require controller/task
@@ -26,10 +27,9 @@ var Application = {
     
     //check if totals need to be shown for each list
     Application.toggleTotals();
-
     Application.attachEventHandlers();
-
     Application.invoiceZoomOut();
+    Application.initClientForms();
   },
 
   extendElement: function() {
@@ -282,6 +282,88 @@ var Application = {
     });
   },
 
+  fillClientData: function (form, client) {
+    form.elements['client[id]'].value = client ? client.id : '';
+    form.elements['client[name]'].value = client ? client.name : '';
+    form.elements['client[country]'].value = client ? client.country : '';
+    form.elements['client[state]'].value = client ? client.state : '';
+    form.elements['client[city]'].value = client ? client.city : '';
+    form.elements['client[zip]'].value = client ? client.zip : '';
+    form.elements['client[address]'].value = client ? client.address : '';
+    var clientLayout = form.next('span');
+    clientLayout.down('h4').innerHTML = client ? client.name : '';
+    clientLayout.down('p').innerHTML =
+      client
+        ?
+          client.address + "\n" +
+          client.city + ', ' + client.state + ', ' + client.zip + "\n" +
+          client.country
+        : '';
+  },
+
+  showClientForm: function (stepForm) {
+    var form = stepForm.el;
+    var clientLayout = form.next('span');
+    clientLayout.removeClassName('show');
+    form.removeClassName('hide');
+  },
+  showClientView: function (stepForm) {
+    var form = stepForm.el;
+    var clientLayout = form.next('span');
+    clientLayout.addClassName('show');
+    form.addClassName('hide');
+    stepForm.reset();
+  },
+  initClientForms: function() {
+    $$('#invoices li > header + section > form').each(function (theForm) {
+      var stepForm = new stepsForm(theForm, {
+        onSubmit: function (form) {
+          var form_client = theForm.readAttribute('state');
+          if (form_client == 'new') {
+            // @TODO: create new client
+          } else {
+            Application.showClientView(stepForm);
+          }
+        },
+        onInput: function (ev) {
+          var input = ev.target;
+          if (input.match('form.edit_client:not([state="edit"]) input[type="email"]')) {
+            new Ajax.Request("/clients/" + input.value, {
+              method: 'get',
+              requestHeaders: {
+                "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
+              },
+              onSuccess: function (transport) {
+                var client = transport.responseJSON;
+                theForm.writeAttribute('state', client ? client.id : 'new');
+                Application.fillClientData(theForm, client);
+              }
+            });
+          }
+        },
+        beforeNextQuestion: function () {
+          var form_client = theForm.readAttribute('state');
+          if (form_client == 'new' || form_client == 'edit') {
+            return true;
+          }
+          Application.showClientView(stepForm);
+          return false;
+        }
+      });
+      theForm.next('span').down('button.edit').observe('click', function(ev) {
+        theForm.writeAttribute('state', 'edit');
+        Application.showClientForm(stepForm);
+      });
+      theForm.next('span').down('button.change').observe('click', function(ev) {
+        theForm.writeAttribute('state', 'select');
+        Application.showClientForm(stepForm);
+      });
+      if (parseInt(theForm.readAttribute('state'))) {
+        Application.showClientView(stepForm);
+      }
+    });
+  },
+
   handleResize: function () {
     if (!$('invoices').match('.show')) {
       return;
@@ -341,23 +423,40 @@ var Application = {
     Application.initInvoicesDnD();
   },
 
-  initInvoicesDnD: function() {
+  initInvoicesDnD: function () {
     $$("#invoices li main > ul").each(function (container) {
       Sortable.create(container, {
+        draggable: 'li.task_container',
         group: {
           name: 'invoices',
           pull: true,
           put: ['taskList']
         },
-        sort: false,
-        onAdd: function(evt) {
+        onAdd: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
+        },
+        onUpdate: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
+        },
+        onRemove: function (evt) {
+          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
         }
       });
     });
   },
 
-  dragAndDropTaskList: function(task_list_container) {
-    var task_list_id = task_list_container.identify().replace(/task_list_container_/gi, '');
+  updateInvoiceTasksOrder: function (container) {
+    var invoice_id = Application.strip_id(container);
+    if (!invoice_id) {
+      return;
+    }
+    var inv = invoice(invoice_id);
+    var seq = Application.getSequence(container.down('ul'));
+    inv.setTaskSequence(seq);
+  },
+
+  dragAndDropTaskList: function (task_list_container) {
+    var task_list_id = Application.strip_id(task_list_container);
     var tl = task_list(task_list_id);
     tl.sortable =  Sortable.create(task_list_container, {
       draggable: 'li.task_container',
@@ -367,17 +466,7 @@ var Application = {
         put: ['invoices']
       },
       animation: 100,
-      onEnd: function(evt) {
-        var afterDropFn = function() {
-          $$('body')[0].removeClassName('drag-active');
-          if (!Application.invoicesShownBeforeDnD) {
-            $('invoices').removeClassName('show');
-          }
-        };
-        clearTimeout(Application.invoicesDnDTimeout);
-        Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
-      },
-      onStart: function(evt) {
+      onStart: function (evt) {
         var item = evt.item;
         var parent = item.parentNode;
         var id = item.identify().replace(/task_container_/gi, '');
@@ -385,41 +474,45 @@ var Application = {
         var t = task(id);
         t.taskListBeforeDnD = list_id;
 
-        $$('body')[0].addClassName('drag-active');
         Application.invoicesShownBeforeDnD = $('invoices').hasClassName('show');
         $('invoices').addClassName('show');
         clearTimeout(Application.invoicesDnDTimeout);
       },
-      onAdd: function(evt) {
-        Application.updateTasksOrder(evt.target.parentNode);
+      onEnd: function (evt) {
+        var afterDropFn = function() {
+          if (!Application.invoicesShownBeforeDnD) {
+            $('invoices').removeClassName('show');
+          }
+        };
+        clearTimeout(Application.invoicesDnDTimeout);
+        Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
       },
-      onUpdate: function(evt) {
-        Application.updateTasksOrder(evt.target);
+      onAdd: function (evt) {
+        Application.updateListTasksOrder(evt.target.parentNode);
       },
-      onRemove: function(evt) {
-        var item = evt.item,
-            parent = item.parentNode,
-            id = item.identify().replace(/task_container_/gi, '');
-            tl = task(id).taskListBeforeDnD;
-            tl_selector = '#task_list_container_' + tl;
+      onUpdate: function (evt) {
+        Application.updateListTasksOrder(evt.target);
+      },
+      onRemove: function (evt) {
+        var parent = evt.item.parentNode;
         if (parent.hasClassName('list_container')) {
-          // task was moved to another list, let's update changes
-          Application.updateTasksOrder(evt.target);
-        } else if (parent.match('#invoices > ul > li:not(.new) > ul')) {
+          // task was moved to another list
+          Application.updateListTasksOrder(evt.target);
+        } else if (parent.match('#invoices > ul > li:not(.new) main > ul')) {
+          // task was moved to an invoice
         }
       }
     });
   },
 
-  updateTasksOrder: function(container) {
-    var task_list_id = container.identify().replace(/task_list_container_/gi, '');
+  updateListTasksOrder: function(container) {
+    var task_list_id = Application.strip_id(container);
     var tl = task_list(task_list_id);
-    var seq = Application.getSequence(container.identify());
+    var seq = Application.getSequence(container);
     tl.setTaskSequence(seq);
   },
 
   getSequence: function(element) {
-    element = $(element);
     return $(Element.findChildren(element, 'li') || []).map( function(item) {
       var matchre = /^[^_\-](?:[A-Za-z0-9\-\_]*)[_](.*)$/;
       return item.id.match(matchre) ? item.id.match(matchre)[1] : '';
@@ -481,6 +574,8 @@ var Application = {
         $("grand_total_earnings").update(json.total_earnings);
         $("grand_total_duration").update(json.total_duration);
 
+        Application.toggleTotals();
+
         setTimeout(Application.updateTasks, 10000);
       },
       requestHeaders: {
@@ -514,8 +609,7 @@ var Application = {
   },
 
   toggleTotals: function() {
-    $sortable_containers =  $$(".list_container");
-    $sortable_containers.each(function (s) {
+    $$(".list_container").each(function (s) {
       var l = task_list(Application.strip_id(s));
       l.checkIfTotalNeeded();
     });

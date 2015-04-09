@@ -16,7 +16,9 @@ TheApp::Application.routes.draw do
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
   match 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
-  
+  match 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
+  match "/clients/:id" => 'clients#show', :constraints => { :id => /[^\/]+/ }
+
   match 'login' => 'sessions#new'
   match 'session/destroy' => 'sessions#destroy'
 
@@ -86,8 +88,8 @@ TheApp::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
   match ':controller/:action'
-  match ':controller/:action.:format'  
+  #match ':controller/:action.:format'
 
   match ':controller/:id/:action'
-  match ':controller/:id/:action.:format'
+  #match ':controller/:id/:action.:format'
 end

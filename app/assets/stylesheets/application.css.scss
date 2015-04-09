@@ -1,5 +1,6 @@
 @import 'reset-fonts';
 @import 'font-awesome';
+@import 'simform';
 
 $left-margin: 70px;
 $invoices-scale: .2;
@@ -535,12 +536,12 @@ input[name='task_list[title]'] {
   height: 18px;
 }
 
-input[type='text'] {
+#task_lists input[type='text'] {
   border: 1px solid #ccc;
   height: 18px;
 }
 
-input[type='checkbox'] {
+#task_lists input[type='checkbox'] {
   vertical-align: middle;
 }
 
@@ -653,7 +654,6 @@ input[type='checkbox'] {
   transition: transform 0.5s;
   -webkit-transform: translate3d(0,0,0) scale($invoices-scale);
   transform: translate3d(0,0,0);
-  overflow: visible;
 }
 #invoices.show {
   -webkit-transform: translate3d(-100%,0,0);
@@ -720,6 +720,7 @@ input[type='checkbox'] {
   -moz-transition: opacity .8s ease-out;
   -webkit-transition: opacity .8s ease-out;
   text-align: left;
+  box-shadow: .5em .5em .5em #cccccc;
 }
 #invoices > ul.zoomed > li:not(.zoom) {
   opacity: 0;
@@ -738,6 +739,7 @@ input[type='checkbox'] {
 #invoices header > details,
 #invoices section {
   padding-left: 20px;
+  padding-right: 20px;
 }
 
 #invoices header {
@@ -758,13 +760,13 @@ input[type='checkbox'] {
 
 #invoices header details {
   float: right;
-  width: 50%;
+  width: calc(50% - 40px);
   font-size: 2.5em;
   white-space: pre-line;
 }
 
 #invoices header h3 {
-  font-size: 6em;
+  font-size: 5em;
   line-height: 1em;
 }
 
@@ -774,7 +776,7 @@ input[type='checkbox'] {
 
 #invoices header + section {
   float: left;
-  width: 50%;
+  width: calc(50% - 40px);
 }
 
 #invoices section + section {
@@ -783,16 +785,25 @@ input[type='checkbox'] {
 
 #invoices section h4 {
   font-size: 3.3em;
-  line-height: .7em;
   font-weight: bold;
 }
 
-#invoices section h4 em {
+#invoices section h4:before {
   color: #999999;
-  font-size: .5em;
+  font-size: .6em;
+  line-height: 1.2em;
+  display: block;
+  font-weight: normal;
 }
 
-#invoices section h4,
+#invoices header + section h4:before {
+  content: 'Attention'
+}
+
+#invoices section + section h4:before {
+  content: 'Pay to the order of'
+}
+
 #invoices section p {
   white-space: pre-line;
 }
@@ -806,7 +817,7 @@ input[type='checkbox'] {
 #invoices main {
   border-top: 2px solid #efefef;
   border-bottom: 2px solid #efefef;
-  min-height: 60%;
+  min-height: 55%;
   position: relative;
 }
 
@@ -831,7 +842,7 @@ input[type='checkbox'] {
   padding: .5em 1em;
 }
 
-#invoices .task_container:nth-child(odd) {
+#invoices .task_container:nth-child(odd):not(.sortable-ghost) {
   background-color: #f8f7e9;
 }
 
