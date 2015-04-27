@@ -37,7 +37,7 @@ class TasksController < ApplicationController
         @task.add_action(:action=>"stop")
         @task.add_action(:action=>"start")
       end
-       new_duration = @task.updateDiffTime(diffTime)
+      new_duration = @task.updateDiffTime(diffTime)
       @task.update_attributes(:duration_cache => new_duration.to_s)
     end
     @task.update_attributes(params[:task])
