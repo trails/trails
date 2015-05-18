@@ -8,6 +8,7 @@ TheApp::Application.routes.draw do
   # Keep in mind you can assign values other than :controller and :action
   match 'task_lists/refresh' => 'task_lists#refresh'
   match 'signup' => 'users#new'
+  match 'settings' => 'users#edit'
 
   match 'thanks' => 'pages#thanks'
 
