@@ -1,5 +1,4 @@
-<%= form_for edit, authenticity_token: false, :namespace => prefix, :html => {:autocomplete => 'off', :state => edit.id} do |form| %>
-    <%= form.hidden_field :id %>
+<%= form_for edit, authenticity_token: false, :namespace => prefix, :html => {:autocomplete => 'off', :client => edit.id}, :method => '' do |form| %>
     <ol class="questions">
       <li>
         <span><%= form.label :email %></span>

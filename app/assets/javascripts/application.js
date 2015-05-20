@@ -13,6 +13,8 @@
 //= require controller/task_form
 //= require controller/task_list_form
 //= require controller/invoice
+//= require controller/client
+//= require controller/client_form
 
 var Application = {
   init: function() {
@@ -219,7 +221,7 @@ var Application = {
 
     $S("input[type=submit][method]").observe("click", function(event) {
       var element = event.element();
-      element.form.overrideMthod = element.readAttribute("method");
+      element.form.overrideMethod = element.readAttribute("method");
     });
 
     $S('.task.form .default_rate_check > input[type="checkbox"]').observe('change', function(event) {
@@ -282,84 +284,72 @@ var Application = {
     });
   },
 
-  fillClientData: function (form, client) {
-    form.elements['client[id]'].value = client ? client.id : '';
-    form.elements['client[name]'].value = client ? client.name : '';
-    form.elements['client[country]'].value = client ? client.country : '';
-    form.elements['client[state]'].value = client ? client.state : '';
-    form.elements['client[city]'].value = client ? client.city : '';
-    form.elements['client[zip]'].value = client ? client.zip : '';
-    form.elements['client[address]'].value = client ? client.address : '';
-    var clientLayout = form.next('span');
-    clientLayout.down('h4').innerHTML = client ? client.name : '';
-    clientLayout.down('p').innerHTML =
-      client
-        ?
-          client.address + "\n" +
-          client.city + ', ' + client.state + ', ' + client.zip + "\n" +
-          client.country
-        : '';
-  },
 
-  showClientForm: function (stepForm) {
-    var form = stepForm.el;
-    var clientLayout = form.next('span');
-    clientLayout.removeClassName('show');
-    form.removeClassName('hide');
-  },
-  showClientView: function (stepForm) {
-    var form = stepForm.el;
+  showClientView: function (form) {
     var clientLayout = form.next('span');
     clientLayout.addClassName('show');
     form.addClassName('hide');
-    stepForm.reset();
   },
   initClientForms: function() {
     $$('#invoices li > header + section > form').each(function (theForm) {
-      var stepForm = new stepsForm(theForm, {
+      theForm.observe("submit", Application.formSubmitHandler);
+
+      theForm.stepForm = new stepsForm(theForm, {
         onSubmit: function (form) {
-          var form_client = theForm.readAttribute('state');
-          if (form_client == 'new') {
-            // @TODO: create new client
-          } else {
-            Application.showClientView(stepForm);
-          }
+          var status = theForm.readAttribute('status');
+          theForm.responder = client(0, theForm).client_form();
+          theForm.overrideAction = '/clients' + (status == 'new' ? '' : '/' + theForm.readAttribute('client'));
+          theForm.overrideMethod = status == 'new' ? 'post' : 'put';
+          theForm.down('button[type="submit"]').click();
         },
         onInput: function (ev) {
           var input = ev.target;
-          if (input.match('form.edit_client:not([state="edit"]) input[type="email"]')) {
+          if (input.match('form[action^="/clients"] input[type="email"]')) {
             new Ajax.Request("/clients/" + input.value, {
               method: 'get',
               requestHeaders: {
                 "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
               },
               onSuccess: function (transport) {
-                var client = transport.responseJSON;
-                theForm.writeAttribute('state', client ? client.id : 'new');
-                Application.fillClientData(theForm, client);
+                var client = transport.responseJSON,
+                    status = theForm.readAttribute('status'),
+                    current = theForm.readAttribute('client');
+                if (status == 'edit') {
+                  if (client.email && client.id != current) {
+                    // email address already in use
+                  }
+                } else {
+                  Client.render(client, theForm);
+                  theForm.stepForm.reset();
+                }
               }
             });
           }
         },
         beforeNextQuestion: function () {
-          var form_client = theForm.readAttribute('state');
-          if (form_client == 'new' || form_client == 'edit') {
+          var status = theForm.readAttribute('status');
+          if (status == 'new' || status == 'edit') {
             return true;
           }
-          Application.showClientView(stepForm);
+          Application.showClientView(theForm);
+          theForm.stepForm.reset();
           return false;
         }
       });
       theForm.next('span').down('button.edit').observe('click', function(ev) {
-        theForm.writeAttribute('state', 'edit');
-        Application.showClientForm(stepForm);
+        var id = theForm.readAttribute('client');
+        theForm.writeAttribute('status', 'edit');
+        client(id, theForm).client_form().show();
       });
       theForm.next('span').down('button.change').observe('click', function(ev) {
-        theForm.writeAttribute('state', 'select');
-        Application.showClientForm(stepForm);
+        var id = theForm.readAttribute('client');
+        theForm.writeAttribute('status', 'select');
+        client(id, theForm).client_form().show();
       });
-      if (parseInt(theForm.readAttribute('state'))) {
-        Application.showClientView(stepForm);
+      var id = parseInt(theForm.readAttribute('client'));
+      theForm.writeAttribute('status', id ? 'display' : 'select');
+      if (id) {
+        client(id, theForm).show()
       }
     });
   },
@@ -376,34 +366,24 @@ var Application = {
 
   formSubmitHandler: function (event) {
     event.stop();
+    var action = this.overrideAction ? this.overrideAction : this.action,
+        method = this.overrideMethod ? this.overrideMethod : this.method;
+
     var options = {
       requestHeaders: {
-      "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-      }
+        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
+      },
+      method: method,
+      parameters: this.serialize()
     };
-    // Setup before request
-    if (this.overrideAction) {
-      var defaultAction = this.action;
-      this.action = this.overrideAction;
-    }
-    if (this.overrideMthod) {
-      var defaultMethod = this.method;
-      this.method = this.overrideMthod;
-    }
-    if (this.responder) {
-      if(this.responder.onSuccess) options.onSuccess = this.responder.onSuccess.bind(this.responder)
+
+    if (this.responder && this.responder.onSuccess) {
+      options.onSuccess = this.responder.onSuccess.bind(this.responder);
     }
 
     // Perform request!
-    this.request(options);
+    var request = new Ajax.Request(action, options); //this.request(options);
 
-    // Clean up
-    if (this.overrideAction) {
-      this.action = defaultAction;
-    }
-    if (this.overrideMthod) {
-      this.method = defaultMethod;
-    }
     this.responder = null;
   },
 
