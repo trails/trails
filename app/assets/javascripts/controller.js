@@ -4,19 +4,16 @@ var Controller = Class.create({
   },
 
   baseURL: function () {
-    return "/" + this.className + "s/"
+    return '/' + this.className + 's';
   },
 
   url: function () {
-    return this.baseURL() + this.id + "/"
+    return this.baseURL() + (this.id ? '/' + this.id: '');
   },
 
   ajaxAction: function (name, options) {
     var ajaxOptions = {
-      onSuccess: this["after"+name.capitalize()].bind(this),
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-      }
+      onSuccess: this["after"+name.capitalize()].bind(this)
     };
     if(options) Object.extend(ajaxOptions, options);
     return new Ajax.Request(this.url(),ajaxOptions);

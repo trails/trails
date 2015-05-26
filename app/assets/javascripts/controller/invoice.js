@@ -3,17 +3,23 @@ Invoice.prototype.className = 'invoice';
 Invoice.cache = {};
 
 Invoice.addMethods({
+  create: function(callback) {
+  },
+
   setTaskSequence: function(seq) {
-    var options = {
-      method: "put",
+    if (!parseInt(this.id)) {
+      this.create(function() {
+        this.setTaskSequence(seq);
+      })
+      return;
+    }
+
+    new Ajax.Request(this.url() + '/setSequence', {
+      method: 'put',
       parameters: {
         tasks: seq.toString()
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
-    };
-    new Ajax.Request(this.url() + "setSequence", options);
+    });
   }
 });
 

@@ -19,6 +19,7 @@
 var Application = {
   init: function() {
     Application.extendElement();
+    Application.CSRFAjax()
 
     Application.initDragAndDrop();
     Application.initSliders();
@@ -32,6 +33,18 @@ var Application = {
     Application.attachEventHandlers();
     Application.invoiceZoomOut();
     Application.initClientForms();
+  },
+
+  CSRFAjax: function() {
+    Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
+      function (original, options) {
+        var headers = options.requestHeaders || {},
+            token = $$('meta[name=csrf-token]')[0].readAttribute('content');
+        headers["X-CSRF-Token"] = token
+        options.requestHeaders = headers;
+        return original(options);
+      }
+    );
   },
 
   extendElement: function() {
@@ -307,9 +320,6 @@ var Application = {
           if (input.match('form[action^="/clients"] input[type="email"]')) {
             new Ajax.Request("/clients/" + input.value, {
               method: 'get',
-              requestHeaders: {
-                "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-              },
               onSuccess: function (transport) {
                 var client = transport.responseJSON,
                     status = theForm.readAttribute('status'),
@@ -367,15 +377,11 @@ var Application = {
   formSubmitHandler: function (event) {
     event.stop();
     var action = this.overrideAction ? this.overrideAction : this.action,
-        method = this.overrideMethod ? this.overrideMethod : this.method;
-
-    var options = {
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-      },
-      method: method,
-      parameters: this.serialize()
-    };
+        method = this.overrideMethod ? this.overrideMethod : this.method,
+        options = {
+          method: method,
+          parameters: this.serialize()
+        };
 
     if (this.responder && this.responder.onSuccess) {
       options.onSuccess = this.responder.onSuccess.bind(this.responder);
@@ -427,9 +433,6 @@ var Application = {
 
   updateInvoiceTasksOrder: function (container) {
     var invoice_id = Application.strip_id(container);
-    if (!invoice_id) {
-      return;
-    }
     var inv = invoice(invoice_id);
     var seq = Application.getSequence(container.down('ul'));
     inv.setTaskSequence(seq);
@@ -557,9 +560,6 @@ var Application = {
         Application.toggleTotals();
 
         setTimeout(Application.updateTasks, 10000);
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
     };
     new Ajax.Request("/task_lists/refresh", options);
