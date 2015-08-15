@@ -7,12 +7,17 @@
 //= require stepsForm
 
 //= require controller
-//= require controller/task
 //= require controller/actions
-//= require controller/task_list
+
+//= require controller/task
 //= require controller/task_form
+
+//= require controller/task_list
 //= require controller/task_list_form
+
 //= require controller/invoice
+//= require controller/invoice_form
+
 //= require controller/client
 //= require controller/client_form
 
@@ -27,12 +32,13 @@ var Application = {
     //Initialize clockTicking
     $showTick = false;
     setInterval(Application.clockTick, 500);
-    
+
     //check if totals need to be shown for each list
     Application.toggleTotals();
     Application.attachEventHandlers();
-    Application.invoiceZoomOut();
-    Application.initClientForms();
+
+    Invoice.init();
+    ClientForm.init();
   },
 
   CSRFAjax: function() {
@@ -40,7 +46,7 @@ var Application = {
       function (original, options) {
         var headers = options.requestHeaders || {},
             token = $$('meta[name=csrf-token]')[0].readAttribute('content');
-        headers["X-CSRF-Token"] = token
+        headers["X-CSRF-Token"] = token;
         options.requestHeaders = headers;
         return original(options);
       }
@@ -49,20 +55,24 @@ var Application = {
 
   extendElement: function() {
     Element.addMethods({
-      recordID: function (element) {
-        do {
+      recordID: function (element, prefix) {
+        var ret = null;
+        while (element) {
+          var matchRegEx = new RegExp((prefix ? prefix : '') + '\\_(\\d+|new)$');
+          var match;
+          if (element.id && matchRegEx.test(element.id)) {
+            match = matchRegEx.exec(element.id);
+          }
+          if (element.href && matchRegEx.test(element.href)) {
+            match = matchRegEx.exec(element.href);
+          }
+          if (match) {
+            ret = match[1];
+            break;
+          }
           element = element.parentNode;
-        } while (!element.id && !element.href);
-
-        if (element.id) {
-          var match = element.id.match(/\d+/);
-          if(!match) return "new";
-          return parseInt(match[0]);
         }
-
-        if (element.href) {
-          return parseInt(element.href.match(/\d+/).last());
-        }
+        return ret;
       },
 
       fadeDelete: function (element) { //fades element, then deletes it
@@ -252,116 +262,17 @@ var Application = {
       }
     });
     $S('#invoices > h2').observe('click', function(event) {
-      Application.invoiceZoomOut();
+      Invoice.zoomOut();
       $('invoices').toggleClassName('show');
     });
     $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
-      var element =
-        event.element().match('#invoices > ul > li')
-          ? event.element()
-          : event.element().up('#invoices > ul > li');
-      Application.invoiceZoomIn(element);
+      var id = event.element().recordID('invoice');
+      invoice(id).zoomIn();
     });
     $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom)').observe('click', function(event) {
-      Application.invoiceZoomOut();
+      Invoice.zoomOut();
     });
     window.addEventListener('resize', Application.handleResize, false);
-  },
-
-  INVOICES_CSS_SCALE: .2,
-  invoiceZoomIn: function (element) {
-    var listWidth = $$('#invoices > ul')[0].getLayout().get('width');
-    var listHeight = $$('#invoices > ul')[0].getLayout().get('height');
-    var scaleX = listWidth / element.getLayout().get('margin-box-width');
-    var scaleY = listHeight / element.getLayout().get('margin-box-height');
-    var width = element.getLayout().get('margin-box-width');
-    var height = element.getLayout().get('margin-box-height');
-    var scale = scaleX < scaleY ? scaleX : scaleY;
-    var realScale = scale * Application.INVOICES_CSS_SCALE;
-    var offsetX = ((listWidth - width * scale) / 2 - element.offsetLeft * scale) * Application.INVOICES_CSS_SCALE;
-    var offsetY = ((listHeight - height * scale) / 2 - element.offsetTop * scale) * Application.INVOICES_CSS_SCALE;
-    $$('#invoices > ul')[0].addClassName('zoomed').setStyle({
-      transform:
-        'translate(' + offsetX.toString() + 'px, ' + offsetY.toString() + 'px) ' +
-        'scale(' + realScale.toString() + ')'
-    });
-    element.addClassName('zoom');
-  },
-  invoiceZoomOut: function () {
-    var zoomItem = $$('#invoices > ul > li.zoom');
-    if (zoomItem.length) {
-      zoomItem[0].removeClassName('zoom');
-    }
-    $$('#invoices > ul')[0].removeClassName('zoomed').setStyle({
-      transform: 'translate(0, 0) scale(' + Application.INVOICES_CSS_SCALE + ')'
-    });
-  },
-
-
-  showClientView: function (form) {
-    var clientLayout = form.next('span');
-    clientLayout.addClassName('show');
-    form.addClassName('hide');
-  },
-  initClientForms: function() {
-    $$('#invoices li > header + section > form').each(function (theForm) {
-      theForm.observe("submit", Application.formSubmitHandler);
-
-      theForm.stepForm = new stepsForm(theForm, {
-        onSubmit: function (form) {
-          var status = theForm.readAttribute('status');
-          theForm.responder = client(0, theForm).client_form();
-          theForm.overrideAction = '/clients' + (status == 'new' ? '' : '/' + theForm.readAttribute('client'));
-          theForm.overrideMethod = status == 'new' ? 'post' : 'put';
-          theForm.down('button[type="submit"]').click();
-        },
-        onInput: function (ev) {
-          var input = ev.target;
-          if (input.match('form[action^="/clients"] input[type="email"]')) {
-            new Ajax.Request("/clients/" + input.value, {
-              method: 'get',
-              onSuccess: function (transport) {
-                var client = transport.responseJSON,
-                    status = theForm.readAttribute('status'),
-                    current = theForm.readAttribute('client');
-                if (status == 'edit') {
-                  if (client.email && client.id != current) {
-                    // email address already in use
-                  }
-                } else {
-                  Client.render(client, theForm);
-                  theForm.stepForm.reset();
-                }
-              }
-            });
-          }
-        },
-        beforeNextQuestion: function () {
-          var status = theForm.readAttribute('status');
-          if (status == 'new' || status == 'edit') {
-            return true;
-          }
-          Application.showClientView(theForm);
-          theForm.stepForm.reset();
-          return false;
-        }
-      });
-      theForm.next('span').down('button.edit').observe('click', function(ev) {
-        var id = theForm.readAttribute('client');
-        theForm.writeAttribute('status', 'edit');
-        client(id, theForm).client_form().show();
-      });
-      theForm.next('span').down('button.change').observe('click', function(ev) {
-        var id = theForm.readAttribute('client');
-        theForm.writeAttribute('status', 'select');
-        client(id, theForm).client_form().show();
-      });
-      var id = parseInt(theForm.readAttribute('client'));
-      theForm.writeAttribute('status', id ? 'display' : 'select');
-      if (id) {
-        client(id, theForm).show()
-      }
-    });
   },
 
   handleResize: function () {
@@ -369,8 +280,8 @@ var Application = {
       return;
     }
     if ($$('#invoices > ul')[0].match('.zoomed')) {
-      var element = $$('#invoices > ul > li.zoom')[0];
-      Application.invoiceZoomIn(element);
+      var id = $$('#invoices > ul > li.zoom')[0].recordID();
+      invoice(id).zoomIn()
     }
   },
 
@@ -405,37 +316,6 @@ var Application = {
     $sortable_containers.each(function (container) {
       Application.dragAndDropTaskList(container);
     });
-
-    Application.initInvoicesDnD();
-  },
-
-  initInvoicesDnD: function () {
-    $$("#invoices li main > ul").each(function (container) {
-      Sortable.create(container, {
-        draggable: 'li.task_container',
-        group: {
-          name: 'invoices',
-          pull: true,
-          put: ['taskList']
-        },
-        onAdd: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        },
-        onUpdate: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        },
-        onRemove: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        }
-      });
-    });
-  },
-
-  updateInvoiceTasksOrder: function (container) {
-    var invoice_id = Application.strip_id(container);
-    var inv = invoice(invoice_id);
-    var seq = Application.getSequence(container.down('ul'));
-    inv.setTaskSequence(seq);
   },
 
   dragAndDropTaskList: function (task_list_container) {
@@ -593,26 +473,6 @@ var Application = {
       var l = task_list(Application.strip_id(s));
       l.checkIfTotalNeeded();
     });
-  },
-
-  hideTaskForms: function() {
-    //lists (task_form + task_list_form)
-    $lists = $$(".list_container");
-    $lists.each(function (s) {
-      var tl = task_list(Application.strip_id(s));
-      tl.task_form().hide();
-      tl.task_list_form().hide();
-    });
-    //tasks (task_form)
-    $tasks = $$(".task_container");
-    $tasks.each(function (s) {
-      var t = task(Application.strip_id(s));
-      t.task_form().hide();
-    });
-    //task_list_Create
-    var taskListCreator = $("task_list_new");
-    taskListCreator.hide();
-    $A(taskListCreator.getElementsByTagName("INPUT")).invoke("disable");
   },
 
   formattedTime: function(t) {

@@ -4,7 +4,7 @@ TaskListForm.cache = {};
 
 TaskListForm.addMethods({
   show: function() {
-    Application.hideTaskForms();
+    TaskForm.hideAll();
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     var titleInput = this.element().down(".title").down("input");

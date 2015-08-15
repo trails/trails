@@ -28,6 +28,12 @@ Client.render = function(client, form) {
   form.writeAttribute('status', client.id ? 'display' : 'new');
   form.writeAttribute('client', client.id);
   if (!client.id) {
+    for (var i = 0; i < form.elements.length; i++) {
+      var name = form.elements[i].name;
+      if (name.match(/client\[\w+\]/) && name != 'client[email]') {
+        form.elements[i].value = '';
+      }
+    }
     return;
   }
   for (var field in client) {
@@ -44,8 +50,7 @@ Client.render = function(client, form) {
         client.city + ', ' + client.state + ', ' + client.zip + "\n" +
         client.country
       : '';
-}
-
+};
 
 var client = function (id, form) {
   var instance = Client.cache[id];

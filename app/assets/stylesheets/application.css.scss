@@ -814,21 +814,21 @@ input[name='task_list[title]'] {
   margin-top: .6em;
 }
 
-#invoices main {
+#invoices li > main {
   border-top: 2px solid #efefef;
   border-bottom: 2px solid #efefef;
   min-height: 55%;
   position: relative;
 }
 
-#invoices main > ul {
+#invoices li > main > ul {
   padding-top: 4em;
   position: absolute;
   height: calc(100% - 4em);
   width: 100%;
 }
 
-#invoices main > ul:after {
+#invoices li > main > ul:after {
   content: '\00a0';
   position: absolute;
   width: 0px;
@@ -836,6 +836,10 @@ input[name='task_list[title]'] {
   height: 100%;
   border-right: 2px solid #efefef;
   right: 23%;
+}
+
+#invoices li > main .submit {
+  display: none;
 }
 
 #invoices main > ul section {
@@ -939,4 +943,23 @@ input[name='task_list[title]'] {
 #invoices footer p:last-child span {
   display: block;
   font-size: 1.5em;
+}
+
+#invoices li > fieldset {
+  position: absolute;
+  top: 0;
+  width: 20em;
+  right: -22em;
+  transition: opacity .8s ease-out;
+  -moz-transition: opacity .8s ease-out;
+  -webkit-transition: opacity .8s ease-out;
+}
+
+#invoices > ul:not(.zoomed) li > fieldset {
+  opacity: 0;
+}
+
+#invoices li > fieldset button {
+  font-size: 3em;
+  margin: .3em .2em;
 }

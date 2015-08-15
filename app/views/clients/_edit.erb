@@ -1,4 +1,5 @@
-<%= form_for edit, authenticity_token: false, :namespace => prefix, :html => {:autocomplete => 'off', :client => edit.id}, :method => '' do |form| %>
+<%= fields_for edit, :namespace => prefix do |form| %>
+  <fieldset client="<%= edit.id %>">
     <ol class="questions">
       <li>
         <span><%= form.label :email %></span>
@@ -39,4 +40,5 @@
       </span>
       <span class="error-message"></span>
     </div>
+  </fieldset>
 <% end %>

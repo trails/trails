@@ -24,10 +24,10 @@
     <%= render :partial=>"task_lists/footer" %>
   </section>
 </form>
-<div id="invoices">
+<form id="invoices" autocomplete="off">
   <h2>Invoices</h2>
   <ul>
     <%= render :partial => 'invoices/invoice', :object => Invoice.new %>
     <%= render :partial => @invoices %>
   </ul>
-</div>
+</form>
