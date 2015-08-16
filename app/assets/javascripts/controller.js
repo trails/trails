@@ -8,8 +8,9 @@ var Controller = Class.create({
   },
 
   url: function () {
-    return this.baseURL() + (this.id ? '/' + this.id: '');
+    return this.baseURL() + (parseInt(this.id) ? '/' + this.id: '');
   },
+
 
   ajaxAction: function (name, options) {
     var ajaxOptions = {

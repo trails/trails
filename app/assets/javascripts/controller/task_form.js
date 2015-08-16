@@ -68,7 +68,7 @@ TaskForm.addMethods({
   },
 
   onSuccess: function(transport) {
-    //call back method on update for Tasks
+    //callback method on update for Tasks
     var element = this.element();
     if (this.task) {
       //update existing task

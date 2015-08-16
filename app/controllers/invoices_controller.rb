@@ -5,13 +5,19 @@ class InvoicesController < ApplicationController
   end
 
   def create
-    @invoices = Invoice.create!(params[:invoice])
-    render json: @invoices
+    @invoice = Invoice.create!(params[:invoice])
+
+    # get list of tasks to be modified
+    @tasks = params[:tasks].split(",")
+    linkTasks(@tasks, @invoice)
+
+    render json: @invoice
   end
 
   def update
-    @invoices = Invoice.update(params[:id], params[:invoice])
-    render json: @invoices
+    @invoice = Invoice.find(params[:id])
+    @invoice.update(params[:invoice])
+    render json: @invoice
   end
 
   def destroy
@@ -20,6 +26,8 @@ class InvoicesController < ApplicationController
   end
 
   def setSequence
+    @invoice = Invoice.find(params[:id])
+
     # unlink all tasks from invoice
     @tasks_to_unlink = Task.all(:conditions=> "invoice_id = #{params[:id]}")
     @tasks_to_unlink.each do |task_id|
@@ -29,13 +37,18 @@ class InvoicesController < ApplicationController
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
-    @tasks.each do |task_id|
-      @task = Task.find(task_id)
-      @task.update_attributes("invoice_id" => params[:id])
-    end
+    linkTasks(@tasks, @invoice)
 
-    @invoice = Invoice.find(params[:id])
-    @invoice.update_attributes("task_order" => @tasks)
     head :ok
   end
+
+  protected
+    def linkTasks (tasks, invoice)
+      tasks.each do |task_id|
+        @task = Task.find(task_id)
+        @task.update_attributes("invoice_id" => invoice.id)
+      end
+      invoice.update_attributes("task_order" => tasks)
+    end
+
 end

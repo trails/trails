@@ -38,7 +38,6 @@ var Application = {
     Application.attachEventHandlers();
 
     Invoice.init();
-    ClientForm.init();
   },
 
   CSRFAjax: function() {
@@ -58,7 +57,7 @@ var Application = {
       recordID: function (element, prefix) {
         var ret = null;
         while (element) {
-          var matchRegEx = new RegExp((prefix ? prefix : '') + '\\_(\\d+|new)$');
+          var matchRegEx = new RegExp((prefix ? prefix : '') + '\\_(\\d+|new)(?:$|\\_.+)');
           var match;
           if (element.id && matchRegEx.test(element.id)) {
             match = matchRegEx.exec(element.id);
@@ -196,7 +195,7 @@ var Application = {
 
     $S(".task.new .submit input[type=submit]").observe("click", function(event) {
       var element = event.element();
-      var id = element.recordID();
+      var id = element.parentNode.recordID('task_list');
       element.form.responder = task_list(id).task_form();
     });
 
@@ -297,7 +296,6 @@ var Application = {
     if (this.responder && this.responder.onSuccess) {
       options.onSuccess = this.responder.onSuccess.bind(this.responder);
     }
-
     // Perform request!
     var request = new Ajax.Request(action, options); //this.request(options);
 

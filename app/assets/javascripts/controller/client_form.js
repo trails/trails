@@ -20,8 +20,9 @@ ClientForm.addMethods({
   }
 });
 
-ClientForm.init = function () {
-  $$('#invoices li > header + section > fieldset').each(function (wizard) {
+ClientForm.init = function (newInvoiceOnly) {
+  var selector = '#invoices li' + (newInvoiceOnly ? '#invoice_new' : '') + ' > header + section > fieldset';
+  $$(selector).each(function (wizard) {
     wizard.observe("submit", Application.formSubmitHandler);
 
     wizard.stepForm = new stepsForm(wizard, {
@@ -62,8 +63,9 @@ ClientForm.init = function () {
           }
           return true;
         }
-        if (status == 'display' && wizard.up('li#invoice_new')) {
-          Invoice.create();
+        invoice_id = wizard.recordID('invoice');
+        if (status == 'display' && invoice_id == 'new') {
+          invoice(invoice_id).update();
         }
         var id = parseInt(wizard.readAttribute('client'));
         client(id, wizard).show()
