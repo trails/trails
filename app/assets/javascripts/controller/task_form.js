@@ -4,7 +4,7 @@ TaskForm.cache = {};
 
 TaskForm.addMethods({
   show: function() {
-    Application.hideTaskForms();
+    TaskForm.hideAll();
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     //focus on title input when form appears
@@ -68,7 +68,7 @@ TaskForm.addMethods({
   },
 
   onSuccess: function(transport) {
-    //call back method on update for Tasks
+    //callback method on update for Tasks
     var element = this.element();
     if (this.task) {
       //update existing task
@@ -96,6 +96,26 @@ TaskForm.addMethods({
     return this.task_list ? $("task_list_" + this.task_list.id + "_task_new") : (this.task ? $("edit_task_" + this.task.id) : null);
   }
 });
+
+TaskForm.hideAll = function () {
+  //lists (task_form + task_list_form)
+  $lists = $$(".list_container");
+  $lists.each(function (s) {
+    var tl = task_list(Application.strip_id(s));
+    tl.task_form().hide();
+    tl.task_list_form().hide();
+  });
+  //tasks (task_form)
+  $tasks = $$(".task_container");
+  $tasks.each(function (s) {
+    var t = task(Application.strip_id(s));
+    t.task_form().hide();
+  });
+  //task_list_Create
+  var taskListCreator = $("task_list_new");
+  taskListCreator.hide();
+  $A(taskListCreator.getElementsByTagName("INPUT")).invoke("disable");
+};
 
 var task_form = function (id) {
   var instance = TaskForm.cache[id];

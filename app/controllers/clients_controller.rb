@@ -5,7 +5,7 @@ class ClientsController < ApplicationController
     else
       @client = Client.find_by_email(params[:id], :conditions=> {:user_id => current_user.id})
     end
-    render json: @client
+    render json: (@client or {})
   end
 
   def index

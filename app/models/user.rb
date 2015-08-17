@@ -21,6 +21,14 @@ class User < ActiveRecord::Base
   
   attr_accessor   :unencrypted_password, :unencrypted_password_confirmation
   attr_protected  :password
+
+  attr_accessible :email,
+                  :display_name,
+                  :address,
+                  :city,
+                  :state,
+                  :zip,
+                  :country
   
   serialize :prefs, Hash
 

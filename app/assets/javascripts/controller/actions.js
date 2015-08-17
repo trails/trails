@@ -38,7 +38,7 @@ Actions.addMethods({
   },
 
   url: function() {
-    return this.task.url()+"actions";
+    return this.task.url() + '/actions';
   },
 
   ajaxAction: function($super, name) {

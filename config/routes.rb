@@ -8,6 +8,7 @@ TheApp::Application.routes.draw do
   # Keep in mind you can assign values other than :controller and :action
   match 'task_lists/refresh' => 'task_lists#refresh'
   match 'signup' => 'users#new'
+  match 'settings' => 'users#edit'
 
   match 'thanks' => 'pages#thanks'
 
@@ -17,7 +18,7 @@ TheApp::Application.routes.draw do
   # This route can be invoked with purchase_url(:id => product.id)
   match 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
   match 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
-  match "/clients/:id" => 'clients#show', :constraints => { :id => /[^\/]+/ }
+  get "/clients/:id" => 'clients#show', :constraints => { :id => /[^\/]+/ }
 
   match 'login' => 'sessions#new'
   match 'session/destroy' => 'sessions#destroy'

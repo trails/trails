@@ -1,21 +1,21 @@
 #invoices li > header + section,
-#invoices li > header + section > form {
+#invoices li > header + section > fieldset {
     position: relative;
 }
 
-#invoices li > header + section > form {
+#invoices li > header + section > fieldset {
     margin: 0 auto;
     padding: 1em 0;
     text-align: left;
     font-size: 2.5em;
 }
 
-#invoices li > header + section > form .submit {
+#invoices li > header + section > fieldset .submit {
     display: none;
 }
 
 /* Question list style */
-#invoices li > header + section > form ol {
+#invoices li > header + section > fieldset ol {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -24,7 +24,7 @@
     transition: height .1s;
 }
 
-#invoices li > header + section > form ol:before {
+#invoices li > header + section > fieldset ol:before {
     content: '';
     position: absolute;
     left: 0;
@@ -33,7 +33,7 @@
     height: 2.35em;
 }
 
-#invoices li > header + section > form .questions li {
+#invoices li > header + section > fieldset .questions li {
     z-index: 100;
     position: relative;
     visibility: hidden;
@@ -42,7 +42,7 @@
     transition: visibility 0s .1s, height 0s .1s;
 }
 
-#invoices li > header + section > form .questions li.current {
+#invoices li > header + section > fieldset .questions li.current {
     visibility: visible;
     height: auto;
     -webkit-transition: none;
@@ -50,14 +50,14 @@
 }
 
 /* Labels */
-#invoices li > header + section > form .questions li > span {
+#invoices li > header + section > fieldset .questions li > span {
     display: block;
     overflow: hidden;
     font-size: .8em;
     color: #999999;
 }
 
-#invoices li > header + section > form .questions li > span label {
+#invoices li > header + section > fieldset .questions li > span label {
     display: block;
     -webkit-transition: -webkit-transform .1s;
     transition: transform .1s;
@@ -65,14 +65,14 @@
     transform: translateY(-100%);
 }
 
-#invoices li > header + section > form .questions li.current > span label {
+#invoices li > header + section > fieldset .questions li.current > span label {
     -webkit-transition: none;
     transition: none;
     -webkit-transform: translateY(0);
     transform: translateY(0);
 }
 
-#invoices li > header + section > form.show-next .questions li.current > span label {
+#invoices li > header + section > fieldset.show-next .questions li.current > span label {
     -webkit-animation: moveUpFromDown .1s both;
     animation: moveUpFromDown .1s both;
 }
@@ -88,7 +88,7 @@
 }
 
 /* Input field */
-#invoices li > header + section > form .questions input {
+#invoices li > header + section > fieldset .questions input {
     display: block;
     margin: 0.3em 0 0 0;
     padding: 0.5em 1em 0.5em 0.7em;
@@ -102,7 +102,7 @@
     transition: opacity 0.3s;
 }
 
-#invoices li > header + section > form .questions input:invalid {
+#invoices li > header + section > fieldset .questions input:invalid {
     border: 0;
     outline: none;
     box-shadow: none;
@@ -110,17 +110,17 @@
     -webkit-box-shadow: none;
 }
 
-#invoices li > header + section > form .questions .current input {
+#invoices li > header + section > fieldset .questions .current input {
     opacity: 1;
 }
 
-#invoices li > header + section > form .questions input:focus,
-#invoices li > header + section > form button:focus {
+#invoices li > header + section > fieldset .questions input:focus,
+#invoices li > header + section > fieldset button:focus {
     outline: none;
 }
 
 /* Next question button */
-#invoices li > header + section > form .next {
+#invoices li > header + section > fieldset .next {
     position: absolute;
     right: 0;
     bottom: 3em;
@@ -143,11 +143,11 @@
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-#invoices li > header + section > form .next:hover {
+#invoices li > header + section > fieldset .next:hover {
     color: rgba(0,0,0,0.5);
 }
 
-#invoices li > header + section > form .next::after {
+#invoices li > header + section > fieldset .next::after {
     position: absolute;
     top: -.2em;
     left: -.2em;
@@ -166,15 +166,15 @@
     font-size: 1.5em;
 }
 
-#invoices li > header + section > form:valid .next::after {
+#invoices li > header + section > fieldset:valid .next::after {
     content: '\f061';
 }
 
-#invoices li > header + section > form[state="new"]:valid .next::after {
+#invoices li > header + section > fieldset[state="new"]:valid .next::after {
     content: '\f067';
 }
 
-#invoices li > header + section > form .next.show {
+#invoices li > header + section > fieldset .next.show {
     opacity: 1;
     -webkit-transform: translateX(0);
     transform: translateX(0);
@@ -182,7 +182,7 @@
 }
 
 /* Progress bar */
-#invoices li > header + section > form .progress {
+#invoices li > header + section > fieldset .progress {
     width: 0%;
     height: 0.15em;
     background: rgba(0,0,0,0.3);
@@ -190,7 +190,7 @@
     transition: width .1s ease-in-out;
 }
 
-#invoices li > header + section > form .progress::before {
+#invoices li > header + section > fieldset .progress::before {
     position: absolute;
     top: auto;
     width: 100%;
@@ -200,7 +200,7 @@
 }
 
 /* Number indicator */
-#invoices li > header + section > form .number {
+#invoices li > header + section > fieldset .number {
     position: absolute;
     right: 0;
     overflow: hidden;
@@ -210,7 +210,7 @@
     font-size: .5em;
 }
 
-#invoices li > header + section > form .number:after {
+#invoices li > header + section > fieldset .number:after {
     position: absolute;
     left: 50%;
     content: '/';
@@ -219,43 +219,43 @@
     transform: translateX(-50%);
 }
 
-#invoices li > header + section > form .number span {
+#invoices li > header + section > fieldset .number span {
     float: right;
     width: 40%;
     text-align: center;
 }
 
-#invoices li > header + section > form .number .number-current {
+#invoices li > header + section > fieldset .number .number-current {
     float: left;
 }
 
-#invoices li > header + section > form .number-next {
+#invoices li > header + section > fieldset .number-next {
     position: absolute;
     left: 0;
 }
 
-#invoices li > header + section > form.show-next .number-current {
+#invoices li > header + section > fieldset.show-next .number-current {
     -webkit-transition: -webkit-transform .1s;
     transition: transform .1s;
     -webkit-transform: translateY(-100%);
     transform: translateY(-100%);
 }
 
-#invoices li > header + section > form.show-next .number-next {
+#invoices li > header + section > fieldset.show-next .number-next {
     -webkit-animation: moveUpFromDown .1s both;
     animation: moveUpFromDown .1s both;
 }
 
 /* Error and final message */
-#invoices li > header + section > form .error-message,
-#invoices li > header + section > form + span {
+#invoices li > header + section > fieldset .error-message,
+#invoices li > header + section > fieldset + span {
     visibility: hidden;
     opacity: 0;
     -webkit-transition: opacity .1s;
     transition: opacity .1s;
 }
 
-#invoices li > header + section > form .error-message {
+#invoices li > header + section > fieldset .error-message {
     position: absolute;
     padding: 0.4em 3.5em 0 0;
     width: 100%;
@@ -264,57 +264,57 @@
     font-size: .5em;
 }
 
-#invoices li > header + section > form + span {
+#invoices li > header + section > fieldset + span {
     position: relative;
     width: 100%;
     display: inline-block;
     padding-bottom: .5em;
 }
 
-#invoices li > header + section > form + span.show {
+#invoices li > header + section > fieldset + span.show {
     -webkit-transition: opacity .3s .3s, visibility .3s .3s;
     transition: opacity .3s .3s, visibility .3s .3s;
     -webkit-transform: translateX(0);
     transform: translateX(0);
 }
 
-#invoices li > header + section > form .error-message.show,
-#invoices li > header + section > form + span.show {
+#invoices li > header + section > fieldset .error-message.show,
+#invoices li > header + section > fieldset + span.show {
     visibility: visible;
     opacity: 1;
 }
 
-#invoices li > header + section > form + span.show {
+#invoices li > header + section > fieldset + span.show {
     -webkit-transition-delay: 0.5s;
     transition-delay: 0.5s;
 }
 
-#invoices li > header + section > form + span > .controls {
+#invoices li > header + section > fieldset + span > .controls {
     position: absolute;
     top: 0;
     right: 0;
 }
 
-#invoices li > header + section > form + span > .controls button {
+#invoices li > header + section > fieldset + span > .controls button {
     border: 0 none;
     background: transparent none;
     padding: 0;
     color: #999999;
     cursor: pointer;
 }
-#invoices li > header + section > form + span > .controls button:before {
+#invoices li > header + section > fieldset + span > .controls button:before {
     font-family: FontAwesome;
     font-size: 2em;
 }
-#invoices li > header + section > form + span > .controls button.edit:before {
+#invoices li > header + section > fieldset + span > .controls button.edit:before {
     content: '\f044';
 }
-#invoices li > header + section > form + span > .controls button.change:before {
+#invoices li > header + section > fieldset + span > .controls button.change:before {
     content: '\f00d';
 }
 
 /* Final hiding of form / showing message */
-#invoices li > header + section > form.hide {
+#invoices li > header + section > fieldset.hide {
     visibility: hidden;
     opacity: 0;
     -webkit-transition: opacity .3s, visibility .3s 0;
@@ -323,19 +323,19 @@
 }
 
 /* Remove IE clear cross */
-#invoices li > header + section > form input::-ms-clear {
+#invoices li > header + section > fieldset input::-ms-clear {
     display: none;
 }
 
 /* Adjust form for smaller screens */
 @media screen and (max-width: 44.75em) {
-    #invoices li > header + section > form {
+    #invoices li > header + section > fieldset {
         font-size: 1.8em;
     }
 }
 
 @media screen and (max-width: 33.5625em) {
-    #invoices li > header + section > form {
+    #invoices li > header + section > fieldset {
         font-size: 1.2em;
     }
 }

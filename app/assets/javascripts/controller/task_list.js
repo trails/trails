@@ -26,12 +26,9 @@ TaskList.addMethods({
       method: "put",
       parameters: {
         tasks: seq.toString()
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
     };
-    new Ajax.Request(this.url() + "setsequence", options);
+    new Ajax.Request(this.url() + '/setsequence', options);
   },
 
   listContainer: function() {

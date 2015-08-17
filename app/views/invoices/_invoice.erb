@@ -14,12 +14,17 @@
     <%= user.country %></p>
   </section>
   <main>
-    <ul>
-      <%= render :partial=>invoice.sorted_tasks %>
-    </ul>
+    <%= render :partial => 'invoices/edit', :object => invoice %>
   </main>
   <footer>
     <p>Total time <span>0:00</span></p>
     <p>Total due <span>$0</span></p>
   </footer>
+  <% if invoice.id %>
+    <fieldset>
+      <button>Send</button>
+      <button>Delete</button>
+      <button>Print</button>
+    </fieldset>
+  <% end %>
 </li>

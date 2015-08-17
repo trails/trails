@@ -7,16 +7,24 @@
 //= require stepsForm
 
 //= require controller
-//= require controller/task
 //= require controller/actions
-//= require controller/task_list
+
+//= require controller/task
 //= require controller/task_form
+
+//= require controller/task_list
 //= require controller/task_list_form
+
 //= require controller/invoice
+//= require controller/invoice_form
+
+//= require controller/client
+//= require controller/client_form
 
 var Application = {
   init: function() {
     Application.extendElement();
+    Application.CSRFAjax()
 
     Application.initDragAndDrop();
     Application.initSliders();
@@ -24,30 +32,46 @@ var Application = {
     //Initialize clockTicking
     $showTick = false;
     setInterval(Application.clockTick, 500);
-    
+
     //check if totals need to be shown for each list
     Application.toggleTotals();
     Application.attachEventHandlers();
-    Application.invoiceZoomOut();
-    Application.initClientForms();
+
+    Invoice.init();
+  },
+
+  CSRFAjax: function() {
+    Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
+      function (original, options) {
+        var headers = options.requestHeaders || {},
+            token = $$('meta[name=csrf-token]')[0].readAttribute('content');
+        headers["X-CSRF-Token"] = token;
+        options.requestHeaders = headers;
+        return original(options);
+      }
+    );
   },
 
   extendElement: function() {
     Element.addMethods({
-      recordID: function (element) {
-        do {
+      recordID: function (element, prefix) {
+        var ret = null;
+        while (element) {
+          var matchRegEx = new RegExp((prefix ? prefix : '') + '\\_(\\d+|new)(?:$|\\_.+)');
+          var match;
+          if (element.id && matchRegEx.test(element.id)) {
+            match = matchRegEx.exec(element.id);
+          }
+          if (element.href && matchRegEx.test(element.href)) {
+            match = matchRegEx.exec(element.href);
+          }
+          if (match) {
+            ret = match[1];
+            break;
+          }
           element = element.parentNode;
-        } while (!element.id && !element.href);
-
-        if (element.id) {
-          var match = element.id.match(/\d+/);
-          if(!match) return "new";
-          return parseInt(match[0]);
         }
-
-        if (element.href) {
-          return parseInt(element.href.match(/\d+/).last());
-        }
+        return ret;
       },
 
       fadeDelete: function (element) { //fades element, then deletes it
@@ -171,7 +195,7 @@ var Application = {
 
     $S(".task.new .submit input[type=submit]").observe("click", function(event) {
       var element = event.element();
-      var id = element.recordID();
+      var id = element.parentNode.recordID('task_list');
       element.form.responder = task_list(id).task_form();
     });
 
@@ -219,7 +243,7 @@ var Application = {
 
     $S("input[type=submit][method]").observe("click", function(event) {
       var element = event.element();
-      element.form.overrideMthod = element.readAttribute("method");
+      element.form.overrideMethod = element.readAttribute("method");
     });
 
     $S('.task.form .default_rate_check > input[type="checkbox"]').observe('change', function(event) {
@@ -237,131 +261,17 @@ var Application = {
       }
     });
     $S('#invoices > h2').observe('click', function(event) {
-      Application.invoiceZoomOut();
+      Invoice.zoomOut();
       $('invoices').toggleClassName('show');
     });
     $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
-      var element =
-        event.element().match('#invoices > ul > li')
-          ? event.element()
-          : event.element().up('#invoices > ul > li');
-      Application.invoiceZoomIn(element);
+      var id = event.element().recordID('invoice');
+      invoice(id).zoomIn();
     });
     $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom)').observe('click', function(event) {
-      Application.invoiceZoomOut();
+      Invoice.zoomOut();
     });
     window.addEventListener('resize', Application.handleResize, false);
-  },
-
-  INVOICES_CSS_SCALE: .2,
-  invoiceZoomIn: function (element) {
-    var listWidth = $$('#invoices > ul')[0].getLayout().get('width');
-    var listHeight = $$('#invoices > ul')[0].getLayout().get('height');
-    var scaleX = listWidth / element.getLayout().get('margin-box-width');
-    var scaleY = listHeight / element.getLayout().get('margin-box-height');
-    var width = element.getLayout().get('margin-box-width');
-    var height = element.getLayout().get('margin-box-height');
-    var scale = scaleX < scaleY ? scaleX : scaleY;
-    var realScale = scale * Application.INVOICES_CSS_SCALE;
-    var offsetX = ((listWidth - width * scale) / 2 - element.offsetLeft * scale) * Application.INVOICES_CSS_SCALE;
-    var offsetY = ((listHeight - height * scale) / 2 - element.offsetTop * scale) * Application.INVOICES_CSS_SCALE;
-    $$('#invoices > ul')[0].addClassName('zoomed').setStyle({
-      transform:
-        'translate(' + offsetX.toString() + 'px, ' + offsetY.toString() + 'px) ' +
-        'scale(' + realScale.toString() + ')'
-    });
-    element.addClassName('zoom');
-  },
-  invoiceZoomOut: function () {
-    var zoomItem = $$('#invoices > ul > li.zoom');
-    if (zoomItem.length) {
-      zoomItem[0].removeClassName('zoom');
-    }
-    $$('#invoices > ul')[0].removeClassName('zoomed').setStyle({
-      transform: 'translate(0, 0) scale(' + Application.INVOICES_CSS_SCALE + ')'
-    });
-  },
-
-  fillClientData: function (form, client) {
-    form.elements['client[id]'].value = client ? client.id : '';
-    form.elements['client[name]'].value = client ? client.name : '';
-    form.elements['client[country]'].value = client ? client.country : '';
-    form.elements['client[state]'].value = client ? client.state : '';
-    form.elements['client[city]'].value = client ? client.city : '';
-    form.elements['client[zip]'].value = client ? client.zip : '';
-    form.elements['client[address]'].value = client ? client.address : '';
-    var clientLayout = form.next('span');
-    clientLayout.down('h4').innerHTML = client ? client.name : '';
-    clientLayout.down('p').innerHTML =
-      client
-        ?
-          client.address + "\n" +
-          client.city + ', ' + client.state + ', ' + client.zip + "\n" +
-          client.country
-        : '';
-  },
-
-  showClientForm: function (stepForm) {
-    var form = stepForm.el;
-    var clientLayout = form.next('span');
-    clientLayout.removeClassName('show');
-    form.removeClassName('hide');
-  },
-  showClientView: function (stepForm) {
-    var form = stepForm.el;
-    var clientLayout = form.next('span');
-    clientLayout.addClassName('show');
-    form.addClassName('hide');
-    stepForm.reset();
-  },
-  initClientForms: function() {
-    $$('#invoices li > header + section > form').each(function (theForm) {
-      var stepForm = new stepsForm(theForm, {
-        onSubmit: function (form) {
-          var form_client = theForm.readAttribute('state');
-          if (form_client == 'new') {
-            // @TODO: create new client
-          } else {
-            Application.showClientView(stepForm);
-          }
-        },
-        onInput: function (ev) {
-          var input = ev.target;
-          if (input.match('form.edit_client:not([state="edit"]) input[type="email"]')) {
-            new Ajax.Request("/clients/" + input.value, {
-              method: 'get',
-              requestHeaders: {
-                "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-              },
-              onSuccess: function (transport) {
-                var client = transport.responseJSON;
-                theForm.writeAttribute('state', client ? client.id : 'new');
-                Application.fillClientData(theForm, client);
-              }
-            });
-          }
-        },
-        beforeNextQuestion: function () {
-          var form_client = theForm.readAttribute('state');
-          if (form_client == 'new' || form_client == 'edit') {
-            return true;
-          }
-          Application.showClientView(stepForm);
-          return false;
-        }
-      });
-      theForm.next('span').down('button.edit').observe('click', function(ev) {
-        theForm.writeAttribute('state', 'edit');
-        Application.showClientForm(stepForm);
-      });
-      theForm.next('span').down('button.change').observe('click', function(ev) {
-        theForm.writeAttribute('state', 'select');
-        Application.showClientForm(stepForm);
-      });
-      if (parseInt(theForm.readAttribute('state'))) {
-        Application.showClientView(stepForm);
-      }
-    });
   },
 
   handleResize: function () {
@@ -369,41 +279,26 @@ var Application = {
       return;
     }
     if ($$('#invoices > ul')[0].match('.zoomed')) {
-      var element = $$('#invoices > ul > li.zoom')[0];
-      Application.invoiceZoomIn(element);
+      var id = $$('#invoices > ul > li.zoom')[0].recordID();
+      invoice(id).zoomIn()
     }
   },
 
   formSubmitHandler: function (event) {
     event.stop();
-    var options = {
-      requestHeaders: {
-      "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-      }
-    };
-    // Setup before request
-    if (this.overrideAction) {
-      var defaultAction = this.action;
-      this.action = this.overrideAction;
-    }
-    if (this.overrideMthod) {
-      var defaultMethod = this.method;
-      this.method = this.overrideMthod;
-    }
-    if (this.responder) {
-      if(this.responder.onSuccess) options.onSuccess = this.responder.onSuccess.bind(this.responder)
-    }
+    var action = this.overrideAction ? this.overrideAction : this.action,
+        method = this.overrideMethod ? this.overrideMethod : this.method,
+        options = {
+          method: method,
+          parameters: this.serialize()
+        };
 
+    if (this.responder && this.responder.onSuccess) {
+      options.onSuccess = this.responder.onSuccess.bind(this.responder);
+    }
     // Perform request!
-    this.request(options);
+    var request = new Ajax.Request(action, options); //this.request(options);
 
-    // Clean up
-    if (this.overrideAction) {
-      this.action = defaultAction;
-    }
-    if (this.overrideMthod) {
-      this.method = defaultMethod;
-    }
     this.responder = null;
   },
 
@@ -419,40 +314,6 @@ var Application = {
     $sortable_containers.each(function (container) {
       Application.dragAndDropTaskList(container);
     });
-
-    Application.initInvoicesDnD();
-  },
-
-  initInvoicesDnD: function () {
-    $$("#invoices li main > ul").each(function (container) {
-      Sortable.create(container, {
-        draggable: 'li.task_container',
-        group: {
-          name: 'invoices',
-          pull: true,
-          put: ['taskList']
-        },
-        onAdd: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        },
-        onUpdate: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        },
-        onRemove: function (evt) {
-          Application.updateInvoiceTasksOrder(evt.target.up('#invoices > ul > li'));
-        }
-      });
-    });
-  },
-
-  updateInvoiceTasksOrder: function (container) {
-    var invoice_id = Application.strip_id(container);
-    if (!invoice_id) {
-      return;
-    }
-    var inv = invoice(invoice_id);
-    var seq = Application.getSequence(container.down('ul'));
-    inv.setTaskSequence(seq);
   },
 
   dragAndDropTaskList: function (task_list_container) {
@@ -577,9 +438,6 @@ var Application = {
         Application.toggleTotals();
 
         setTimeout(Application.updateTasks, 10000);
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
     };
     new Ajax.Request("/task_lists/refresh", options);
@@ -613,26 +471,6 @@ var Application = {
       var l = task_list(Application.strip_id(s));
       l.checkIfTotalNeeded();
     });
-  },
-
-  hideTaskForms: function() {
-    //lists (task_form + task_list_form)
-    $lists = $$(".list_container");
-    $lists.each(function (s) {
-      var tl = task_list(Application.strip_id(s));
-      tl.task_form().hide();
-      tl.task_list_form().hide();
-    });
-    //tasks (task_form)
-    $tasks = $$(".task_container");
-    $tasks.each(function (s) {
-      var t = task(Application.strip_id(s));
-      t.task_form().hide();
-    });
-    //task_list_Create
-    var taskListCreator = $("task_list_new");
-    taskListCreator.hide();
-    $A(taskListCreator.getElementsByTagName("INPUT")).invoke("disable");
   },
 
   formattedTime: function(t) {
