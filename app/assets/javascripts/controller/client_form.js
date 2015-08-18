@@ -5,7 +5,7 @@ ClientForm.cache = {};
 ClientForm.addMethods({
   show: function(wizard) {
     InvoiceForm.disableAll();
-    invoice_id = wizard.recordID('invoice');
+    var invoice_id = wizard.recordID('invoice');
     $A(invoice(invoice_id).element().getElementsByTagName("INPUT")).invoke("enable");
     var clientLayout = wizard.next('span');
     clientLayout.removeClassName('show');
@@ -13,10 +13,16 @@ ClientForm.addMethods({
   },
 
   onSuccess: function(transport) {
-    var client = transport.responseJSON;
-    Client.render(client, this.form);
+    var wizard = this.client.form,
+        status = wizard.readAttribute('status'),
+        invoice_id = wizard.recordID('invoice'),
+        data = transport.responseJSON;
+    Client.render(data, this.form);
     this.client.show();
     this.form.stepForm.reset();
+    if (status == 'new' && invoice_id == 'new' && data.id) {
+      invoice(invoice_id).update();
+    }
   }
 });
 
@@ -35,8 +41,8 @@ ClientForm.init = function (newInvoiceOnly) {
       },
       onInput: function (ev) {
         var input = ev.target,
-            id = input.recordID('invoice');
-        invoice(id).invoice_form().enable();
+            invoice_id = input.recordID('invoice');
+        invoice(invoice_id).invoice_form().enable();
         if (input.match('input[type="email"]')) {
           new Ajax.Request("/clients/" + input.value, {
             method: 'get',
@@ -57,13 +63,13 @@ ClientForm.init = function (newInvoiceOnly) {
         }
       },
       beforeNextQuestion: function () {
-        var status = wizard.readAttribute('status');
+        var status = wizard.readAttribute('status'),
+            invoice_id = wizard.recordID('invoice');
         if (status == 'new' || status == 'edit') {
           if (status == 'new') {
           }
           return true;
         }
-        invoice_id = wizard.recordID('invoice');
         if (status == 'display' && invoice_id == 'new') {
           invoice(invoice_id).update();
         }
