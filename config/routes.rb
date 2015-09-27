@@ -4,7 +4,7 @@ TheApp::Application.routes.draw do
 
   get '/logout' => 'sessions#destroy'
 
-  get 'task_lists/refresh' => 'task_lists#refresh'
+  match 'task_lists/refresh' => 'task_lists#refresh', via: [:get, :post, :put]
   get 'settings' => 'users#edit'
   get 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
   get 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
