@@ -39,7 +39,7 @@ class TaskListsController < ApplicationController
 
   def refresh
     @jsonTasks = []
-    @task_lists = TaskList.find(:all, :conditions=> {:owner_id=>session[:user_id]}, :order=>"updated_at DESC")
+    @task_lists = TaskList.order("updated_at DESC").where({:owner_id => current_user.id})
     total_duration = 0
     total_earnings = Money.new(0, "USD")
     @task_lists.each do |task_list_id|
