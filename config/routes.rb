@@ -1,96 +1,39 @@
-TheApp::Application.routes.draw do  
+TheApp::Application.routes.draw do
+  get 'auth/:provider/callback' => 'sessions#create'
+  get 'auth/failure' => redirect('/')
 
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
+  get '/logout' => 'sessions#destroy'
 
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
-  match 'task_lists/refresh' => 'task_lists#refresh'
-  match 'signup' => 'users#new'
-  match 'settings' => 'users#edit'
-
-  match 'thanks' => 'pages#thanks'
-
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
-  match 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
-  match 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
+  get 'task_lists/refresh' => 'task_lists#refresh'
+  get 'settings' => 'users#edit'
+  get 'task_lists/:id/setsequence' => 'task_lists#setTasksSequence', :as => :setsequence
+  get 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
   get "/clients/:id" => 'clients#show', :constraints => { :id => /[^\/]+/ }
 
-  match 'login' => 'sessions#new'
-  match 'session/destroy' => 'sessions#destroy'
+  get 'thanks' => 'pages#thanks'
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-  resource :session
-  
+  resource :sessions, only: [:create, :destroy]
+
   resources :users,
             :clients,
             :invoices
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-  
   resources :task_lists do
     resources :tasks
     member do
       post :destroy
     end
   end
-  
+
   resources :tasks do
     resources :actions
     member do
       post :destroy
     end
   end
-  
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
 
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
-
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
   root :to => "pages#home"
 
-  # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
-  match ':controller/:action'
-  #match ':controller/:action.:format'
-
-  match ':controller/:id/:action'
-  #match ':controller/:id/:action.:format'
+  match ':controller/:action', via: [:get, :post, :put, :delete]
+  match ':controller/:id/:action', via: [:get, :post, :put, :delete]
 end

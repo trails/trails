@@ -8,10 +8,10 @@
   <%= render :partial => invoice.client ? invoice.client : Client.new,
     :locals => {prefix: 'invoice_' + (invoice.id ? "#{invoice.id}" : 'new') } %>
   <section>
-    <h4><%= user.display_name %></h4>
-    <p><%= user.address %>
-    <%= user.city %>, <%= user.state %>, <%= user.zip %>
-    <%= user.country %></p>
+    <h4><%= user.name %></h4>
+    <p><%#= user.address %>
+    <%#= user.city %>, <%#= user.state %>, <%#= user.zip %>
+    <%#= user.country %></p>
   </section>
   <main>
     <%= render :partial => 'invoices/edit', :object => invoice %>

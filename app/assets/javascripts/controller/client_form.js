@@ -20,7 +20,7 @@ ClientForm.addMethods({
     Client.render(data, this.form);
     this.client.show();
     this.form.stepForm.reset();
-    if (status == 'new' && invoice_id == 'new' && data.id) {
+    if (data.id) {
       invoice(invoice_id).update();
     }
   }

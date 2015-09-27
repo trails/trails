@@ -1,10 +1,4 @@
 class Invoice < ActiveRecord::Base
-  attr_accessible   :description,
-                    :client_id,
-                    :created,
-                    :due,
-                    :task_order
-
   has_many :tasks,
     :foreign_key => "invoice_id"
 
@@ -15,7 +9,14 @@ class Invoice < ActiveRecord::Base
   before_save :save_task_order
 
   def total
-    tasks.to_a.sum(&:earnings).to_money
+    sum = tasks.to_a.sum(&:earnings)
+    sum == 0 ? 0.0 : sum.to_money
+  end
+
+  def earnings
+
+    return 0.0 if !sum
+    return sum if sum
   end
 
   def sorted_tasks

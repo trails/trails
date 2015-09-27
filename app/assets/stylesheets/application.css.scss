@@ -278,25 +278,17 @@ tr.blank_task td {
   text-decoration: underline;
 }
 
-.delete {
-  padding-top: 15px;
-  height: 0px;
-  width: 15px;
-  display: block;
+.task .toolbar .delete {
   float: left;
-  background-image: url('Trash.png');
-  background-repeat: no-repeat;
-  background-position: 0px left;
-  overflow: hidden;
   border: none !important;
-  font-size: 1px;
-  background-color: none;
-}
-.delete:hover {
-  background-position: -14px left;
-  background-color: none;
+  font-size: 1.15em;
+  padding: 0 .2em;
+  color: #666666;
 }
 
+.task .toolbar .delete:hover {
+  color: #a12b2b;
+}
 td.status {
   min-width: 18px;
 }
