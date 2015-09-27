@@ -44,7 +44,7 @@ class TaskList < ActiveRecord::Base
   end
 
   def earnings
-    tasks.to_a.sum(&:earnings).to_money
+    Money.new(tasks.to_a.sum(&:earnings), "USD")
   end
 
   def duration
