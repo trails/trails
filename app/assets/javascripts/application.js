@@ -41,6 +41,9 @@ var Application = {
   },
 
   CSRFAjax: function() {
+    if (0 == $$('meta[name=csrf-token]').length) {
+      return;
+    }
     Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
       function (original, options) {
         var headers = options.requestHeaders || {},
