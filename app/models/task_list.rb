@@ -21,7 +21,7 @@ class TaskList < ActiveRecord::Base
   end
 
   def default_rate=(rate)
-    self.actual_default_rate = rate.to_money
+    self.actual_default_rate = Money.new(rate.to_i * 100, "USD")
   end
 
   def running_tasks

@@ -15,7 +15,7 @@
         Total:
       </span>
       <span class="grand_total" id="grand_total_earnings">
-        <%= @task_lists.to_a.sum(&:earnings).to_money.format(:no_cents_if_whole => true, :symbol => "$") %>
+        <%= Money.new(@task_lists.to_a.sum(&:earnings), "USD").format(:no_cents_if_whole => true, :symbol => "$") %>
       </span>
       <span class="grand_total" id="grand_total_duration">
         <%= raw formatted_duration(@task_lists.to_a.sum(&:duration)) %>
