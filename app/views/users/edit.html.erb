@@ -1,31 +1,11 @@
 <%= form_for @user do |form| %>
   <fieldset>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </fieldset>
+  <fieldset>
     <%= form.label :email %>
     <%= form.text_field :email %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :display_name, 'Name' %>
-    <%= form.text_field :display_name %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :address %>
-    <%= form.text_field :address %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :city %>
-    <%= form.text_field :city %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :state %>
-    <%= form.text_field :state %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :zip %>
-    <%= form.text_field :zip %>
-  </fieldset>
-  <fieldset>
-    <%= form.label :country %>
-    <%= form.text_field :country %>
   </fieldset>
   <%= form.submit 'Save', :method=>'put' %>
 <% end %>

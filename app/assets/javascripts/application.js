@@ -107,7 +107,7 @@ var Application = {
       task(id).edit(event);
     });
 
-    $S(".task .toolbar .delete").observe("click", function(event) {
+    $S(".task .toolbar .delete, .task .toolbar .delete > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
@@ -261,8 +261,10 @@ var Application = {
       }
     });
     $S('#invoices > h2').observe('click', function(event) {
-      Invoice.zoomOut();
       $('invoices').toggleClassName('show');
+      if (!$('invoices').hasClassName('show')) {
+        Invoice.zoomOut();
+      }
     });
     $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
       var id = event.element().recordID('invoice');

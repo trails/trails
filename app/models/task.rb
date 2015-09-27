@@ -1,38 +1,29 @@
 class Task < ActiveRecord::Base
-  composed_of :specific_rate, 
-    :class_name => "Money", 
-    :mapping    => [%w(rate_cents cents), %w(currency currency_as_string)], 
+  composed_of :specific_rate,
+    :class_name => "Money",
+    :mapping    => [%w(rate_cents cents), %w(currency currency_as_string)],
     :allow_nil  => true
-  
-  has_many :log_entries, 
-    :order      => "created_at DESC",  
-    :dependent  => :destroy
-  
-  has_one :last_start, 
-    :class_name => "LogEntry", 
-    :order      => "created_at DESC", 
-    :conditions => "action = 'start'"
-  
-  belongs_to :task_list
-  
-  attr_accessible :description,
-                  :rate,
-                  :duration_cache,
-                  :task_list_id,
-                  :invoice_id
 
-  
+  has_many :log_entries,
+    :dependent  => :destroy
+
+  has_one :last_start, -> { where action: 'start' },
+    :class_name => "LogEntry",
+    :order      => "created_at DESC"
+
+  belongs_to :task_list
+
   include ApplicationHelper
-  
+
   validates_presence_of :task_list_id, :description
-  
+
   STATUS_MAP = {
     "start"     => :active,
     "stop"      => :stopped,
     "complete"  => :complete,
     "reopen"    => :stopped
   }
-  
+
   def add_action(action)
     action_name = action[:action]
     #do nothing if the new action won't change our status
@@ -45,33 +36,33 @@ class Task < ActiveRecord::Base
     log_entries.create(action)
     reload
   end
-  
+
   def last_entry
     log_entries.last
   end
-  
+
   def status
     return :stopped unless last_entry
     STATUS_MAP[log_entries.first.action]
     # @status ||= [:active, :stopped, :complete][rand(3)]
   end
-  
+
   def completed?
     status == :complete
   end
-  
+
   def active?
     status == :stopped or status == :active
   end
-  
+
   def running?
     status == :active
   end
-  
+
   def specific_rate?
     rate_cents?
   end
-  
+
   #if rate is negative then use default rate
   #else use specific_rate (value of 0 is now valid)
   def rate
@@ -87,22 +78,21 @@ class Task < ActiveRecord::Base
   end
 
   def rate=(value)
-    self.specific_rate = value.to_money if value
+    self.specific_rate = Money.new(value.to_f ? (value.to_f * 100).to_i : 0, "USD")
   end
-  
+
   def duration
     duration_cache || 0
   end
-  
-  
+
   def earnings
     rate * (running_time.to_f/(60*60))
   end
-  
+
   def earnings?
-    earnings > 0
+    !!earnings
   end
-  
+
   def running_time
     if(running?)
       Time.now - last_start.created_at + duration
@@ -110,7 +100,7 @@ class Task < ActiveRecord::Base
       duration
     end
   end
-  
+
   def updateDiffTime(difftime)
      new_time = duration + difftime*60
     if(new_time < 0)
@@ -124,19 +114,19 @@ class Task < ActiveRecord::Base
   #therefore will be moved here
   def task_duration
     if status == :active
-      formatted_duration(running_time) 
+      formatted_duration(running_time)
     else
       formatted_duration(duration)
     end
   end
-  
-  #same for task_earnings (see task_duration)   
+
+  #same for task_earnings (see task_duration)
   def task_earnings
      earnings.format(:no_cents_if_whole => true, :symbol => "$") if earnings?
   end
- 
+
   def task_duration_bar
     %Q|<div class="duration_bar" duration="#{running_time}"></div>|
   end
-  
+
 end

@@ -2,7 +2,7 @@
   <section class="<%= "#{task.class.name.underscore} #{task.status}" %>"
    id="<%= "#{task.class.name.underscore}_#{task.id}" %>">
     <span class="toolbar external">
-      <%= link_to "Delete", "#delete",:class=>"delete" %>
+      <%= link_to '<i class="fa fa-trash-o"></i>'.html_safe, "#delete",:class=>"delete" %>
       <%= link_to "Edit", "#edit", :class=>"edit" %>
       <img class="taskhandle" src="images/task_handle.png"/>
     </span>
