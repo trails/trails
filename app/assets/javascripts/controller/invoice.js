@@ -20,7 +20,8 @@ Invoice.addMethods({
     return {
       "invoice[id]": parseInt(this.id) ? 'new' : '',
       "invoice[client_id]": this.element().select('fieldset[client]')[0].readAttribute('client'),
-      "invoice[description]": this.element().select('header > input[name="client[description]"]')[0].value
+      "invoice[description]": this.element().select('header > input[name="invoice[description]"]')[0].value,
+      "invoice[due]": this.element().select('header p > input[name="invoice[due]"]')[0].value
     };
   },
 
