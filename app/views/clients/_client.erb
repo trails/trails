@@ -2,12 +2,9 @@
   <%= render :partial => 'clients/edit', :object => client, :locals => {prefix: prefix} %>
   <span>
     <div class="controls">
-      <button class="edit"></button>
       <button class="change"></button>
     </div>
     <h4><%= client.name %></h4>
-    <p><%= client.address %>
-    <%= client.city %>, <%= client.state %>, <%= client.zip %>
-    <%= client.country %></p>
+    <p><%= client.email %>
   </span>
 </section>

@@ -1,4 +1,4 @@
-@import 'yosemite-base';
+@import 'yosemite-base.css.scss';
 
 $form_width: 240px;
 $form_font: Arial, Helvetica, sans-serif;
@@ -34,7 +34,7 @@ $form_submit_color: #ffffff;
 }
 
 #signup > form input[type="email"] {
-    width: $form_width - 20px;    
+    width: $form_width - 20px;
 }
 
 #signup > form input[type="password"] {

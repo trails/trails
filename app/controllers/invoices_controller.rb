@@ -5,7 +5,7 @@ class InvoicesController < ApplicationController
   end
 
   def create
-    @invoice = Invoice.create!(params[:invoice])
+    @invoice = Invoice.create!(invoice_params)
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
@@ -29,7 +29,7 @@ class InvoicesController < ApplicationController
     @invoice = Invoice.find(params[:id])
 
     # unlink all tasks from invoice
-    @tasks_to_unlink = Task.all(:conditions=> "invoice_id = #{params[:id]}")
+    @tasks_to_unlink = Task.where(invoice_id: params[:id]).all
     @tasks_to_unlink.each do |task_id|
       @task = Task.find(task_id)
       @task.update_attributes("invoice_id" => 0)
@@ -43,6 +43,11 @@ class InvoicesController < ApplicationController
   end
 
   protected
+    def invoice_params
+      params.require(:invoice).permit(:id, :client_id, :description)
+    end
+
+
     def linkTasks (tasks, invoice)
       tasks.each do |task_id|
         @task = Task.find(task_id)

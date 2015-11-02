@@ -20,7 +20,7 @@ Invoice.addMethods({
     return {
       "invoice[id]": parseInt(this.id) ? 'new' : '',
       "invoice[client_id]": this.element().select('fieldset[client]')[0].readAttribute('client'),
-      "invoice[description]": this.element().select('header > h3 + p')[0].innerHTML
+      "invoice[description]": this.element().select('header > input[name="client[description]"]')[0].value
     };
   },
 
@@ -54,6 +54,7 @@ Invoice.addMethods({
           });
           element.insert({before: Invoice.newInvoiceClone});
           ClientForm.init(true);
+          invoice(data.id).zoomIn();
         }
       }
     });

@@ -273,7 +273,7 @@ var Application = {
       var id = event.element().recordID('invoice');
       invoice(id).zoomIn();
     });
-    $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom)').observe('click', function(event) {
+    $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
       Invoice.zoomOut();
     });
     window.addEventListener('resize', Application.handleResize, false);

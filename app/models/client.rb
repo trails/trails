@@ -4,11 +4,7 @@ class Client < ActiveRecord::Base
 
   validates_presence_of :user_id,
                         :email,
-                        :name,
-                        :address,
-                        :city,
-                        :country,
-                        :email
+                        :name
 
   validates_uniqueness_of   :email, :case_sensitive => false
   validates_length_of       :email, :within => 3..100

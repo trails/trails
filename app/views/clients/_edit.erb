@@ -3,41 +3,17 @@
     <ol class="questions">
       <li>
         <span><%= form.label :email %></span>
-        <%= form.text_field :email, :type => :email, :required => true %>
+        <%= form.text_field :email, :type => :email, :required => true, :placeholder => 'payer@email.adress' %>
       </li>
       <li>
         <span><%= form.label :name %></span>
         <%= form.text_field :name %>
-      </li>
-      <li>
-        <span><%= form.label :country %></span>
-        <%= form.text_field :country %>
-      </li>
-      <li>
-        <span><%= form.label :state %></span>
-        <%= form.text_field :state %>
-      </li>
-      <li>
-        <span><%= form.label :city %></span>
-        <%= form.text_field :city %>
-      </li>
-      <li>
-        <span><%= form.label :zip %></span>
-        <%= form.text_field :zip %>
-      </li>
-      <li>
-        <span><%= form.label :address %></span>
-        <%= form.text_field :address %>
       </li>
     </ol>
     <button class="submit" type="submit">Confirm</button>
     <div class="controls">
       <button class="next"></button>
       <div class="progress"></div>
-      <span class="number">
-        <span class="number-current"></span>
-        <span class="number-total"></span>
-      </span>
       <span class="error-message"></span>
     </div>
   </fieldset>
