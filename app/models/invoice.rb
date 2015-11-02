@@ -4,8 +4,7 @@ class Invoice < ActiveRecord::Base
 
   belongs_to :client
 
-  validates_presence_of :description,
-                        :client_id
+  validates_presence_of :client_id
   before_save :save_task_order
 
   def total
