@@ -17,9 +17,9 @@ class TaskListsController < ApplicationController
     head :ok
   end
 
-  def setTasksSequence
+  def setSequence
     # unlink all tasks from task_list
-    @tasks_to_unlink = Task.all(:conditions=> "task_list_id = #{params[:id]}")
+    @tasks_to_unlink = Task.where(task_list_id: params[:id]).all
     @tasks_to_unlink.each do |task_id|
       @task = Task.find(task_id)
       @task.update_attributes("task_list_id" => 0)

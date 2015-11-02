@@ -1,6 +1,6 @@
-@import 'reset-fonts';
-@import 'font-awesome';
-@import 'simform';
+@import 'reset-fonts.css.scss';
+@import 'font-awesome.css';
+@import 'simform.css';
 
 $left-margin: 70px;
 $invoices-scale: .2;
@@ -319,6 +319,10 @@ td.status {
 }
 .start .stop_task a:visited {
   text-decoration: underline;
+}
+
+.list_container {
+  min-height: 50px;
 }
 
 .task_list_container_row td {
@@ -696,6 +700,12 @@ input[name='task_list[title]'] {
   transform-origin: top left;
 }
 
+#invoices > ul.zoomed,
+#invoices > ul.zoomed > li:not(.zoom) {
+  cursor: -webkit-zoom-out;
+  cursor: -moz-zoom-out;
+}
+
 #invoices > ul > li {
   position: relative;
   display: inline-block;
@@ -713,12 +723,15 @@ input[name='task_list[title]'] {
   -webkit-transition: opacity .8s ease-out;
   text-align: left;
   box-shadow: .5em .5em .5em #cccccc;
+  cursor: default;
 }
 #invoices > ul.zoomed > li:not(.zoom) {
   opacity: 0;
 }
 #invoices.show > ul:not(.zoomed) > li {
   cursor: pointer;
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
 }
 
 #invoices header,
@@ -739,7 +752,9 @@ input[name='task_list[title]'] {
 }
 
 #invoices header h3,
+#invoices li header h3 + input[type="text"],
 #invoices header p,
+#invoices header p input[type="text"],
 #invoices section h4,
 #invoices section h4 + p {
   color: #527c22;
@@ -750,7 +765,7 @@ input[name='task_list[title]'] {
   width: 45%;
 }
 
-#invoices header details {
+#invoices header p:first-child {
   float: right;
   width: calc(50% - 40px);
   font-size: 2.5em;
@@ -762,8 +777,52 @@ input[name='task_list[title]'] {
   line-height: 1em;
 }
 
+#invoices li#invoice_new header h3 {
+  display: none;
+}
+
 #invoices header p {
   font-size: 2.5em;
+}
+
+#invoices li header h3 + input[type="text"] {
+  font-size: 2em;
+  display: inline-block;
+  border: 0;
+}
+
+#invoices li header h3 + input[type="text"] {
+  box-shadow: none;
+  outline: medium none;
+}
+
+
+#invoices li#invoice_new header h3 + input[type="text"] {
+  margin: 1em 0px;
+  padding: 0.5em 1em 0.5em 0.7em;
+  border-style: solid;
+  border-color: #f0f0f0;
+  border-width: 0px 0px 0.1em;
+}
+
+#invoices header p > input[type="text"] {
+  display: inline-block;
+  width: 6em;
+  border: 0;
+  outline: medium none;
+}
+
+
+#invoices li#invoice_new header {
+  position: relative;
+}
+
+#invoices li#invoice_new header:before {
+  content: 'Description';
+  position: absolute;
+  top: 1em;
+  font-size: 1.5em;
+  color: #999999;
 }
 
 #invoices header + section {
@@ -945,6 +1004,10 @@ input[name='task_list[title]'] {
   transition: opacity .8s ease-out;
   -moz-transition: opacity .8s ease-out;
   -webkit-transition: opacity .8s ease-out;
+}
+
+#invoices li#invoice_new > fieldset {
+  display: none;
 }
 
 #invoices > ul:not(.zoomed) li > fieldset {

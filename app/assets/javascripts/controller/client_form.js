@@ -31,59 +31,33 @@ ClientForm.init = function (newInvoiceOnly) {
   $$(selector).each(function (wizard) {
     wizard.observe("submit", Application.formSubmitHandler);
 
-    wizard.stepForm = new stepsForm(wizard, {
+    wizard.stepForm = new clientForm(wizard, {
       onSubmit: function () {
         var status = wizard.readAttribute('status');
         wizard.form.responder = client(0, wizard).client_form();
-        wizard.form.overrideAction = '/clients' + (status == 'new' ? '' : '/' + wizard.readAttribute('client'));
-        wizard.form.overrideMethod = status == 'new' ? 'post' : 'put';
+        wizard.form.overrideAction = '/clients';
+        wizard.form.overrideMethod = 'post';
         wizard.down('button[type="submit"]').click();
       },
-      onInput: function (ev) {
-        var input = ev.target,
-            invoice_id = input.recordID('invoice');
-        invoice(invoice_id).invoice_form().enable();
-        if (input.match('input[type="email"]')) {
-          new Ajax.Request("/clients/" + input.value, {
-            method: 'get',
-            onSuccess: function (transport) {
-              var client = transport.responseJSON,
-                  status = wizard.readAttribute('status'),
-                  current = wizard.readAttribute('client');
-              if (status == 'edit') {
-                if (client.email && client.id != current) {
-                  // email address already in use
-                }
-              } else {
-                Client.render(client, wizard);
-                wizard.stepForm.reset();
-              }
+      onIDQuery: function(question) {
+        var input = question.querySelector('input');
+        new Ajax.Request("/clients/" + input.value, {
+          method: 'get',
+          onSuccess: function (transport) {
+            var json = transport.responseJSON;
+            if (json.email) {
+              Client.render(json, wizard);
+              wizard.stepForm.reset();
+              var invoice_id = wizard.recordID('invoice');
+              invoice(invoice_id).update();
+              client(json.id, wizard).show();
+            } else {
+              wizard.stepForm.nextQuestion();
             }
-          });
-        }
-      },
-      beforeNextQuestion: function () {
-        var status = wizard.readAttribute('status'),
-            invoice_id = wizard.recordID('invoice');
-        if (status == 'new' || status == 'edit') {
-          if (status == 'new') {
           }
-          return true;
-        }
-        if (status == 'display' && invoice_id == 'new') {
-          invoice(invoice_id).update();
-        }
-        var id = parseInt(wizard.readAttribute('client'));
-        client(id, wizard).show()
-        wizard.stepForm.reset();
+        });
         return false;
       }
-    });
-    wizard.next('span').down('button.edit').observe('click', function(ev) {
-      ev.stop();
-      var id = wizard.readAttribute('client');
-      wizard.writeAttribute('status', 'edit');
-      client(id, wizard).client_form().show(wizard);
     });
     wizard.next('span').down('button.change').observe('click', function(ev) {
       ev.stop();

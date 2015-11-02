@@ -1,17 +1,16 @@
 <li id='<%= "#{invoice.class.name.underscore}_" + (invoice.id ? "#{invoice.id}" : 'new') %>'>
   <header>
-    <details><summary>totaling $<%= invoice.total %></summary>
-    &amp; due <%= invoice.due.strftime('%b %d, %Y') if invoice.due %></details>
-    <h3><%= invoice.id ? "Invoice #{invoice.number}" : 'New invoice' %></h3>
-    <p><%= invoice.id ? invoice.description : 'Drop tasks here' %></p>
+    <p>totaling $<%= invoice.total %>
+      &amp; due <input type="text" name="invoice[due]" value="<%= (invoice.due or Time.now + 2592000).strftime('%Y-%m-%d') %>" />
+    </p>
+    <h3>Invoice #<%= invoice.id ? invoice.number : '' %></h3>
+    <input type="text" name="invoice[description]" value="<%= invoice.description %>" placeholder="descriptive text" />
   </header>
   <%= render :partial => invoice.client ? invoice.client : Client.new,
     :locals => {prefix: 'invoice_' + (invoice.id ? "#{invoice.id}" : 'new') } %>
   <section>
     <h4><%= user.name %></h4>
-    <p><%#= user.address %>
-    <%#= user.city %>, <%#= user.state %>, <%#= user.zip %>
-    <%#= user.country %></p>
+    <p><%= user.email %></p>
   </section>
   <main>
     <%= render :partial => 'invoices/edit', :object => invoice %>
@@ -20,11 +19,9 @@
     <p>Total time <span>0:00</span></p>
     <p>Total due <span>$0</span></p>
   </footer>
-  <% if invoice.id %>
-    <fieldset>
-      <button>Send</button>
-      <button>Delete</button>
-      <button>Print</button>
-    </fieldset>
-  <% end %>
+  <fieldset>
+    <button>Send</button>
+    <button>Delete</button>
+    <button>Print</button>
+  </fieldset>
 </li>

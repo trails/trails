@@ -43,13 +43,7 @@ Client.render = function(client, form) {
   }
   var clientLayout = form.next('span');
   clientLayout.down('h4').innerHTML = client.id ? client.name : '';
-  clientLayout.down('p').innerHTML =
-    client.id
-      ?
-        client.address + "\n" +
-        client.city + ', ' + client.state + ', ' + client.zip + "\n" +
-        client.country
-      : '';
+  clientLayout.down('p').innerHTML = client.email;
 };
 
 var client = function (id, form) {

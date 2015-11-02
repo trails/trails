@@ -28,7 +28,7 @@ TaskList.addMethods({
         tasks: seq.toString()
       }
     };
-    new Ajax.Request(this.url() + '/setsequence', options);
+    new Ajax.Request(this.url() + '/setSequence', options);
   },
 
   listContainer: function() {
