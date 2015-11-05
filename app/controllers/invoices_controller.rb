@@ -5,7 +5,7 @@ class InvoicesController < ApplicationController
   end
 
   def create
-    @invoice = Invoice.create!(invoice_params)
+    @invoice = Invoice.create!(invoice_params.merge(:user_id => session[:user_id]))
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
@@ -16,7 +16,7 @@ class InvoicesController < ApplicationController
 
   def update
     @invoice = Invoice.find(params[:id])
-    @invoice.update(params[:invoice])
+    @invoice.update!(invoice_params)
     render json: @invoice
   end
 
@@ -44,7 +44,7 @@ class InvoicesController < ApplicationController
 
   protected
     def invoice_params
-      params.require(:invoice).permit(:id, :client_id, :description)
+      params.require(:invoice).permit(:client_id, :description)
     end
 
 

@@ -654,7 +654,8 @@ input[name='task_list[title]'] {
 #invoices.show {
   -webkit-transform: translate3d(-100%,0,0);
   transform: translate3d(-100%,0,0);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 #invoices > h2 {
@@ -687,7 +688,6 @@ input[name='task_list[title]'] {
 
 #invoices > ul {
   width: 500%;
-  height: 500%;
   -webkit-transition: -webkit-transform 0.4s 0.1s;
   transition: transform 0.4s 0.1s;
   -webkit-transform: translate3d(50%,0,0);
@@ -722,10 +722,14 @@ input[name='task_list[title]'] {
   -moz-transition: opacity .8s ease-out;
   -webkit-transition: opacity .8s ease-out;
   text-align: left;
-  box-shadow: .5em .5em .5em #cccccc;
+  box-shadow: 0 0 2em 1em #DDE8CE;
   cursor: default;
 }
-#invoices > ul.zoomed > li:not(.zoom) {
+#invoices > ul > li#invoice_new {
+  opacity: .8;
+}
+#invoices > ul.zoomed > li:not(.zoom),
+#invoices > ul.zoomed > li#invoice_new:not(.zoom) {
   opacity: 0;
 }
 #invoices.show > ul:not(.zoomed) > li {
@@ -760,6 +764,17 @@ input[name='task_list[title]'] {
   color: #527c22;
 }
 
+#invoices li header h3 + input[type="text"]::-webkit-input-placeholder,
+#invoices li header h3 + input[type="text"]:-moz-placeholder,
+#invoices li header h3 + input[type="text"]::-moz-placeholder,
+#invoices li header h3 + input[type="text"]:-ms-input-placeholder {
+  color: #2A4012 !important;
+}
+
+#invoices section h4 + p {
+  margin-top: 0;
+}
+
 #invoices header h3,
 #invoices header p {
   width: 45%;
@@ -775,6 +790,10 @@ input[name='task_list[title]'] {
 #invoices header h3 {
   font-size: 5em;
   line-height: 1em;
+}
+
+#invoices li#invoice_new {
+  box-shadow: 1em 1em 1em 0 #DDE8CE;
 }
 
 #invoices li#invoice_new header h3 {
@@ -801,7 +820,7 @@ input[name='task_list[title]'] {
   margin: 1em 0px;
   padding: 0.5em 1em 0.5em 0.7em;
   border-style: solid;
-  border-color: #f0f0f0;
+  border-color: #666;
   border-width: 0px 0px 0.1em;
 }
 
@@ -822,7 +841,7 @@ input[name='task_list[title]'] {
   position: absolute;
   top: 1em;
   font-size: 1.5em;
-  color: #999999;
+  color: #333;
 }
 
 #invoices header + section {
@@ -991,7 +1010,7 @@ input[name='task_list[title]'] {
   padding-right: 1em;
 }
 
-#invoices footer p:last-child span {
+#invoices footer p:last-child strong {
   display: block;
   font-size: 1.5em;
 }
