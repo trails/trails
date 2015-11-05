@@ -1,6 +1,6 @@
 <li id='<%= "#{invoice.class.name.underscore}_" + (invoice.id ? "#{invoice.id}" : 'new') %>'>
   <header>
-    <p>totaling $<%= invoice.total %>
+    <p>totaling $<span><%= invoice.total %></span>
       &amp; due <input type="text" name="invoice[due]" value="<%= (invoice.due or Time.now + 2592000).strftime('%Y-%m-%d') %>" />
     </p>
     <h3>Invoice #<%= invoice.id ? invoice.number : '' %></h3>
@@ -17,7 +17,7 @@
   </main>
   <footer>
     <p>Total time <span>0:00</span></p>
-    <p>Total due <span>$0</span></p>
+    <p>Total due <strong>$<span><%= invoice.total %></span></strong></p>
   </footer>
   <fieldset>
     <button>Send</button>

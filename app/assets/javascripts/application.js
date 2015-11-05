@@ -385,6 +385,12 @@ var Application = {
     });
   },
 
+  getEarningsSequence: function(element) {
+    return $(Element.findChildren(element, 'li') || []).map( function(item) {
+      return parseFloat(item.down('.task > .earnings').innerHTML.trim().replace(/[^0-9.,]/g, ''));
+    });
+  },
+
   initSliders: function() {
     //get slider tracks' ids
     $slider_track_elements = $$(".slider_track");
@@ -441,8 +447,9 @@ var Application = {
         $("grand_total_duration").update(json.total_duration);
 
         Application.toggleTotals();
+        Application.updateInvoicesTotals();
 
-        setTimeout(Application.updateTasks, 10000);
+        setTimeout(Application.updateTasks, 2000);
       }
     };
     new Ajax.Request("/task_lists/refresh", options);

@@ -6,6 +6,9 @@ class User < ActiveRecord::Base
   has_many :clients,
     :foreign_key => "user_id"
 
+  has_many :invoices,
+    :foreign_key => "user_id"
+
   has_many :identities
 
   belongs_to :last_command,

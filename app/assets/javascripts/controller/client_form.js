@@ -47,6 +47,7 @@ ClientForm.init = function (newInvoiceOnly) {
             var json = transport.responseJSON;
             if (json.email) {
               Client.render(json, wizard);
+              wizard.writeAttribute('client', json.id);
               wizard.stepForm.reset();
               var invoice_id = wizard.recordID('invoice');
               invoice(invoice_id).update();

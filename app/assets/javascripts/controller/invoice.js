@@ -42,6 +42,8 @@ Invoice.addMethods({
             id = element.recordID('invoice');
         if (id == 'new' && data.id > 0) {
           element.writeAttribute('id', 'invoice_' + data.id);
+          $(element).down('header:first-child > h3').innerHTML = 'Invoice #' + data.number;
+          $(element).down('input[name="invoice[description]"]').value = data.description;
           Sortable.create($$("#invoice_" + data.id + " main > ul")[0], {
             draggable: 'li.task_container',
             group: {
@@ -53,7 +55,8 @@ Invoice.addMethods({
             onUpdate: Invoice.updateTasksOrder,
             onRemove: Invoice.updateTasksOrder
           });
-          element.insert({before: Invoice.newInvoiceClone});
+          var clone = Invoice.newInvoiceClone.clone(true);
+          element.insert({before: clone});
           ClientForm.init(true);
           invoice(data.id).zoomIn();
         }
@@ -129,6 +132,14 @@ Invoice.updateTasksOrder = function (event) {
   var element = inv.element();
   var seq = Application.getSequence(element.down('main > ul'));
   inv.setTaskSequence(seq);
+  var earnings = Application.getEarningsSequence(element.down('main > ul'));
+  var total_earnings = .0;
+  for (var i=0; i<earnings.length; i++) {
+    total_earnings += earnings[i];
+  }
+  total_earnings = total_earnings.toFixed(2);
+  element.down('header:first-child > p > span').innerHTML = total_earnings;
+  element.down('footer > p:last-child > strong > span').innerHTML = total_earnings;
 };
 
 var invoice = function (id) {
