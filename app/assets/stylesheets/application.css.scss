@@ -688,6 +688,7 @@ input[name='task_list[title]'] {
 
 #invoices > ul {
   width: 500%;
+  height: 500%;
   -webkit-transition: -webkit-transform 0.4s 0.1s;
   transition: transform 0.4s 0.1s;
   -webkit-transform: translate3d(50%,0,0);
