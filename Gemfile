@@ -8,6 +8,9 @@ gem 'pg'
 gem 'font-awesome-rails'
 gem 'bower-rails'
 gem 'omniauth-google-oauth2'
+gem 'prawn'
+gem 'prawn-table'
+gem 'curb'
 
 group :assets do
   gem 'sass-rails'

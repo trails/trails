@@ -20,8 +20,8 @@
     <p>Total due <strong>$<span><%= invoice.total %></span></strong></p>
   </footer>
   <fieldset>
-    <button>Send</button>
-    <button>Delete</button>
-    <button>Print</button>
+    <a href="/invoices/<%= invoice.id %>.pdf">Print</a>
+    <a href="#">Send</a>
+    <a href="#">Delete</a>
   </fieldset>
 </li>

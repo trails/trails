@@ -5,7 +5,6 @@ TheApp::Application.routes.draw do
   get '/logout' => 'sessions#destroy'
 
   match 'task_lists/refresh' => 'task_lists#refresh', via: [:get, :post, :put]
-  get 'settings' => 'users#edit'
   get 'task_lists/:id/setSequence' => 'task_lists#setSequence', :as => :setsequence
   get 'invoices/:id/setSequence' => 'invoices#setSequence', :as => :setSequence
   get "/clients/:id" => 'clients#show', :constraints => { :id => /[^\/]+/ }

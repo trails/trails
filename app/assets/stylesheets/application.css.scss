@@ -638,32 +638,65 @@ input[name='task_list[title]'] {
   transition: all 0.3s ease-out;
 }
 
-
-#invoices {
+#slide {
   position: fixed;
-  top: 50px;
+  top: 0;
   left: 100%;
-  width: calc(100% - 500px);
+  width: calc(100% - 550px);
   height: 100%;
-  text-align: left;
-  -webkit-transition: -webkit-transform 0.5s;
-  transition: transform 0.5s;
-  -webkit-transform: translate3d(0,0,0) scale($invoices-scale);
+  -webkit-transition: -webkit-transform .2s ease-out;
+  transition: transform .2s ease-out;
+  -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
+  text-align: left;
 }
-#invoices.show {
+#slide.show {
   -webkit-transform: translate3d(-100%,0,0);
   transform: translate3d(-100%,0,0);
-  overflow-x: hidden;
-  overflow-y: scroll;
 }
 
-#invoices > h2 {
-  font-size: 2em;
-  font-weight: bold;
-  margin: .5em 1em;
+#slide > form {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  opacity: .6;
+}
+
+#slide > form.current {
+  z-index: 1;
+}
+
+#slide > form:hover,
+#slide.show > form.current, {
+  opacity: 1;
+}
+
+#slide > form:not(.current) {
+  z-index: 0;
+}
+
+#slide > a:last-child {
+  position: absolute;
+  bottom: .2em;
+  left: -1.15em;
+  opacity: 0;
+  font-size: 2.5em;
   color: #666;
-  cursor: pointer;
+  transition: opacity .2s ease-out;
+}
+
+#slide.show > a:last-child {
+  opacity: .5;
+}
+
+#slide.show > a:last-child:hover {
+  opacity: 1;
+}
+
+#settings,
+#settings > h2:before {
+  background-color: #f5f5f5;
 }
 
 #invoices,
@@ -671,34 +704,167 @@ input[name='task_list[title]'] {
   background-color: #f3f7ee;
 }
 
-#invoices > h2:before {
+#clients,
+#clients > h2:before {
+  background-color: #f7f7e7;
+}
+
+#slide > form > h2 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0 1em .5em;
+  padding-top: .5em;
+  color: #666;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  transition: opacity .5s ease-out;
+  opacity: 1;
+}
+
+#slide > form > h2:before {
   font-family: FontAwesome;
-  content: '\f0f6';
   display: inline-block;
   margin-left: -3em;
   padding: .5em .7em;
   margin-top: -.5em;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border-top-left-radius: .2em;
+  border-bottom-left-radius: .2em;
+  position: absolute;
 }
 
-#invoices.show > h2:before {
-  display: none;
+#slide,
+#slide.show > form.current > h2:before {
+  box-shadow: -.2em 0 0 0 #DDE8CE;
+}
+
+#settings > h2:before {
+  content: '\f013';
+}
+
+#invoices > h2:before {
+  top: 63px;
+  content: '\f0f6';
+}
+
+#clients > h2:before {
+  top: 115px;
+  content: '\f007';
+}
+
+
+#slide > form > h2:first-child + ul {
+  position: absolute;
+}
+
+#settings > ul {
+  width: calc(100% - 1.2em * 2);
+  height: calc(100% - 5em);
+  padding: 4.5em 1.2em .5em;
 }
 
 #invoices > ul {
+  padding-top: 10em;
   width: 500%;
   height: 500%;
-  -webkit-transition: -webkit-transform 0.4s 0.1s;
-  transition: transform 0.4s 0.1s;
+  -webkit-transition: -webkit-transform .2s ease-out;
+  transition: transform .2s ease-out;
   -webkit-transform: translate3d(50%,0,0);
   transform: translate3d(50%,0,0);
 }
 
-#invoices.show > ul {
+#slide.show #invoices > ul {
   -webkit-transform: translate3d(0,0,0);
   transform: translate3d(0,0,0);
   transform-origin: top left;
+}
+
+#slide.show #invoices > ul:not(.zoomed) {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#settings > ul > li:first-child {
+  margin-bottom: 6em;
+}
+
+#settings > ul > li h3 {
+  font-size: 1.8em;
+  color: #666;
+  margin-left: .7em;
+}
+
+#settings > ul > li h3 a {
+  color: #999;
+}
+
+#settings > ul > li h3 + img {
+  float: left;
+  width: 150px;
+  border-radius: 75px;
+  margin: 2em 3em;
+}
+
+#settings > ul > li fieldset {
+  margin-top: 2em;
+}
+
+#settings > ul > li fieldset > label,
+#settings > ul > li fieldset > input[type="text"],
+#settings > ul > li fieldset > input[type="email"] {
+  display: block;
+}
+
+#settings > ul > li fieldset > label {
+  font-size: 1.3em;
+  color: #999;
+}
+
+#settings > ul > li fieldset > input[type="text"],
+#settings > ul > li fieldset > input[type="email"] {
+  font-size: 2em;
+  padding: .1em .4em;
+  color: #666;
+}
+
+#settings > ul > li fieldset > input[type="text"]:focus,
+#settings > ul > li fieldset > input[type="email"]:focus {
+  color: #333;
+}
+
+#settings > ul > li:first-child fieldset > input[type="text"],
+#settings > ul > li:first-child fieldset > input[type="email"] {
+  width: 40%;
+}
+
+#settings > ul > li:nth-child(2) fieldset > input[type="text"] {
+  width: 95%;
+}
+
+#settings > ul > li:nth-child(2) > fieldset {
+  width: calc(33% - 4em);
+  display:inline-block;
+  padding: .5em 1em .5em 3em;
+  vertical-align: bottom;
+}
+
+#settings > ul > li:last-child {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+}
+
+#settings input[type="submit"] {
+  float: right;
+  padding: 0.3em 0.8em;
+  font-size: 1.5em;
+  margin-top: 0.5em;
+}
+
+#settings > ul > li:last-child > a {
+  font-size: 1.5em;
+  color: #666;
+  text-decoration: none;
 }
 
 #invoices > ul.zoomed,
@@ -719,9 +885,9 @@ input[name='task_list[title]'] {
   text-align: center;
   vertical-align: top;
   opacity: 1;
-  transition: opacity .8s ease-out;
-  -moz-transition: opacity .8s ease-out;
-  -webkit-transition: opacity .8s ease-out;
+  transition: opacity .2s ease-out;
+  -moz-transition: opacity .2s ease-out;
+  -webkit-transition: opacity .2s ease-out;
   text-align: left;
   box-shadow: 0 0 2em 1em #DDE8CE;
   cursor: default;
@@ -733,7 +899,7 @@ input[name='task_list[title]'] {
 #invoices > ul.zoomed > li#invoice_new:not(.zoom) {
   opacity: 0;
 }
-#invoices.show > ul:not(.zoomed) > li {
+#slide.show #invoices > ul:not(.zoomed) > li {
   cursor: pointer;
   cursor: -webkit-zoom-in;
   cursor: -moz-zoom-in;
@@ -914,7 +1080,7 @@ input[name='task_list[title]'] {
 }
 
 #invoices main > ul section {
-  padding: .5em 1em;
+  padding: .5em 0;
 }
 
 #invoices .task_container:nth-child(odd):not(.sortable-ghost) {
@@ -927,8 +1093,8 @@ input[name='task_list[title]'] {
 }
 
 #invoices .task {
-  padding-top: .5em;
-  padding-bottom: .5em;
+  padding-top: .1em;
+  padding-bottom: 0;
 }
 
 #invoices .task > span {
@@ -961,6 +1127,7 @@ input[name='task_list[title]'] {
   font-style: italic;
   position: absolute;
   margin-top: -1.8em;
+  padding-top: .3em;
   color: #666666;
 }
 
@@ -1019,11 +1186,11 @@ input[name='task_list[title]'] {
 #invoices li > fieldset {
   position: absolute;
   top: 0;
-  width: 20em;
-  right: -22em;
-  transition: opacity .8s ease-out;
-  -moz-transition: opacity .8s ease-out;
-  -webkit-transition: opacity .8s ease-out;
+  width: 15em;
+  right: -18em;
+  transition: opacity .2s ease-out;
+  -moz-transition: opacity .2s ease-out;
+  -webkit-transition: opacity .2s ease-out;
 }
 
 #invoices li#invoice_new > fieldset {
@@ -1034,7 +1201,21 @@ input[name='task_list[title]'] {
   opacity: 0;
 }
 
-#invoices li > fieldset button {
+#invoices li > fieldset > a {
+  display: block;
+  padding: .3em .2em;
   font-size: 3em;
-  margin: .3em .2em;
+  border: 1px solid #527C22;
+  color: #527C22;
+  text-align: center;
+  border-radius: .2em;
+  text-decoration: none;
+  margin-bottom: .5em;
+}
+
+#invoices li > fieldset > a:hover,
+#invoices li > fieldset > a:active,
+#invoices li > fieldset > a:focus {
+  box-shadow: 0 0 5px 5px #DDE8CE;
+  font-weight: bold;
 }

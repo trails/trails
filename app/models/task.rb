@@ -112,17 +112,21 @@ class Task < ActiveRecord::Base
   #not quite sure why task_duration(task) exists as a helper method
   #i believe it should be an object method and
   #therefore will be moved here
-  def task_duration
-    if status == :active
-      formatted_duration(running_time)
+  def task_duration(html_formatted = true)
+    if html_formatted
+      if status == :active
+        html_duration(running_time)
+      else
+        html_duration(duration)
+      end
     else
       formatted_duration(duration)
     end
   end
 
   #same for task_earnings (see task_duration)
-  def task_earnings
-     earnings.format(:no_cents_if_whole => true, :symbol => "$") if earnings?
+  def task_earnings(no_cents_if_whole = true)
+    earnings.format(:no_cents_if_whole => no_cents_if_whole, :symbol => "$") if earnings?
   end
 
   def task_duration_bar

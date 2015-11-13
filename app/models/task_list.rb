@@ -64,7 +64,7 @@ class TaskList < ActiveRecord::Base
   end
 
   def task_list_duration
-    formatted_duration(duration)
+    html_duration(duration)
   end
 
 

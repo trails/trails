@@ -9,7 +9,7 @@
     <%= task_list.earnings.format(:no_cents_if_whole => true, :symbol => "$") %>
   </span>
   <span class="duration" id="task_list_duration_<%= task_list.id %>">
-    <%= raw formatted_duration(task_list.duration) %>
+    <%= raw html_duration(task_list.duration) %>
   </span>
 </div>
 <%= render :partial=>"task_lists/footer" %>

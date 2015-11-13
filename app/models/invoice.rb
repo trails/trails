@@ -12,13 +12,20 @@ class Invoice < ActiveRecord::Base
 
   def total
     sum = tasks.to_a.sum(&:earnings)
-    sum == 0 ? 0.0 : sum.to_money
+    Money.new(sum == 0 ? 0.0 : sum, "USD")
   end
 
   def earnings
+    return 0.0 if !total
+    total
+  end
 
-    return 0.0 if !sum
-    return sum if sum
+  def earnings?
+    !!earnings
+  end
+
+  def formatted_total
+    total.format(:symbol => "$")
   end
 
   def sorted_tasks
@@ -38,6 +45,7 @@ class Invoice < ActiveRecord::Base
   def task_order=(order)
     @task_order = order
   end
+
 
   private
     def save_task_order
