@@ -19,22 +19,5 @@
   </script>
 </head>
 <body class="<%= page_class %>">
-  <nav class="clearfix">
-    <ul class="clearfix">
-      <li>
-        <%=
-          link_to "Settings", "settings"
-        %>
-      </li>
-      <li>
-        <%=
-          link_to "Sign out",
-            :controller => "sessions",
-            :action => 'destroy'
-        %>
-      </li>
-    </ul>
-    <a href="#" id="pull">Menu</a>
-  </nav>
   <%= yield %>
 </body>

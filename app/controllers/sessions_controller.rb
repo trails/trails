@@ -13,6 +13,8 @@ class SessionsController < ApplicationController
     if @identity.nil?
       # create new identity if unknown
       @identity = Identity.create_with_omniauth(auth)
+    else
+      @identity.update_with_omniauth(auth)
     end
 
     if signed_in?
@@ -25,8 +27,8 @@ class SessionsController < ApplicationController
     else
       if !@identity.user.present?
         @identity.user = User.create_with_omniauth(auth)
-        @identity.save()
       end
+      @identity.save()
       self.current_user = @identity.user
       redirect_to :controller => 'tasks'
     end

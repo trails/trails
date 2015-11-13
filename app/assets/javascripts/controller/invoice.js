@@ -90,7 +90,7 @@ Invoice.addMethods({
   }
 });
 
-Invoice.CSS_SCALE = .2
+Invoice.CSS_SCALE = .2;
 
 Invoice.zoomOut = function () {
   var zoomItem = $$('#invoices > ul > li.zoom');

@@ -263,24 +263,64 @@ var Application = {
         }
       }
     });
-    $S('#invoices > h2').observe('click', function(event) {
-      $('invoices').toggleClassName('show');
-      if (!$('invoices').hasClassName('show')) {
+    $S('#slide > form > h2').observe('click', function(event) {
+      var item = event.target,
+          parent = item.parentNode;
+      $$('#slide > form.current').invoke('removeClassName' ,'current');
+      parent.addClassName('current');
+      if (!item.readAttribute('id') == 'invoices') {
         Invoice.zoomOut();
       }
+      $('slide').addClassName('show');
     });
-    $S('#invoices.show > ul:not(.zoomed) > li, #invoices.show > ul:not(.zoomed) > li *').observe('click', function(event) {
+    $S('#slide.show #invoices > ul:not(.zoomed) > li, #slide.show #invoices > ul:not(.zoomed) > li *').observe('click', function(event) {
       var id = event.element().recordID('invoice');
       invoice(id).zoomIn();
     });
-    $S('#invoices.show > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
+    $S('#slide.show #invoices, #slide.show #invoices > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
       Invoice.zoomOut();
     });
+    $S('#slide.show > a:last-child > i').observe('click', function(event) {
+      event.preventDefault();
+      $('slide').removeClassName('show');
+      return false;
+    });
+
+    $S('#settings > ul > li:nth-child(2) h3 a > i').observe('click', function(event) {
+      event.preventDefault();
+      if (!navigator.geolocation) {
+        return false;
+      }
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var lat = position.coords.latitude,
+            lon = position.coords.longitude;
+
+        new Ajax.Request("/users/me", {
+          method: 'put',
+          parameters: {
+            "user[latitude]": lat,
+            "user[longitude]": lon
+          },
+          onSuccess: function (transport) {
+            var json = transport.responseJSON;
+            if (json.country) $('user_country').value = json.country;
+            if (json.state) $('user_state').value = json.state;
+            if (json.city) $('user_city').value = json.city;
+            if (json.address) $('user_address').value = json.address;
+            if (json.zip) $('user_zip').value = json.zip;
+          }
+        });
+      });
+      return false;
+    });
+    $("settings").observe("submit", Application.formSubmitHandler);
+
+
     window.addEventListener('resize', Application.handleResize, false);
   },
 
   handleResize: function () {
-    if (!$('invoices').match('.show')) {
+    if (!$('slide').match('.show')) {
       return;
     }
     if ($$('#invoices > ul')[0].match('.zoomed')) {
@@ -340,14 +380,14 @@ var Application = {
         var t = task(id);
         t.taskListBeforeDnD = list_id;
 
-        Application.invoicesShownBeforeDnD = $('invoices').hasClassName('show');
-        $('invoices').addClassName('show');
+        Application.invoicesShownBeforeDnD = $('slide').hasClassName('show');
+        $('slide').addClassName('show');
         clearTimeout(Application.invoicesDnDTimeout);
       },
       onEnd: function (evt) {
         var afterDropFn = function() {
           if (!Application.invoicesShownBeforeDnD) {
-            $('invoices').removeClassName('show');
+            $('slide').removeClassName('show');
           }
         };
         clearTimeout(Application.invoicesDnDTimeout);
@@ -387,7 +427,7 @@ var Application = {
 
   getEarningsSequence: function(element) {
     return $(Element.findChildren(element, 'li') || []).map( function(item) {
-      return parseFloat(item.down('.task > .earnings').innerHTML.trim().replace(/[^0-9.,]/g, ''));
+      return parseFloat(item.down('.task > .earnings').innerHTML.trim().replace(/[^0-9.]/g, ''));
     });
   },
 

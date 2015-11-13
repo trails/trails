@@ -5,17 +5,23 @@ module ApplicationHelper
     @user ||= User.find(:first)
   end
 
-  def formatted_duration(seconds)
+  def html_duration(seconds)
     if(seconds > 60)
       minutes = seconds / 60
       hours   = minutes / 60
-      minutes = minutes % 60 
+      minutes = minutes % 60
       ("%02d<span class='colon'>:</span>%02d"%[hours,minutes]).sub(/([0:]+)/,%q{<span class="fade">\1</span>})
     else
       %Q|#{(seconds).floor}<span class="fade">s</span>|
     end
   end
-  
+
+  def formatted_duration(seconds)
+    minutes = seconds / 60
+    hours   = minutes / 60
+    minutes = minutes % 60
+    "%02d:%02d"%[hours,minutes]
+  end
 
   def errors_for(object, message=nil)
     html = ""
@@ -26,10 +32,10 @@ module ApplicationHelper
           html << "\t\t<h5>There was a problem creating the #{object.class.name.humanize.downcase}</h5>\n"
         else
           html << "\t\t<h5>There was a problem updating the #{object.class.name.humanize.downcase}</h5>\n"
-        end    
+        end
       else
         html << "<h5>#{message}</h5>"
-      end  
+      end
       html << "\t\t<ul>\n"
       object.errors.full_messages.each do |error|
         html << "\t\t\t<li>#{error}</li>\n"
@@ -38,7 +44,7 @@ module ApplicationHelper
       html << "\t</div>\n"
     end
     html
-  end 
+  end
 
   def page_class
     return params[:controller] + ' ' + params[:action]

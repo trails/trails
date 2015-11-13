@@ -53,7 +53,7 @@ class TaskListsController < ApplicationController
     end
     json_tasks = @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
     json_task_lists = @task_lists.to_json(:only=>:id,:methods=>[:task_list_duration,:task_list_earnings])
-    render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => formatted_duration(total_duration),:total_earnings => total_earnings.to_money.format(:no_cents_if_whole => true, :symbol => "$")}
+    render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => html_duration(total_duration),:total_earnings => total_earnings.to_money.format(:no_cents_if_whole => true, :symbol => "$")}
     #render :json => @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
   end
 

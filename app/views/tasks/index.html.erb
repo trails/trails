@@ -18,16 +18,82 @@
         <%= Money.new(@task_lists.to_a.sum(&:earnings), "USD").format(:no_cents_if_whole => true, :symbol => "$") %>
       </span>
       <span class="grand_total" id="grand_total_duration">
-        <%= raw formatted_duration(@task_lists.to_a.sum(&:duration)) %>
+        <%= raw html_duration(@task_lists.to_a.sum(&:duration)) %>
       </span>
     </div>
     <%= render :partial=>"task_lists/footer" %>
   </section>
 </form>
-<form id="invoices" autocomplete="off">
-  <h2>Invoices</h2>
-  <ul>
-    <%= render :partial => 'invoices/invoice', :object => Invoice.new %>
-    <%= render :partial => @invoices %>
-  </ul>
-</form>
+<div id="slide">
+  <form id="settings" action="/users/me" method="put" autocomplete="off">
+    <%= fields_for @user do |f| %>
+      <h2>Settings</h2>
+      <ul>
+        <li>
+          <h3>Account</h3>
+          <img src="<%= @user.identities.first.image %>" alt="<%= @user.name %>" />
+          <fieldset>
+            <%= f.label :name %>
+            <%= f.text_field :name %>
+          </fieldset>
+          <fieldset>
+            <%= f.label :email %>
+            <%= f.text_field :email %>
+          </fieldset>
+        </li>
+        <li>
+          <h3>
+            Location
+            <a href="#" title="guess location and fill fields">
+              <i class="fa fa-location-arrow"></i>
+            </a>
+          </h3>
+          <fieldset>
+            <%= f.label :country %>
+            <%= f.text_field :country %>
+          </fieldset>
+          <fieldset>
+            <%= f.label :state %>
+            <%= f.text_field :state %>
+          </fieldset>
+          <fieldset>
+            <%= f.label :city %>
+            <%= f.text_field :city %>
+          </fieldset>
+          <fieldset>
+            <%= f.label :address %>
+            <%= f.text_field :address %>
+          </fieldset>
+          <fieldset>
+            <%= f.label :zip %>
+            <%= f.text_field :zip %>
+          </fieldset>
+          <fieldset>
+            <%= f.submit 'Save', :method => 'put' %>
+          </fieldset>
+        </li>
+        <li>
+          <a href="/sessions/destroy">
+            Sign out
+            <i class="fa fa-sign-out"></i>
+          </a>
+        </li>
+      </ul>
+    <% end %>
+  </form>
+  <form id="invoices" autocomplete="off" class="current">
+    <h2>Invoices</h2>
+    <ul>
+      <%= render :partial => 'invoices/invoice', :object => Invoice.new %>
+      <%= render :partial => @invoices %>
+    </ul>
+  </form>
+  <form id="clients" autocomplete="off">
+    <h2>Clients</h2>
+    <ul>
+    </ul>
+  </form>
+  <a href="#" title="toggle slide">
+    <i class="fa fa-chevron-circle-right"></i>
+  </a>
+</div>
