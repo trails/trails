@@ -46,6 +46,10 @@ class Invoice < ActiveRecord::Base
     @task_order = order
   end
 
+  def unlink_task(task)
+    self.task_order -= [task]
+    save_task_order
+  end
 
   private
     def save_task_order

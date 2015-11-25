@@ -28,7 +28,7 @@ InvoiceForm.addMethods({
 });
 
 InvoiceForm.disableAll = function () {
-  $invoices = $$('#invoices > ul > li');
+  $invoices = $$('#invoices > div > ul > li');
   $invoices.each(function (s) {
     var id = s.recordID();
     invoice(id).invoice_form().disable();

@@ -74,11 +74,17 @@ TaskForm.addMethods({
       //update existing task
       var taskContainer = this.task.taskContainer();
       taskContainer.update(transport.responseText);
+
+      //the content of the list has changed so we need to re-init
+      tl = task_list(this.task.element().recordID('task_list_container'));
+      tl.sortable.destroy();
+      Application.dragAndDropTaskList($('task_list_container_' + tl.id));
+      //tl.checkIfTotalNeeded();
       this.task.initSlider();
     } else {
       //insert newly created task
       var listContainer = this.task_list.listContainer();
-      listContainer.insert({top:transport.responseText});
+      listContainer.insert({top: transport.responseText});
       var newTask = listContainer.firstChild;
       //the content of the list has changed so we need to re-init
       this.task_list.sortable.destroy();
