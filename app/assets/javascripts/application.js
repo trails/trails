@@ -100,10 +100,10 @@ var Application = {
 
   attachEventHandlers: function() {
     $$('section.task_list > .title').each(function(element) {
-      element.insert(" <small>-</small>");
+      element.insert({top: '<i class="fa fa-caret-down"></i>'});
     });
     $("task_form").observe("submit", Application.formSubmitHandler);
-    $S(".task .toolbar .edit").observe("click", function(event) {
+    $S(".task .toolbar .edit, .task .toolbar .edit > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
@@ -117,8 +117,8 @@ var Application = {
       task(id).remove(event);
     });
 
-    $S('.task_list > .title').observe('click', function(event) {
-      var currentTh = $(Event.element(event));
+    $S('.task_list > .title > i').observe('click', function(event) {
+      var currentTh = $(Event.element(event)).up('.title');
       trTitleId = currentTh.up().identify();
       currentList = $(trTitleId).next(2);
       currentTotal = currentTh.up().next('.total');
@@ -129,11 +129,11 @@ var Application = {
       addTotalTo = currentTitleTr.down(('.new_task'));
       currentList.toggle();
       if (currentList.visible()) {
-        $(currentTh).down().update("-");
+        $(currentTh).down('i').removeClassName('fa-caret-right').addClassName('fa-caret-down');
         addTotalTo.down('span').remove();
         currentTotal.show();
       } else {
-        $(currentTh).down().update("+");
+        $(currentTh).down('i').removeClassName('fa-caret-down').addClassName('fa-caret-right');
         addTotalTo.update('<span>' + currentEarnings + ' ' + currentDuration + '</span> ' + newTaskLink);
         currentTotal.hide();
       }
@@ -164,19 +164,19 @@ var Application = {
       task(id).actions().reopen(event);
     });
 
-    $S(".new_task a").observe("click", function(event) {
+    $S(".new_task a, .new_task a > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task_list(id).task_form().show(event);
     });
-    $S(".task_list .toolbar .edit").observe("click", function(event) {
+    $S(".task_list .toolbar .edit, .task_list .toolbar .edit > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task_list(id).edit(event);
     });
-    $S(".task_list .toolbar .delete").observe("click", function(event) {
+    $S(".task_list .toolbar .delete, .task_list .toolbar .delete > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
@@ -273,11 +273,11 @@ var Application = {
       }
       $('slide').addClassName('show');
     });
-    $S('#slide.show #invoices > ul:not(.zoomed) > li, #slide.show #invoices > ul:not(.zoomed) > li *').observe('click', function(event) {
+    $S('#slide.show #invoices > div > ul:not(.zoomed) > li, #slide.show #invoices > div > ul:not(.zoomed) > li *').observe('click', function(event) {
       var id = event.element().recordID('invoice');
       invoice(id).zoomIn();
     });
-    $S('#slide.show #invoices, #slide.show #invoices > ul.zoomed, #invoices > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
+    $S('#slide.show #invoices, #slide.show #invoices > div, #slide.show #invoices > div > ul.zoomed, #invoices > div > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
       Invoice.zoomOut();
     });
     $S('#slide.show > a:last-child > i').observe('click', function(event) {
@@ -315,17 +315,43 @@ var Application = {
     });
     $("settings").observe("submit", Application.formSubmitHandler);
 
-
     window.addEventListener('resize', Application.handleResize, false);
+    window.addEventListener('keyup', Application.handleKeyUp);
+  },
+
+  handleKeyUp: function (event) {
+    switch(event.keyCode) {
+      case 27:
+        Application.handleEscKey(event);
+        break;
+    }
+  },
+
+  handleEscKey: function(event) {
+    var element = document.activeElement;
+    if (element == $$('body')[0]) {
+      if (Invoice.isActiveTab() && Invoice.isZoomed()) {
+        Invoice.zoomOut();
+      } else if ($('slide').hasClassName('show')) {
+        $('slide').removeClassName('show');
+      }
+    } else {
+      var cancelLink = element.up('section') ? element.up('section').down('a[href="#cancel"]') : false;
+      if (cancelLink) {
+        cancelLink.click();
+      } else {
+        element.blur();
+      }
+    }
   },
 
   handleResize: function () {
-    if (!$('slide').match('.show')) {
+    if (!$('slide').hasClassName('show')) {
       return;
     }
-    if ($$('#invoices > ul')[0].match('.zoomed')) {
-      var id = $$('#invoices > ul > li.zoom')[0].recordID();
-      invoice(id).zoomIn()
+    if ($$('#invoices > div > ul')[0].hasClassName('zoomed')) {
+      var id = $$('#invoices > div > ul > li.zoom')[0].recordID();
+      invoice(id).zoomIn();
     }
   },
 
@@ -373,6 +399,8 @@ var Application = {
       },
       animation: 100,
       onStart: function (evt) {
+        $$('body')[0].addClassName('dnd');
+
         var item = evt.item;
         var parent = item.parentNode;
         var id = item.identify().replace(/task_container_/gi, '');
@@ -389,6 +417,7 @@ var Application = {
           if (!Application.invoicesShownBeforeDnD) {
             $('slide').removeClassName('show');
           }
+          $$('body')[0].removeClassName('dnd');
         };
         clearTimeout(Application.invoicesDnDTimeout);
         Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
@@ -398,15 +427,6 @@ var Application = {
       },
       onUpdate: function (evt) {
         Application.updateListTasksOrder(evt.target);
-      },
-      onRemove: function (evt) {
-        var parent = evt.item.parentNode;
-        if (parent.hasClassName('list_container')) {
-          // task was moved to another list
-          Application.updateListTasksOrder(evt.target);
-        } else if (parent.match('#invoices > ul > li:not(.new) main > ul')) {
-          // task was moved to an invoice
-        }
       }
     });
   },
@@ -460,15 +480,21 @@ var Application = {
           t.duration().update(jsonTasks[i].task_duration);
           t.durationBar().replace(jsonTasks[i].task_duration_bar);
         }
-        var maxDuration = 0;
+        var maxDuration = .0;
         $$('.duration_bar').each(function (element) {
-          var duration = parseInt(element.readAttribute('duration'));
+          if (!element.up('.list_container')) {
+            return;
+          }
+          var duration = parseFloat(element.readAttribute('duration'));
           if (duration > maxDuration) {
             maxDuration = duration;
           }
         });
         $$('.duration_bar').each(function (element) {
-          var duration = parseInt(element.readAttribute('duration'));
+          if (!element.up('.list_container')) {
+            return;
+          }
+          var duration = parseFloat(element.readAttribute('duration'));
           element.setStyle({
             width: (duration * 100 / maxDuration) + '%'
           });

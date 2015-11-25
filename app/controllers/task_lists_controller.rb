@@ -22,18 +22,19 @@ class TaskListsController < ApplicationController
     @tasks_to_unlink = Task.where(task_list_id: params[:id]).all
     @tasks_to_unlink.each do |task_id|
       @task = Task.find(task_id)
-      @task.update_attributes("task_list_id" => 0)
+      @task.unlink
     end
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
     @tasks.each do |task_id|
       @task = Task.find(task_id)
-      @task.update_attributes("task_list_id" => params[:id])
+      @task.unlink
+      @task.update_attributes(:task_list_id => params[:id])
     end
 
     @task_list = TaskList.find(params[:id])
-    @task_list.update_attributes("task_order" => @tasks)
+    @task_list.task_order = @tasks
     head :ok
   end
 

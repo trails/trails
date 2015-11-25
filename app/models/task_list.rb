@@ -67,6 +67,10 @@ class TaskList < ActiveRecord::Base
     html_duration(duration)
   end
 
+  def unlink_task(task)
+    self.task_order -= [task]
+    save_task_order
+  end
 
   private
 

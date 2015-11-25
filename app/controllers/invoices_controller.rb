@@ -41,7 +41,7 @@ class InvoicesController < ApplicationController
     @tasks_to_unlink = Task.where(invoice_id: params[:id]).all
     @tasks_to_unlink.each do |task_id|
       @task = Task.find(task_id)
-      @task.update_attributes("invoice_id" => 0)
+      @task.unlink
     end
 
     # get list of tasks to be modified

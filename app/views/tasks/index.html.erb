@@ -1,3 +1,15 @@
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M 8 0 L 8 8" fill="none" stroke="#EEEEEE" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <rect width="80" height="80" fill="url(#smallGrid)"/>
+      <path d="M 80 0 L 80 80" fill="none" stroke="#EEEEEE" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#grid)" />
+</svg>
 <form action="/tasks" id="task_form" method="post">
   <section id="task_lists">
     <div>
@@ -27,7 +39,9 @@
 <div id="slide">
   <form id="settings" action="/users/me" method="put" autocomplete="off">
     <%= fields_for @user do |f| %>
-      <h2>Settings</h2>
+      <h2>
+        <span>Settings</span>
+      </h2>
       <ul>
         <li>
           <h3>Account</h3>
@@ -82,18 +96,24 @@
     <% end %>
   </form>
   <form id="invoices" autocomplete="off" class="current">
-    <h2>Invoices</h2>
-    <ul>
-      <%= render :partial => 'invoices/invoice', :object => Invoice.new %>
-      <%= render :partial => @invoices %>
-    </ul>
+    <h2>
+      <span>Invoices</span>
+    </h2>
+    <div>
+      <ul>
+        <%= render :partial => 'invoices/invoice', :object => Invoice.new %>
+        <%= render :partial => @invoices %>
+      </ul>
+    </div>
   </form>
   <form id="clients" autocomplete="off">
-    <h2>Clients</h2>
+    <h2>
+      <span>Clients</span>
+    </h2>
     <ul>
     </ul>
   </form>
   <a href="#" title="toggle slide">
-    <i class="fa fa-chevron-circle-right"></i>
+    <i class="fa fa-times"></i>
   </a>
 </div>

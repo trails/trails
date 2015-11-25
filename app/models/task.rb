@@ -12,6 +12,7 @@ class Task < ActiveRecord::Base
     :order      => "created_at DESC"
 
   belongs_to :task_list
+  belongs_to :invoice
 
   include ApplicationHelper
 
@@ -102,11 +103,26 @@ class Task < ActiveRecord::Base
   end
 
   def updateDiffTime(difftime)
-     new_time = duration + difftime*60
+    new_time = duration + difftime*60
     if(new_time < 0)
       new_time = 0
     end
     return new_time
+  end
+
+  def unlink_from_list
+    task_list.unlink_task(id) if task_list
+    write_attribute(:task_list_id, 0)
+  end
+
+  def unlink_from_invoice
+    invoice.unlink_task(id) if invoice
+    write_attribute(:invoice_id, 0)
+  end
+
+  def unlink
+    unlink_from_list
+    unlink_from_invoice
   end
 
   #not quite sure why task_duration(task) exists as a helper method

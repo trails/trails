@@ -65,25 +65,41 @@ Invoice.addMethods({
   },
 
   zoomIn: function() {
-    var listWidth = $$('#invoices > ul')[0].getLayout().get('width');
-    var listHeight = $$('#invoices > ul')[0].getLayout().get('height');
     var element = this.element();
-    var scaleX = listWidth / element.getLayout().get('margin-box-width');
-    var scaleY = listHeight / element.getLayout().get('margin-box-height');
-    var width = element.getLayout().get('margin-box-width');
-    var height = element.getLayout().get('margin-box-height');
-    var scale = scaleX < scaleY ? scaleX : scaleY;
+    var list = {
+      width: $$('#invoices > div > ul')[0].getLayout().get('width'),
+      height: $$('#invoices > div > ul')[0].getLayout().get('height')
+    };
+    var inv = {
+      width: element.getLayout().get('margin-box-width'),
+      height: element.getLayout().get('margin-box-height')
+    };
+    var viewport = {
+      width: $('invoices').getLayout().get('margin-box-width'),
+      height: $('invoices').getLayout().get('margin-box-height')
+    };
+    var diff = {
+      x: inv.width - viewport.width,
+      y: inv.height - viewport.height
+    };
+    var invScale = {
+      x: list.width / (inv.width + diff.x),
+      y: list.height / (inv.height + diff.y)
+    };
+    var scale = invScale.x < invScale.y ? invScale.x : invScale.y;
     var realScale = scale * Invoice.CSS_SCALE;
-    var offsetX = ((listWidth - width * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE;
-    var offsetY = ((listHeight - height * scale) / 2 - element.offsetTop * scale) * Invoice.CSS_SCALE;
+    var offset = {
+      x: ((list.width - (inv.width + diff.x / 2) * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE,
+      y: ((list.height - (inv.height + diff.y / 2) * scale) / 2 - element.offsetTop * scale) * Invoice.CSS_SCALE
+    };
 
     InvoiceForm.disableAll();
     invoice_id = element.recordID('invoice');
     $A(invoice(invoice_id).element().getElementsByTagName("INPUT")).invoke("enable");
 
-    $$('#invoices > ul')[0].addClassName('zoomed').setStyle({
+    $$('#invoices > div > ul')[0].addClassName('zoomed').setStyle({
       transform:
-        'translate(' + offsetX.toString() + 'px, ' + offsetY.toString() + 'px) ' +
+        'translate(' + offset.x.toString() + 'px, ' + offset.y.toString() + 'px) ' +
         'scale(' + realScale.toString() + ')'
     });
     element.addClassName('zoom');
@@ -93,13 +109,21 @@ Invoice.addMethods({
 Invoice.CSS_SCALE = .2;
 
 Invoice.zoomOut = function () {
-  var zoomItem = $$('#invoices > ul > li.zoom');
+  var zoomItem = $$('#invoices > div > ul > li.zoom');
   if (zoomItem.length) {
     zoomItem[0].removeClassName('zoom');
   }
-  $$('#invoices > ul')[0].removeClassName('zoomed').setStyle({
+  $$('#invoices > div > ul')[0].removeClassName('zoomed').setStyle({
     transform: 'translate(0, 0) scale(' + Invoice.CSS_SCALE + ')'
   });
+};
+
+Invoice.isZoomed = function() {
+  return $$('#invoices > div > ul')[0].hasClassName('zoomed');
+};
+
+Invoice.isActiveTab = function() {
+  return $$('#invoices')[0].hasClassName('current');
 };
 
 Invoice.init = function () {
@@ -120,8 +144,7 @@ Invoice.initDnD = function () {
         put: ['taskList']
       },
       onAdd: Invoice.updateTasksOrder,
-      onUpdate: Invoice.updateTasksOrder,
-      onRemove: Invoice.updateTasksOrder
+      onUpdate: Invoice.updateTasksOrder
     });
   });
 };
