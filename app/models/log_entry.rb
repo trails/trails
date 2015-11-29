@@ -5,6 +5,8 @@ class LogEntry < ActiveRecord::Base
 
   after_save :update_duration_cache
 
+  default_scope {order({created_at: :desc})}
+
   def update_duration_cache
     case action
     when "stop"
