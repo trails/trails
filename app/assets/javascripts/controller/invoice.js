@@ -83,14 +83,15 @@ Invoice.addMethods({
       y: inv.height - viewport.height
     };
     var invScale = {
-      x: list.width / (inv.width + diff.x),
-      y: list.height / (inv.height + diff.y)
+      x: list.width / (inv.width + diff.x / 2),
+      y: list.height / (inv.height + diff.y / 2)
     };
     var scale = invScale.x < invScale.y ? invScale.x : invScale.y;
+    console.log(scale == invScale.x ? 'x' : 'y');
     var realScale = scale * Invoice.CSS_SCALE;
     var offset = {
-      x: ((list.width - (inv.width + diff.x / 2) * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE,
-      y: ((list.height - (inv.height + diff.y / 2) * scale) / 2 - element.offsetTop * scale) * Invoice.CSS_SCALE
+      x: ((list.width - (inv.width + diff.x / 4) * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE,
+      y: ((list.height - (inv.height + diff.y / 4) * scale) / 2 - element.offsetTop * scale) * Invoice.CSS_SCALE
     };
 
     InvoiceForm.disableAll();

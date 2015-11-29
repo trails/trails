@@ -684,9 +684,8 @@ input[name='task_list[title]'] {
 #slide > form.current {
   z-index: 1;
 }
-
 #slide > form:hover,
-#slide.show > form.current, {
+#slide.show > form.current {
   opacity: 1;
 }
 
@@ -740,28 +739,32 @@ input[name='task_list[title]'] {
   transition: opacity .5s ease-out;
   opacity: 1;
   color: rgba(200, 200, 200, .8);
-  width: 20%;
-  padding-left: 80%;
+  width: 100%;
+}
+
+#slide > form > h2:before,
+#slide > form > h2 > span {
+  display: inline-block;
+  position: absolute;
 }
 
 #slide > form > h2:before {
   color: #666;
   font-family: FontAwesome;
-  display: inline-block;
   margin-left: -2.9em;
   padding: .5em .7em;
   margin-top: -.5em;
   border-top-left-radius: .2em;
   border-bottom-left-radius: .2em;
-  position: absolute;
   left: 17px;
 }
 
 #slide > form > h2 > span {
-  width: 100%;
+  width: 8em;
   text-align: right;
-  display: inline-block;
   transform: rotate(-90deg) translate(-6em, 4em);
+  right: 1.2em;
+  top: 0;
 }
 
 #slide,
