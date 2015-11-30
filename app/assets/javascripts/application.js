@@ -496,7 +496,7 @@ var Application = {
 
         Application.toggleTotals();
 
-        setTimeout(Application.updateTasks, 20000);
+        setTimeout(Application.updateTasks, 2000);
       }
     };
     return new Ajax.Request("/task_lists/refresh", options);
