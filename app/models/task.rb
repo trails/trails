@@ -14,9 +14,11 @@ class Task < ActiveRecord::Base
   belongs_to :task_list
   belongs_to :invoice
 
+  default_scope {order({sort_order: :desc})}
+
   include ApplicationHelper
 
-  validates_presence_of :task_list_id, :description
+  validates_presence_of :description
 
   STATUS_MAP = {
     "start"     => :active,
@@ -45,7 +47,6 @@ class Task < ActiveRecord::Base
   def status
     return :stopped unless last_entry
     STATUS_MAP[log_entries.first.action]
-    # @status ||= [:active, :stopped, :complete][rand(3)]
   end
 
   def completed?
@@ -95,11 +96,7 @@ class Task < ActiveRecord::Base
   end
 
   def running_time
-    if(running?)
-      Time.now - last_start.created_at + duration
-    else
-      duration
-    end
+    Time.now - last_start.created_at + duration if running? else duration
   end
 
   def updateDiffTime(difftime)
@@ -110,43 +107,17 @@ class Task < ActiveRecord::Base
     return new_time
   end
 
-  def unlink_from_list
-    task_list.unlink_task(id) if task_list
-    write_attribute(:task_list_id, 0)
-  end
-
-  def unlink_from_invoice
-    invoice.unlink_task(id) if invoice
-    write_attribute(:invoice_id, 0)
-  end
-
-  def unlink
-    unlink_from_list
-    unlink_from_invoice
-  end
-
-  #not quite sure why task_duration(task) exists as a helper method
-  #i believe it should be an object method and
-  #therefore will be moved here
-  def task_duration(html_formatted = true)
-    if html_formatted
-      if status == :active
-        html_duration(running_time)
-      else
-        html_duration(duration)
-      end
+  def formatted_duration(html = false)
+    if html
+      html_duration(running_time)
     else
-      formatted_duration(duration)
+      minutes = ((running_time / 60).to_i % 60).to_i
+      hours   = ((running_time / 60).to_i / 60).to_i
+      "%02d:%02d"%[hours,minutes]
     end
   end
 
-  #same for task_earnings (see task_duration)
-  def task_earnings(no_cents_if_whole = true)
-    earnings.format(:no_cents_if_whole => no_cents_if_whole, :symbol => "$") if earnings?
+  def task_earnings
+    earnings.cents / 100.00 if earnings?
   end
-
-  def task_duration_bar
-    %Q|<div class="duration_bar" duration="#{running_time}"></div>|
-  end
-
 end

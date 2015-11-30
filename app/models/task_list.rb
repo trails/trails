@@ -1,7 +1,7 @@
 class TaskList < ActiveRecord::Base
   has_many :tasks,
     :dependent  => :destroy,
-    :after_add  => :update_ordering_for_new_task
+    :before_add  => :update_ordering_for_new_task
 
   belongs_to :owner,
     :class_name => "User"
@@ -12,7 +12,6 @@ class TaskList < ActiveRecord::Base
     :allow_nil  => true
 
   validates_presence_of :title, :actual_default_rate
-  before_save :save_task_order
 
   include ApplicationHelper
 
@@ -24,39 +23,12 @@ class TaskList < ActiveRecord::Base
     self.actual_default_rate = Money.new(rate.to_i * 100, "USD")
   end
 
-  def running_tasks
-    running = []
-    task_order.each do |task_id|
-      task = tasks.find(task_id)
-      running << task if task.running?
-    end
-    running
-  end
-
-  def sorted_tasks
-    ret = []
-    task_order.each do |task_id|
-      task = tasks.find(task_id)
-      next if (task.new_record? or task.invoice_id?)
-      ret << task
-    end
-    ret
-  end
-
   def earnings
     Money.new(tasks.to_a.sum(&:earnings), "USD")
   end
 
   def duration
     tasks.to_a.sum(&:running_time)
-  end
-
-  def task_order
-    @task_order ||= ((ord=read_attribute(:task_order)) && ord.split(',')) || []
-  end
-
-  def task_order=(order)
-    @task_order = order
   end
 
   def task_list_earnings
@@ -67,19 +39,10 @@ class TaskList < ActiveRecord::Base
     html_duration(duration)
   end
 
-  def unlink_task(task)
-    self.task_order -= [task]
-    save_task_order
-  end
-
   private
 
-  def save_task_order
-    write_attribute(:task_order, self.task_order.join(','))
-  end
-
   def update_ordering_for_new_task(new_task)
-    self.task_order.unshift(new_task.id) if new_task.id
+    new_task.sort_order = (self.tasks.first.sort_order || 0).succ if new_task.id
   end
 
 end

@@ -5,21 +5,26 @@ TaskForm.cache = {};
 TaskForm.addMethods({
   show: function() {
     TaskForm.hideAll();
-    $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
-    this.element().show();
+    var elem = this.element();
+    $A(elem.getElementsByTagName("INPUT")).invoke("enable");
+
     //focus on title input when form appears
-    var title_input = this.element().down(".task_title").down("input");
-    if (!this.task) {
+    var title_input = elem.down(".task_title").down("input");
+
+    if (this.task) {
+      elem.up('.task_container').addClassName('edit');
+    } else {
+      elem.addClassName('current');
       //if this is not an existing task, reset input value.
       title_input.value = '';
-      var slider_row = this.element().down(".slider_row");
+      var slider_row = elem.down(".slider_row");
       slider_row.display = "none";
 
       // inherit the default rate from the one set by the task list
       var task_list_form = this.task_list.task_list_form();
-      var task_rate_input = this.element().down("input#task_rate");
+      var task_rate_input = elem.down("input#task_rate");
       var list_default_rate = task_list_form.element().down('input#task_list_default_rate').value;
-      var default_rate_checkbox = this.element().down('.default_rate_check > input');
+      var default_rate_checkbox = elem.down('.default_rate_check > input');
       task_rate_input.value = list_default_rate;
       task_rate_input.writeAttribute('default_rate', list_default_rate);
       default_rate_checkbox.checked = (parseFloat(list_default_rate) > 0.00);
@@ -61,9 +66,10 @@ TaskForm.addMethods({
   hide: function() {
     var elem = this.element();
     $A(elem.getElementsByTagName("INPUT")).invoke("disable");
-    elem.hide();
-    if(this.task) {
-      this.task.element().show();
+    if (this.task) {
+      elem.up('.task_container').removeClassName('edit');
+    } else {
+      elem.removeClassName('current');
     }
   },
 
@@ -71,16 +77,14 @@ TaskForm.addMethods({
     //callback method on update for Tasks
     var element = this.element();
     if (this.task) {
-      //update existing task
-      var taskContainer = this.task.taskContainer();
-      taskContainer.update(transport.responseText);
-
-      //the content of the list has changed so we need to re-init
-      tl = task_list(this.task.element().recordID('task_list_container'));
-      tl.sortable.destroy();
-      Application.dragAndDropTaskList($('task_list_container_' + tl.id));
-      //tl.checkIfTotalNeeded();
-      this.task.initSlider();
+      var json = transport.responseJSON
+      this.task.update({
+        description: json.description,
+        earnings: '$' + json.task_earnings,
+        duration: json.running_time
+      });
+      this.task.task_form().hide();
+      Task.renderDurationBars();
     } else {
       //insert newly created task
       var listContainer = this.task_list.listContainer();

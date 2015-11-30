@@ -30,23 +30,13 @@ class TasksController < ApplicationController
       @task.update_attributes(:duration_cache => new_duration.to_s)
     end
     @task.update_attributes(task_params)
-    render :partial=>@task
-    #respond_to do |format|
-    #  format.html {render :partial=>@task}
-    #  format.js {
-    #    render(:update) do |page|
-    #      page["task_container_#{@task.id}"].replace render :partial=>@task
-    #    end
-    #  }
-    #end
+    render json: @task.as_json(only: [:id, :description], methods: [:task_earnings, :running_time])
   end
 
   def destroy
     task = Task.find(params[:id])
     task_list = TaskList.find(task.task_list_id)
     Task.destroy(params[:id])
-    task_list.task_order.delete(params[:id].to_s)
-    task_list.save!
     head :ok
   end
 

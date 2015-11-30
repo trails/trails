@@ -468,44 +468,26 @@ var Application = {
       method: "put",
       onSuccess: function (transport) {
         //read json response
-        var json = transport.responseText.evalJSON();
-        var jsonTaskLists = json.tasklists.evalJSON();
-        var jsonTasks = json.tasks.evalJSON();
+        var json = transport.responseJSON;
+        var lists = json.tasklists;
+        var tasks = json.tasks;
 
         //update tasks
-        for (var i = 0; i < jsonTasks.length; i++) {
-          var id = jsonTasks[i].id;
-          var t = task(id);
-          t.earnings().update(jsonTasks[i].task_earnings);
-          t.duration().update(jsonTasks[i].task_duration);
-          t.durationBar().replace(jsonTasks[i].task_duration_bar);
-        }
-        var maxDuration = .0;
-        $$('.duration_bar').each(function (element) {
-          if (!element.up('.list_container')) {
-            return;
-          }
-          var duration = parseFloat(element.readAttribute('duration'));
-          if (duration > maxDuration) {
-            maxDuration = duration;
-          }
-        });
-        $$('.duration_bar').each(function (element) {
-          if (!element.up('.list_container')) {
-            return;
-          }
-          var duration = parseFloat(element.readAttribute('duration'));
-          element.setStyle({
-            width: (duration * 100 / maxDuration) + '%'
+        for (var i = 0; i < tasks.length; i++) {
+          var id = tasks[i].id;
+          task(id).update({
+            earnings: '$' + tasks[i].task_earnings,
+            duration: tasks[i].running_time
           });
-        });
+        }
+        Task.renderDurationBars();
 
         //update taskLists
-        for (var i = 0; i < jsonTaskLists.length; i++) {
-          var id = jsonTaskLists[i].id;
+        for (var i = 0; i < lists.length; i++) {
+          var id = lists[i].id;
           var l = task_list(id);
-          l.earnings().update(jsonTaskLists[i].task_list_earnings);
-          l.duration().update(jsonTaskLists[i].task_list_duration);
+          l.earnings().update(lists[i].task_list_earnings);
+          l.duration().update(lists[i].task_list_duration);
         }
 
         //update grand total
@@ -513,12 +495,11 @@ var Application = {
         $("grand_total_duration").update(json.total_duration);
 
         Application.toggleTotals();
-        Application.updateInvoicesTotals();
 
-        setTimeout(Application.updateTasks, 2000);
+        setTimeout(Application.updateTasks, 20000);
       }
     };
-    new Ajax.Request("/task_lists/refresh", options);
+    return new Ajax.Request("/task_lists/refresh", options);
   },
 
   //this method called every 1000ms to show/hide clock colons.

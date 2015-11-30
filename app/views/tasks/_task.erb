@@ -1,3 +1,4 @@
+<% if task.id %>
 <li class="task_container" id="task_container_<%= task.id %>">
   <section class="<%= "#{task.class.name.underscore} #{task.status}" %>"
    id="<%= "#{task.class.name.underscore}_#{task.id}" %>">
@@ -26,11 +27,12 @@
       <%= task.task_earnings %>
     </span>
     <span class="duration border">
-      <%= raw task.task_duration %>
+      <%= raw task.formatted_duration %>
     </span>
     <span class="external_bars">
-      <%= raw task.task_duration_bar %>
+      <div class="duration_bar" duration="<%= raw task.running_time %>"></div>
     </span>
   </section>
   <%= render :partial=>"tasks/edit", :object=>task %>
 </li>
+<% end %>

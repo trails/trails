@@ -1,12 +1,9 @@
 <%= fields_for edit do |form| %>
   <section
    class="form task_form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %>"
-   id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>"
-   style="display:none">
+   id="<%= (edit.new_record? ? "task_list_#{edit.task_list.id}" : "edit") << "_#{edit.class.name.underscore}" << "_#{(edit.new_record? ? "new" : edit.id)}" %>">
       <fieldset class="task_title">
         <%= form.text_field   :description, :disabled=>true %>
-        <span class="earnings"><%= edit.new_record? ? "$00.00" : edit.task_earnings %></span>
-        <span class="duration"><%= raw edit.new_record? ? "0s" : edit.task_duration %></span>
       </fieldset>
       <fieldset>
         $ <%= form.text_field :rate, :disabled=>true %> /hour

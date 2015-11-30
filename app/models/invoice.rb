@@ -5,10 +5,7 @@ class Invoice < ActiveRecord::Base
   belongs_to :client
   belongs_to :user
 
-  validates_presence_of :client_id
-  before_save :save_task_order
   before_create :increment_invoice_number
-
 
   def total
     sum = tasks.to_a.sum(&:earnings)
@@ -28,34 +25,7 @@ class Invoice < ActiveRecord::Base
     total.format(:symbol => "$")
   end
 
-  def sorted_tasks
-    ret = []
-    task_order.each do |task_id|
-      task = tasks.find(task_id)
-      next if task.new_record?
-      ret << task
-    end
-    ret
-  end
-
-  def task_order
-    @task_order ||= ((ord=read_attribute(:task_order)) && ord.split(',')) || []
-  end
-
-  def task_order=(order)
-    @task_order = order
-  end
-
-  def unlink_task(task)
-    self.task_order -= [task]
-    save_task_order
-  end
-
   private
-    def save_task_order
-      write_attribute(:task_order, self.task_order.join(','))
-    end
-
     def increment_invoice_number
       write_attribute(:number, find_next_available_number)
     end
