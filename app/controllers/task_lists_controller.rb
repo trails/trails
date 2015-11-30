@@ -18,23 +18,22 @@ class TaskListsController < ApplicationController
   end
 
   def setSequence
+    @task_list = TaskList.find(params[:id])
     # unlink all tasks from task_list
-    @tasks_to_unlink = Task.where(task_list_id: params[:id]).all
-    @tasks_to_unlink.each do |task_id|
-      @task = Task.find(task_id)
-      @task.unlink
+    @task_list.tasks.each do |task|
+      task.update(task_list_id: 0)
     end
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
-    @tasks.each do |task_id|
+    @tasks.to_enum.with_index.each do |task_id, index|
       @task = Task.find(task_id)
-      @task.unlink
-      @task.update_attributes(:task_list_id => params[:id])
+      @task.invoice_id = 0
+      @task.task_list_id = params[:id]
+      @task.sort_order = @tasks.length - index
+      @task.save
     end
 
-    @task_list = TaskList.find(params[:id])
-    @task_list.task_order = @tasks
     head :ok
   end
 
@@ -45,17 +44,16 @@ class TaskListsController < ApplicationController
     total_earnings = Money.new(0, "USD")
     @task_lists.each do |task_list_id|
       @task_list = TaskList.find(task_list_id)
-      @tasks = @task_list.sorted_tasks
+      @tasks = @task_list.tasks
       @tasks.each do |task|
         @jsonTasks << task
         total_duration += task.duration
         total_earnings += task.earnings
       end
     end
-    json_tasks = @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
-    json_task_lists = @task_lists.to_json(:only=>:id,:methods=>[:task_list_duration,:task_list_earnings])
+    json_tasks = @jsonTasks.as_json(only: :id, methods: [:task_earnings, :running_time])
+    json_task_lists = @task_lists.as_json(only: :id, methods: [:task_list_duration,:task_list_earnings])
     render :json => {:tasklists => json_task_lists,:tasks => json_tasks,:total_duration => html_duration(total_duration),:total_earnings => total_earnings.to_money.format(:no_cents_if_whole => true, :symbol => "$")}
-    #render :json => @jsonTasks.to_json(:only=>:id,:methods=>[:task_duration,:task_earnings,:task_duration_bar])
   end
 
   private

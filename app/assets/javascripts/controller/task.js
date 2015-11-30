@@ -23,7 +23,6 @@ Task.addMethods({
 
   edit: function() {
     this.task_form().show();
-    this.element().hide();
     this.getSlider().setValue(0, 0);
     this.getSlider().setValue(0, 1);
   },
@@ -82,18 +81,86 @@ Task.addMethods({
     return task_list(Application.strip_id(elem));
   },
 
-  durationBar: function() {
-    return this.element().down(".duration_bar");
+  earnings: function(earnings) {
+    var elem = this.element().down(".earnings");
+    if (typeof earnings != 'undefined') {
+      elem.update(earnings);
+    }
+    return elem;
   },
 
-  earnings: function() {
-    return this.element().down(".earnings");
+  duration: function(duration) {
+    var elem = this.element().down('.duration');
+    if (typeof duration != 'undefined') {
+      elem.update(Task.HTMLDuration(duration));
+      this.durationBar(duration);
+    }
+    return elem;
   },
 
-  duration: function() {
-    return this.element().down(".duration");
+  durationBar: function(duration) {
+    var elem = this.element().down(".duration_bar");
+    if (typeof duration != 'undefined') {
+      elem.writeAttribute('duration', duration)
+    }
+    return elem;
+  },
+
+  description: function(description) {
+    var elem = this.element().down(".description");
+    if (typeof description != 'undefined') {
+      elem.update(description);
+    }
+    return elem;
+  },
+
+  update: function(json) {
+    if (json.description) {
+      this.description(json.description);
+    }
+    if (json.duration) {
+      this.duration(json.duration);
+    }
+    if (json.earnings) {
+      this.earnings(json.earnings);
+    }
   }
 });
+
+Task.HTMLDuration = function(seconds) {
+  if (seconds > 60) {
+    var minutes = ("00" + parseInt((parseInt(seconds / 60) % 60))).substr(-2),
+        hours   = ("00" + parseInt((parseInt(seconds / 60) / 60))).substr(-2),
+        ret = hours + '<span class="colon">:</span>' + minutes;
+    return ret.replace(/[0:]+/g, function($1) {
+      return '<span class="fade">' + $1 + '</span>';
+    });
+  } else {
+    return Math.floor(seconds) + '<span class="fade">s</span>';
+  }
+};
+
+Task.renderDurationBars = function () {
+  var maxDuration = .0;
+  $$('.duration_bar').each(function (element) {
+    if (!element.up('.list_container')) {
+      return;
+    }
+    var duration = parseFloat(element.readAttribute('duration'));
+    if (duration > maxDuration) {
+      maxDuration = duration;
+    }
+  });
+  $$('.duration_bar').each(function (element) {
+    if (!element.up('.list_container')) {
+      return;
+    }
+    var duration = parseFloat(element.readAttribute('duration'));
+    element.setStyle({
+      width: (duration * 100 / maxDuration) + '%'
+    });
+  });
+};
 
 var task = function (id) {
   var instance = Task.cache[id];

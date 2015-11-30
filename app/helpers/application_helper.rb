@@ -16,13 +16,6 @@ module ApplicationHelper
     end
   end
 
-  def formatted_duration(seconds)
-    minutes = seconds / 60
-    hours   = minutes / 60
-    minutes = minutes % 60
-    "%02d:%02d"%[hours,minutes]
-  end
-
   def errors_for(object, message=nil)
     html = ""
     unless object.errors.blank?

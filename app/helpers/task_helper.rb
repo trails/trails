@@ -9,7 +9,7 @@ module TaskHelper
       link_to image_tag("task_in_progress.gif", :id=>dom_id(task, status), :class=>dom_class(task, status))
     end
   end
-  
+
   def task_action_button(task)
     case (status = task.status)
     when :stopped
@@ -20,22 +20,12 @@ module TaskHelper
       "&nbsp;"
     end
   end
-  
+
   def task_rate(task)
     content_tag :span, task.rate.format(:no_cents_if_whole => true, :symbol => "$") + "/h", :class=>(task.specific_rate? ? "specfic" : "inherited")
   end
-  
-  
-  #def task_duration(task)
-  #  if task.duration > 60 || task.status == :active
-  #    duration(task.duration) 
-  #  elsif task.duration > 0 
-  #    %Q|#{task.duration}<span class="fade">s</span>|
-  #  end
-  #end
-  
+
   def task_earnings(task)
      task.earnings.format(:no_cents_if_whole => true, :symbol => "$") if task.earnings?
   end
-  
 end

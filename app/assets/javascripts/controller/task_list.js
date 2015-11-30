@@ -83,7 +83,7 @@ TaskList.addMethods({
 
   checkIfTotalNeeded: function() {
     var n = this.numTasks();
-    if (n < 2){
+    if (n < 2) {
       this.hideTotal();
     } else {
       this.showTotal();

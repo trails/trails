@@ -13,7 +13,9 @@ Invoice.addMethods({
   },
 
   setTaskSequence: function(sequence) {
-    this.update(sequence);
+    if (this.id) {
+      this.update(sequence);
+    }
   },
 
   data: function() {
@@ -34,7 +36,7 @@ Invoice.addMethods({
       params.tasks = sequence.toString();
     }
     var request = new Ajax.Request(url, {
-      method: parseInt(this.id) ? 'put' : 'post',
+      method: 'put',
       parameters: params,
       onSuccess: function(transport) {
         data = transport.responseJSON;
@@ -87,7 +89,6 @@ Invoice.addMethods({
       y: list.height / (inv.height + diff.y / 2)
     };
     var scale = invScale.x < invScale.y ? invScale.x : invScale.y;
-    console.log(scale == invScale.x ? 'x' : 'y');
     var realScale = scale * Invoice.CSS_SCALE;
     var offset = {
       x: ((list.width - (inv.width + diff.x / 4) * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE,
@@ -136,7 +137,7 @@ Invoice.init = function () {
 };
 
 Invoice.initDnD = function () {
-  $$("#invoices li:not(#invoice_new) main > ul").each(function (container) {
+  $$("#invoices li main > ul").each(function (container) {
     Sortable.create(container, {
       draggable: 'li.task_container',
       group: {
@@ -151,7 +152,7 @@ Invoice.initDnD = function () {
 };
 
 Invoice.updateTasksOrder = function (event) {
-  var id = event.target.recordID('invoice'); //Application.strip_id(container);
+  var id = event.target.recordID('invoice');
   var inv = invoice(id);
   var element = inv.element();
   var seq = Application.getSequence(element.down('main > ul'));

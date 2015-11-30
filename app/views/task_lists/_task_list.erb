@@ -1,7 +1,7 @@
-<%= render :partial=>"task_lists/header", :object=>task_list %>
-<%= render :partial=>"tasks/edit", :object=>task_list.tasks.build %>
+<%= render partial: "task_lists/header", object: task_list %>
+<%= render partial: "tasks/edit", object: task_list.tasks.build %>
 <ul class="list_container" id="task_list_container_<%= task_list.id %>">
-  <%= render :partial=>task_list.sorted_tasks %>
+  <%= render partial: task_list.tasks %>
 </ul>
 <div class="total" id="total_<%= task_list.id %>">
   <span class="external"></span>

@@ -16,10 +16,6 @@ class InvoicesController < ApplicationController
   def create
     @invoice = Invoice.create!(invoice_params.merge(:user_id => session[:user_id]))
 
-    # get list of tasks to be modified
-    @tasks = params[:tasks].split(",")
-    linkTasks(@tasks, @invoice)
-
     render json: @invoice
   end
 
@@ -36,17 +32,20 @@ class InvoicesController < ApplicationController
 
   def setSequence
     @invoice = Invoice.find(params[:id])
-
     # unlink all tasks from invoice
-    @tasks_to_unlink = Task.where(invoice_id: params[:id]).all
-    @tasks_to_unlink.each do |task_id|
-      @task = Task.find(task_id)
-      @task.unlink
+    @invoice.tasks.each do |task|
+      task.update(invoice_id: 0)
     end
 
     # get list of tasks to be modified
     @tasks = params[:tasks].split(",")
-    linkTasks(@tasks, @invoice)
+    @tasks.to_enum.with_index.each do |task_id, index|
+      @task = Task.find(task_id)
+      @task.task_list_id = 0
+      @task.invoice_id = @invoice.id
+      @task.sort_order = @tasks.length - index
+      @task.save
+    end
 
     head :ok
   end
@@ -56,14 +55,6 @@ class InvoicesController < ApplicationController
       params.require(:invoice).permit(:client_id, :description)
     end
 
-
-    def linkTasks (tasks, invoice)
-      tasks.each do |task_id|
-        @task = Task.find(task_id)
-        @task.update_attributes("invoice_id" => invoice.id)
-      end
-      invoice.update_attributes("task_order" => tasks)
-    end
 
     def render_pdf
       @invoice = Invoice.find(params[:id])
