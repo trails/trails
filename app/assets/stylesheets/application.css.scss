@@ -840,6 +840,7 @@ input[name='task_list[title]'] {
 #invoices > div > ul {
   padding-top: 10em;
   width: 500%;
+  min-height: 5000px; // workaround for first usage issues with zoom
   height: 500%;
   -webkit-transition: -webkit-transform .2s ease-out;
   transition: transform .2s ease-out;
