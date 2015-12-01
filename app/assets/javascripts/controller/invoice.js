@@ -36,7 +36,7 @@ Invoice.addMethods({
       params.tasks = sequence.toString();
     }
     var request = new Ajax.Request(url, {
-      method: 'put',
+      method: parseInt(this.id) ? 'put' : 'post',
       parameters: params,
       onSuccess: function(transport) {
         data = transport.responseJSON;
