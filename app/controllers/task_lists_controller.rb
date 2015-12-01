@@ -8,7 +8,8 @@ class TaskListsController < ApplicationController
   end
 
   def update
-    @task_list = TaskList.update(task_list_params)
+    @task_list = TaskList.find(params[:id])
+    @task_list.update_attributes(task_list_params)
     render :partial=>"task_lists/header", :object=>@task_list
   end
 
