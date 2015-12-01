@@ -99,8 +99,8 @@ class InvoicesController < ApplicationController
       items += @invoice.tasks.each.map do |item|
         [
           item[:description],
-          item.task_duration(false),
-          item.task_earnings(false)
+          item.formatted_duration,
+          item.task_earnings
         ]
       end
       items += [
