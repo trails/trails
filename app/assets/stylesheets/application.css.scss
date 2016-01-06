@@ -1143,20 +1143,26 @@ input[name='task_list[title]'] {
 }
 
 #invoices li > main > ul {
-  padding-top: 4em;
   position: absolute;
+  padding-top: 4em;
   height: calc(100% - 4em);
-  width: 100%;
+  padding-right: .5em;
+  width: calc(100% - .5em);
+  overflow-y: scroll;
 }
 
-#invoices li > main > ul:after {
+#invoices li > main > ul > li {
+  position: relative;
+}
+
+#invoices li > main > ul > li:after {
   content: '\00a0';
   position: absolute;
   width: 0px;
   top: 0;
   height: 100%;
   border-right: 2px solid #efefef;
-  right: 23%;
+  right: 21.1%;
 }
 
 #invoices li > main .submit {
@@ -1230,6 +1236,10 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
 #invoices .task .earnings,
 #invoices .task .duration {
   width: 23%;
+}
+
+#invoices .task .duration {
+  vertical-align: top;
 }
 
 #invoices .task_container:first-child .duration:before,
