@@ -46,6 +46,7 @@ Invoice.addMethods({
           element.writeAttribute('id', 'invoice_' + data.id);
           $(element).down('header:first-child > h3').innerHTML = 'Invoice #' + data.number;
           $(element).down('input[name="invoice[description]"]').value = data.description;
+          $(element).down('fieldset > a:first-child').setAttribute('href', '/invoices/' + data.id + '.pdf');
           Sortable.create($$("#invoice_" + data.id + " main > ul")[0], {
             draggable: 'li.task_container',
             group: {
@@ -68,32 +69,39 @@ Invoice.addMethods({
 
   zoomIn: function() {
     var element = this.element();
-    var list = {
-      width: $$('#invoices > div > ul')[0].getLayout().get('width'),
-      height: $$('#invoices > div > ul')[0].getLayout().get('height')
-    };
     var inv = {
       width: element.getLayout().get('margin-box-width'),
-      height: element.getLayout().get('margin-box-height')
+      height: element.getLayout().get('margin-box-height'),
+      left: element.offsetLeft,
+      top: element.offsetTop
     };
     var viewport = {
       width: $('invoices').getLayout().get('margin-box-width'),
       height: $('invoices').getLayout().get('margin-box-height')
     };
-    var diff = {
-      x: inv.width - viewport.width,
-      y: inv.height - viewport.height
+    inv.ratio = inv.width / inv.height;
+    viewport.ratio = viewport.width / viewport.height;
+
+    var result = {
+      width: (
+        (viewport.ratio > inv.ratio)
+          ? inv.width * viewport.height / inv.height
+          : viewport.width
+      ),
+      height: (
+        (viewport.ratio > inv.ratio)
+          ? viewport.height
+          : inv.height * viewport.width / inv.width
+      ),
     };
-    var invScale = {
-      x: list.width / (inv.width + diff.x / 2),
-      y: list.height / (inv.height + diff.y / 2)
-    };
-    var scale = invScale.x < invScale.y ? invScale.x : invScale.y;
-    var realScale = scale * Invoice.CSS_SCALE;
-    var offset = {
-      x: ((list.width - (inv.width + diff.x / 4) * scale) / 2 - element.offsetLeft * scale) * Invoice.CSS_SCALE,
-      y: ((list.height - (inv.height + diff.y / 4) * scale) / 2 - element.offsetTop * scale) * Invoice.CSS_SCALE
-    };
+    result.scale = (
+      (viewport.ratio > inv.ratio)
+        ? result.width / inv.width
+        : result.height / inv.height
+    );
+
+    result.top = -inv.top * result.scale + 50;
+    result.left = -inv.left * result.scale + 50;
 
     InvoiceForm.disableAll();
     invoice_id = element.recordID('invoice');
@@ -101,9 +109,10 @@ Invoice.addMethods({
 
     $$('#invoices > div > ul')[0].addClassName('zoomed').setStyle({
       transform:
-        'translate(' + offset.x.toString() + 'px, ' + offset.y.toString() + 'px) ' +
-        'scale(' + realScale.toString() + ')'
+        'translate(' + result.left.toString() + 'px, ' + result.top.toString() + 'px) ' +
+        'scale(' + result.scale.toString() + ')'
     });
+
     element.addClassName('zoom');
   }
 });
@@ -146,7 +155,8 @@ Invoice.initDnD = function () {
         put: ['taskList']
       },
       onAdd: Invoice.updateTasksOrder,
-      onUpdate: Invoice.updateTasksOrder
+      onUpdate: Invoice.updateTasksOrder,
+      onRemove: Invoice.updateTasksOrder
     });
   });
 };
@@ -165,6 +175,14 @@ Invoice.updateTasksOrder = function (event) {
   total_earnings = total_earnings.toFixed(2);
   element.down('header:first-child > p > span').innerHTML = total_earnings;
   element.down('footer > p:last-child > strong > span').innerHTML = total_earnings;
+
+  var durations = Application.getDurationSequence(element.down('main > ul'));
+  var total_duration = 0;
+  for (var i=0; i<durations.length; i++) {
+    total_duration += durations[i];
+  }
+  total_duration = total_duration.toFixed(2) / 60;
+  element.down('footer > p:first-child > span').innerHTML = Application.formattedTime(total_duration);
 };
 
 var invoice = function (id) {

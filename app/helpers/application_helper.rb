@@ -16,6 +16,17 @@ module ApplicationHelper
     end
   end
 
+  def str_duration(seconds)
+    if(seconds > 60)
+      minutes = seconds / 60
+      hours   = minutes / 60
+      minutes = minutes % 60
+      "%02d:%02d"%[hours,minutes]
+    else
+      %Q|#{(seconds).floor}s|
+    end
+  end
+
   def errors_for(object, message=nil)
     html = ""
     unless object.errors.blank?

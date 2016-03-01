@@ -16,7 +16,7 @@
     <%= render :partial => 'invoices/edit', :object => invoice %>
   </main>
   <footer>
-    <p>Total time <span>0:00</span></p>
+    <p>Total time <span><%= raw html_duration(invoice.duration) %></span></p>
     <p>Total due <strong>$<span><%= invoice.total %></span></strong></p>
   </footer>
   <fieldset>

@@ -5,6 +5,10 @@
 $left-margin: 70px;
 $invoices-scale: .2;
 
+html {
+  height: 100%;
+}
+
 ul table td {
   border: 0px solid blue;
 }
@@ -26,6 +30,7 @@ body {
   font-size: 11px;
   margin-left: 0px;
   position: relative;
+  min-height: 100%;
 }
 
 .clearfix:before,
@@ -69,7 +74,7 @@ body > svg:first-child {
 #task_list_commands {
   display: inline-block;
   text-align: right;
-  margin: 5px 5px 10px 421px;
+  margin: 5px 5px 10px 440px;
 }
 #task_list_commands a,
 #task_lists a[href="#cancel"] {
@@ -462,7 +467,9 @@ body.dnd .list_container:before {
 }
 
 .description {
-  min-width: 200px;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .rate {
@@ -525,7 +532,7 @@ body.dnd .list_container:before {
 .external_bars .duration_bar  {
   height: 3px;
   width: 0px;
-  transition: width .7s ease-out;
+  transition: width .4s ease-in-out;
   margin-top: .6em;
 }
 

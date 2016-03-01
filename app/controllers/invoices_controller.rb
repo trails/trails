@@ -103,8 +103,16 @@ class InvoicesController < ApplicationController
           item.task_earnings
         ]
       end
+      if(@invoice.duration > 60)
+        minutes = @invoice.duration / 60
+        hours   = minutes / 60
+        minutes = minutes % 60
+        duration = "%02d:%02d"%[hours,minutes]
+      else
+        duration = %Q|#{(@invoice.duration).floor}s|
+      end
       items += [
-        ["Total time", @invoice.total.to_s, ""],
+        ["Total time", duration, ""],
         ["", "", "Total due"],
         [{content: @invoice.formatted_total, colspan: 3}]
       ]

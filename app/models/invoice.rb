@@ -12,6 +12,10 @@ class Invoice < ActiveRecord::Base
     Money.new(sum == 0 ? 0.0 : sum, "USD")
   end
 
+  def duration
+    tasks.to_a.sum(&:running_time)
+  end
+
   def earnings
     return 0.0 if !total
     total
