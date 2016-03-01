@@ -41,7 +41,22 @@ TaskList.addMethods({
   },
 
   remove: function() {
-    this.ajaxAction("remove",{method:"delete"});
+    var self = this;
+    swal({
+      title: "Delete list",
+      text: "Are you sure you want to delete list?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: true
+    },
+    function(response){
+      if (response) {
+        self.ajaxAction("remove", {method:"delete"});
+      }
+    });
+
   },
 
   afterRemove: function(name, transport) {

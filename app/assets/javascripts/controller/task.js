@@ -28,10 +28,21 @@ Task.addMethods({
   },
 
   remove: function() {
-    var response = confirm("Are you sure you want to delete task?");
-    if (response) {
-      this.ajaxAction("remove",{method:"delete"});
-    }
+    var self = this;
+    swal({
+      title: "Delete task",
+      text: "Are you sure you want to delete task?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: true
+    },
+    function(response){
+      if (response) {
+        self.ajaxAction("remove", {method:"delete"});
+      }
+    });
   },
 
   afterRemove: function(name, transport) {
@@ -61,7 +72,8 @@ Task.addMethods({
         var diffTime = $("diffTime_"+this.myId);
         var diffTimeInput = $("diffTime_input_"+this.myId);
         total = Math.floor(hours)*60  + mins;
-        diffTime.innerHTML = Application.formattedTime(total);
+        var sign = (total < 0) ? '-' : '+';
+        diffTime.innerHTML = sign + Application.formattedTime(total);
         diffTimeInput.value = total;
       }
     });
@@ -93,6 +105,7 @@ Task.addMethods({
     var elem = this.element().down('.duration');
     if (typeof duration != 'undefined') {
       elem.update(Task.HTMLDuration(duration));
+      elem.setAttribute('duration', duration);
       this.durationBar(duration);
     }
     return elem;
@@ -140,7 +153,7 @@ Task.HTMLDuration = function(seconds) {
   }
 };
 
-Task.renderDurationBars = function () {
+Task.maxDuration = function() {
   var maxDuration = .0;
   $$('.duration_bar').each(function (element) {
     if (!element.up('.list_container')) {
@@ -151,13 +164,22 @@ Task.renderDurationBars = function () {
       maxDuration = duration;
     }
   });
+  return maxDuration;
+};
+
+Task.renderDurationBars = function () {
+  var maxDuration = Task.maxDuration();
   $$('.duration_bar').each(function (element) {
     if (!element.up('.list_container')) {
       return;
     }
-    var duration = parseFloat(element.readAttribute('duration'));
+    var duration = parseFloat(element.readAttribute('duration')),
+        relative = (maxDuration / 60) > $$('.external_bars:first')[0].getLayout().get('width');
+
+    var w = relative ? (duration * 100 / maxDuration) + '%' : (duration / 60) + 'px';
+
     element.setStyle({
-      width: (duration * 100 / maxDuration) + '%'
+      width: w
     });
   });
 };

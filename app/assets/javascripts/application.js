@@ -38,6 +38,7 @@ var Application = {
     Application.attachEventHandlers();
 
     Invoice.init();
+    setInterval(Task.renderDurationBars, 200);
   },
 
   CSRFAjax: function() {
@@ -451,6 +452,12 @@ var Application = {
     });
   },
 
+  getDurationSequence: function(element) {
+    return $(Element.findChildren(element, 'li') || []).map( function(item) {
+      return parseFloat(item.down('.task > .duration').getAttribute('duration'));
+    });
+  },
+
   initSliders: function() {
     //get slider tracks' ids
     $slider_track_elements = $$(".slider_track");
@@ -480,7 +487,6 @@ var Application = {
             duration: tasks[i].running_time
           });
         }
-        Task.renderDurationBars();
 
         //update taskLists
         for (var i = 0; i < lists.length; i++) {
@@ -533,12 +539,11 @@ var Application = {
   },
 
   formattedTime: function(t) {
-    var res = (total < 0) ? '-' : '+';
-    var mins = Math.abs(t % 60);
+    var mins = parseInt(Math.abs(t % 60));
     if(mins < 10) {
       mins = '0' + mins;
     }
-    res += Math.floor(Math.abs(t / 60)) + ':' + mins;
+    res = Math.floor(Math.abs(t / 60)) + ':' + mins;
     return res;
   },
 
