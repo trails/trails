@@ -1,5 +1,13 @@
-@import 'reset-fonts';
-@import 'font-awesome';
+@import 'reset-fonts.css.scss';
+@import 'font-awesome.css';
+@import 'simform.css';
+
+$left-margin: 70px;
+$invoices-scale: .2;
+
+html {
+  height: 100%;
+}
 
 ul table td {
   border: 0px solid blue;
@@ -21,92 +29,80 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial;
   font-size: 11px;
   margin-left: 0px;
+  position: relative;
+  min-height: 100%;
 }
 
 .clearfix:before,
 .clearfix:after {
-    content: " ";
-    display: table;
+  content: " ";
+  display: table;
 }
 .clearfix:after {
-    clear: both;
+  clear: both;
 }
 .clearfix {
-    *zoom: 1;
+  *zoom: 1;
 }
 
-nav {
-  height: 40px;
+body > svg:first-child {
+  position: absolute;
+  top: 0;
+  left: 488px;
+  height: 100%;
+  z-index: -1;
+  width: calc(100% - 488px);
+}
+
+#task_form {
   width: 100%;
-  font-size: 11pt;
-  font-family: 'PT Sans', Arial, sans-serif;
-  font-weight: bold;
-  position: relative;
-}
-nav ul {
-  padding: 0;
-  margin: 0 auto;
-  width: auto;
-  height: 40px;
-  float: right;
-}
-
-nav li {
-  display: inline;
-  float: left;
-}
-
-nav a {
-  color: #aaaaaa;
-  display: inline-block;
-  width: 100px;
-  text-align: center;
-  text-decoration: none;
-  line-height: 40px;
-}
-
-nav li a {
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
-}
-
-nav a#pull {
-  display: none;
 }
 
 #task_lists {
   left: 10px;
   top: 150px;
 }
-#task_lists td, #task_lists th, tr.task td {
-  padding: 3px;
+.task_list > span,
+.task > span {
+  display: inline-block;
+}
+
+#task_lists .task_list_form > span {
+  font-size: 1.75em;
 }
 
 #task_list_commands {
+  display: inline-block;
   text-align: right;
-  margin-right: 5px;
-  margin-bottom: 10px;
+  margin: 5px 5px 10px 440px;
 }
-#task_list_commands a {
+#task_list_commands a,
+#task_lists a[href="#cancel"] {
   color: #006699;
   text-decoration: underline;
-  border: 2px solid #FFF;
+  border-radius: 2px;
+  padding: .2em .3em;
 }
-#task_list_commands a:hover {
+#task_list_commands a:hover,
+#task_lists a[href="#cancel"]:hover,
+#task_list_commands a:active,
+#task_lists a[href="#cancel"]:active,
+#task_list_commands a:focus,
+#task_lists a[href="#cancel"]:focus {
   color: #FFF;
   text-decoration: none;
   background-color: #006699;
-  border: 2px solid #006699;
-}
-#task_list_commands a:visited {
-  text-decoration: underline;
 }
 
 .grand_total {
   background-color: #99cccc;
   color: #FFF;
   text-align: right;
+  padding: .1em .5em;
+  margin-right: -.3em;
+}
+.grand_total:first-child {
+  margin-left: 342px
 }
 .grand_total .fade {
   color: #cccccc;
@@ -119,50 +115,100 @@ nav a#pull {
 }
 
 .task_list {
-  background-color: #f7f7e7;
+  margin-left: $left-margin;
 }
-.task_list .external {
-  background-color: #fff;
+.task_list > .external {
+  width: calc($left-margin -.6em);
+  padding-left: .3em;
+  padding-right: .3em;
 }
-.task_list .toolbar * {
+.task_list > .external:first-child {
+  margin-left: -$left-margin;
+  margin-right: -.2em;
+}
+.task_list .toolbar a {
   visibility: hidden;
+  vertical-align: top;
 }
 .task_list:hover .toolbar {
   background-color: #f7f7e7;
 }
-.task_list:hover .toolbar * {
+.task_list:hover .toolbar a {
   visibility: visible;
 }
-.task_list:hover .toolbar a {
-  color: #990000;
+
+.task_list > span {
+  padding-top: .7em;
+  padding-bottom: .7em;
+  font-size: 1.4em;
+  height: 23px;
+  vertical-align: top;
+}
+.task_list > span:not(.toolbar) {
+  padding-left: .3em;
+  padding-right: .3em;
 }
 
-tr.task_list td {
-  height: 40px;
+section.task_list .title,
+.task_list .new_task {
+  background-color: #f7f7e7;
 }
 
-th.title {
+.task_list .title {
   color: black;
-  font-size: 18px;
   font-family: "Helvetica Neue", Helvetica, Arial;
+  width: calc(268px - .6em);
 }
 
-th.new_task {
+.task_list .title > i {
+  display: inline-block;
+  width: .6em;
+  color: #999;
+  cursor: pointer;
+}
+
+.task_list a > i {
+  font-size: 1.3em;
+  opacity: .6;
+  transition: transform .5s ease-out, opacity .5s ease-out;
+}
+
+.task_list .toolbar a {
+  display: inline-block;
+  padding: 0 .1em;
+}
+
+.task_list .toolbar a:first-child {
+  color: #D3A1A1;
+}
+.task_list .toolbar a:first-child + a {
+  color: #666;
+}
+
+.task_list a:hover > i,
+.task_list a:active > i,
+.task_list a:focus > i {
+  opacity: 1;
+}
+
+.task_list .new_task {
   text-align: right;
+  margin-left: -.2em;
+  width: calc(153px - .6em);
 }
-th.new_task a {
-  color: #006699;
-  border: 2px solid #f7f7e7;
-  text-decoration: underline;
+.task_list .new_task a {
+  color: #CCCC66;
 }
-th.new_task a:hover {
-  background-color: #006699;
-  border: 2px solid #006699;
-  text-decoration: none;
-  color: #f7f7e7;
+
+.task_list .new_task a:hover > i,
+.task_list .new_task a:active > i,
+.task_list .new_task a:focus > i {
+  transform: rotate(180deg);
 }
-th.new_task a:visited {
-  text-decoration: underline;
+
+.task_list .new_task > span {
+  font-size: .8em;
+  vertical-align: top;
 }
 
 .duration {
@@ -171,10 +217,6 @@ th.new_task a:visited {
 }
 .duration .colonTick {
   color: white;
-}
-
-.earnings {
-  color: black;
 }
 
 tr.blank_list_footer {
@@ -193,15 +235,28 @@ tr.blank_task td {
   padding: 0px;
 }
 
-tr.task td {
-  height: 25px;
+.task > span,
+.total > span {
+  height: 2.3em;
+  padding: .8em .2em 0;
+  vertical-align: middle;
+  display: inline-block;
 }
-tr.task td.border {
+
+.task > span.toolbar {
+  height: 2.8em;
+  padding: .3em .2em 0;
+}
+
+.task > span.border {
   border-bottom: 1px solid #eeeeee;
 }
-tr.task .task_submit {
+#invoices .task > span.border {
+  border-bottom: 0 none;
+}
+.task .task_submit {
   text-align: right;
-  height: 30px;
+  padding-bottom: 1em;
 }
 
 .task {
@@ -212,17 +267,6 @@ tr.task .task_submit {
 .task .toolbar * {
   visibility: hidden;
 }
-.task .toolbar a {
-  vertical-align: top;
-  color: #990000;
-  border: 2px solid #f7f7e7;
-}
-.task .toolbar a:hover {
-  text-decoration: underline;
-  color: #990000;
-  border: 2px solid #f7f7e7;
-  background-color: #f7f7e7;
-}
 
 .task:hover .toolbar * {
   visibility: visible;
@@ -231,31 +275,29 @@ tr.task .task_submit {
   text-decoration: underline;
 }
 .task a:hover {
-  color: #FFF;
   text-decoration: none;
+}
+.task .start a:hover {
+  color: #FFF;
   background-color: #669966;
 }
-.task a:visited {
-  text-decoration: underline;
+
+.task .toolbar > a {
+  display: inline-block;
+  padding: 0 .05em;
+  font-size: 1.8em;
 }
 
-.delete {
-  padding-top: 15px;
-  height: 0px;
-  width: 15px;
-  display: block;
-  float: left;
-  background-image: url('Trash.png');
-  background-repeat: no-repeat;
-  background-position: 0px left;
-  overflow: hidden;
-  border: none !important;
-  font-size: 1px;
-  background-color: none;
+.task .toolbar > a:first-child {
+  padding-left: .2em;
 }
-.delete:hover {
-  background-position: -14px left;
-  background-color: none;
+
+.task .toolbar > a.delete {
+  color: #D3A1A1;
+}
+
+.task .toolbar > a.edit {
+  color: #666666;
 }
 
 td.status {
@@ -269,7 +311,7 @@ td.status {
   color: #333333;
   border: 2px solid #FFF;
 }
-.task:hover  .start a {
+.task:hover .start a {
   color: #FFF;
   text-decoration: none;
   background-color: #669966;
@@ -290,6 +332,41 @@ td.status {
   text-decoration: underline;
 }
 
+.list_container {
+  min-height: 20px;
+  position: relative;
+}
+
+.list_container:before,
+#invoices li > main:before {
+  content: '\00a0';
+  display: block;
+  position: absolute;
+  border: 2px dashed #99CC99;
+  top: 1px;
+  opacity: 0;
+  transition: opacity .3s ease-out;
+}
+
+.list_container:before {
+  left: 70px;
+  width: 416px;
+  height: calc(100% - 4px);
+  z-index: -1;
+}
+
+#invoices li > main:before {
+  left: 0;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  border-width: 4px;
+}
+
+body.dnd #invoices li > main:before,
+body.dnd .list_container:before {
+  opacity: 1;
+}
+
 .task_list_container_row td {
   text-align: center;
 }
@@ -301,31 +378,20 @@ td.status {
   width: 95%;
 }
 
-.task_form_container {
-  border-bottom: 1px solid #cdcdcd;
-  min-width: 416px;
-}
-.task_form_container * {
-  padding: 0px;
-}
-.task_form_container * .submit {
-  background-color: #e3eeec;
+.task + .task_form {
+  margin-top: -3.3em;
 }
 
-.task_form {
-  background-color: #e3eeec;
-}
 .task_form .description {
   min-width: 325px;
 }
-.task_form .title {
+.task_form .title,
+.task_list_form .title {
   width: 270px;
 }
-.task_form .task_title {
-  min-width: 308px;
-}
 .task_form .task_title #task_description {
-  margin-left: 11px;
+  margin-left: 1em;
+  width: 287px;
 }
 .task_form .task_title #task_rate[readonly] {
   background-color: #CCC;
@@ -341,25 +407,69 @@ td.status {
   width: 250px;
   height: 18px;
 }
-.task_form:hover {
-  background-color: #e3eeec;
-}
 
 .task_container.sortable-ghost {
   background-color: #E4F7CF;
 }
 
-.external_bars, .submit {
+.external_bars {
+  display: inline-block;
+  width: calc(100% - 500px - 5em);
+}
+
+.submit {
   background-color: white;
   text-align: left;
 }
 
-.external_bars {
-  width: 1000px;
+.task_form,
+.task_list_form {
+  margin-left: $left-margin;
+}
+.task_form {
+  width: 420px;
+}
+.task_form > fieldset {
+  background-color: #e3eeec;
+}
+.task_form > fieldset:last-child {
+  border-bottom-left-radius: .4em;
+  border-bottom-right-radius: .4em;
+}
+.task_container > .task_form,
+.task_list + section + .task_form.new:not(.current) {
+  display: none;
+}
+.task_container.edit > .task_form {
+  display: block;
+}
+.task_list_form {
+  font-size: .6em;
+}
+.task_list_form > .title,
+.task_list_form > .default_rate {
+  background-color: #e3eeec;
+  border-bottom: 1px solid #cdcdcd;
+}
+.task_list_form > .default_rate {
+  width: 145px;
+  margin-left: -.85em;
+}
+.task_form > fieldset {
+  padding: 5px 10px;
+}
+.task_form .submit {
+  background-color: #e3eeec;
+}
+
+.edit > .task > .status {
+  visibility: hidden;
 }
 
 .description {
-  min-width: 200px;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .rate {
@@ -375,9 +485,20 @@ td.status {
   text-align: right;
 }
 
+.earnings,
+.duration {
+  display: inline-block;
+  display: inline-block;
+}
+
 .earnings {
   min-width: 55px;
   text-align: right;
+  color: black;
+}
+
+.total .earnings {
+  margin-left: 374px;
 }
 
 .fade {
@@ -390,6 +511,10 @@ td.status {
 }
 .task:not(.task_form):not(.complete):hover .duration {
   color: #669966;
+}
+.task_form .duration {
+  float: right;
+  margin-top: .3em;
 }
 
 .toolbar {
@@ -405,8 +530,10 @@ td.status {
 }
 
 .external_bars .duration_bar  {
-  height: 2px;
+  height: 3px;
   width: 0px;
+  transition: width .4s ease-in-out;
+  margin-top: .6em;
 }
 
 .active .external_bars .duration_bar {
@@ -426,9 +553,14 @@ td.status {
 
 .default_rate_check {
   margin-left: 50px;
+  display: inline-block
 }
 .default_rate_check span {
   text-decoration: underline;
+}
+
+.slider_row {
+   text-align: center;
 }
 
 .slider_handle {
@@ -449,7 +581,7 @@ td.status {
 .slider_track {
   background: url(bg-fader.gif);
   height: 28px;
-  margin-left: 40px;
+  margin: 0 auto;
   position: relative;
 }
 
@@ -468,12 +600,12 @@ input[name='task_list[title]'] {
   height: 18px;
 }
 
-input[type='text'] {
+#task_lists input[type='text'] {
   border: 1px solid #ccc;
   height: 18px;
 }
 
-input[type='checkbox'] {
+#task_lists input[type='checkbox'] {
   vertical-align: middle;
 }
 
@@ -574,21 +706,961 @@ input[type='checkbox'] {
   transition: all 0.3s ease-out;
 }
 
-.helper {
-  position: absolute !important;
+#slide {
+  position: fixed;
+  top: 0;
+  left: 100%;
+  width: calc(100% - 550px);
+  height: 100%;
+  -webkit-transition: -webkit-transform .2s ease-out;
+  transition: transform .2s ease-out;
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  text-align: left;
+}
+#slide.show {
+  -webkit-transform: translate3d(-100%,0,0);
+  transform: translate3d(-100%,0,0);
+}
+
+#slide > form {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  opacity: .9;
+}
+
+#slide > form.current {
+  z-index: 1;
+}
+#slide > form:hover,
+#slide.show > form.current {
+  opacity: 1;
+}
+
+#slide > form:not(.current) {
+  z-index: 0;
+}
+
+#slide > a:last-child {
+  position: absolute;
+  top: .2em;
+  right: .5em;
+  opacity: 0;
+  font-size: 2.5em;
+  color: #D3A1A1;
+  transition: opacity .5s ease-out, transform .5s ease-out;
+  z-index: 2;
+}
+
+#slide.show > a:last-child {
+  opacity: .8;
+}
+
+#slide.show > a:last-child:hover {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+#settings,
+#settings > h2:before {
+  background-color: #f5f5f5;
+}
+
+#invoices,
+#invoices > h2:before {
+  background-color: #f3f7ee;
+}
+
+#clients,
+#clients > h2:before {
+  background-color: #f7f7e7;
+}
+
+#slide > form > h2 {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0 1em .5em 0;
+  padding-top: .5em;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  transition: opacity .5s ease-out;
+  opacity: 1;
+  color: rgba(200, 200, 200, .8);
+  width: 100%;
+}
+
+#slide > form > h2:before,
+#slide > form > h2 > span {
+  display: inline-block;
+  position: absolute;
+}
+
+#slide > form > h2:before {
+  color: #666;
+  font-family: FontAwesome;
+  margin-left: -2.9em;
+  padding: .5em .7em;
+  margin-top: -.5em;
+  border-top-left-radius: .2em;
+  border-bottom-left-radius: .2em;
+  left: 17px;
+}
+
+#slide > form > h2 > span {
+  width: 8em;
+  text-align: right;
+  transform: rotate(-90deg) translate(-6em, 4em);
+  right: 1.2em;
+  top: 0;
+}
+
+#slide,
+#slide.show > form.current > h2:before {
+  box-shadow: -.2em 0 0 0 #DDE8CE;
+}
+
+#settings > h2:before {
+  content: '\f013';
+}
+
+#invoices > h2:before {
+  top: 63px;
+  content: '\f0f6';
+}
+
+#clients > h2:before {
+  top: 115px;
+  content: '\f007';
+}
+
+
+#slide > form > h2:first-child + ul {
+  position: absolute;
+}
+
+#settings > ul {
+  width: calc(100% - 1.2em * 2);
+  height: calc(100% - 5em);
+  padding: 4.5em 1.2em .5em;
+}
+
+#invoices > div {
+  overflow-x: hidden;
+}
+
+#invoices > div > ul {
+  padding-top: 10em;
+  width: 500%;
+  min-height: 5000px; // workaround for first usage issues with zoom
+  height: 500%;
+  -webkit-transition: -webkit-transform .2s ease-out;
+  transition: transform .2s ease-out;
+  -webkit-transform: translate3d(50%,0,0);
+  transform: translate3d(50%,0,0);
+  overflow: hidden;
+}
+
+#slide.show #invoices > div > ul {
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  transform-origin: top left;
+}
+
+#slide.show #invoices > div > ul:not(.zoomed) {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#settings > ul > li:first-child {
+  margin-bottom: 6em;
+}
+
+#settings > ul > li h3 {
+  font-size: 1.8em;
+  color: #666;
+  margin-left: .7em;
+}
+
+#settings > ul > li h3 a {
+  color: #999;
+}
+
+#settings > ul > li h3 + img {
+  float: left;
+  width: 150px;
+  border-radius: 75px;
+  margin: 2em 3em;
+}
+
+#settings > ul > li fieldset {
+  margin-top: 2em;
+}
+
+#settings > ul > li fieldset > label,
+#settings > ul > li fieldset > input[type="text"],
+#settings > ul > li fieldset > input[type="email"] {
+  display: block;
+}
+
+#settings > ul > li fieldset > label {
+  font-size: 1.3em;
+  color: #999;
+}
+
+#settings > ul > li fieldset > input[type="text"],
+#settings > ul > li fieldset > input[type="email"] {
+  font-size: 2em;
+  padding: .1em .4em;
+  color: #666;
+}
+
+#settings > ul > li fieldset > input[type="text"]:focus,
+#settings > ul > li fieldset > input[type="email"]:focus {
+  color: #333;
+}
+
+#settings > ul > li:first-child fieldset > input[type="text"],
+#settings > ul > li:first-child fieldset > input[type="email"] {
+  width: 40%;
+}
+
+#settings > ul > li:nth-child(2) fieldset > input[type="text"] {
+  width: 95%;
+}
+
+#settings > ul > li:nth-child(2) > fieldset {
+  width: calc(33% - 4em);
+  display:inline-block;
+  padding: .5em 1em .5em 3em;
+  vertical-align: bottom;
+}
+
+#settings > ul > li:last-child {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+}
+
+#settings input[type="submit"] {
+  float: right;
+  padding: 0.3em 0.8em;
+  font-size: 1.5em;
+  margin-top: 0.5em;
+}
+
+#settings > ul > li:last-child > a {
+  font-size: 1.5em;
+  color: #666;
+  text-decoration: none;
+}
+
+#invoices > div,
+#invoices > div > ul.zoomed,
+#invoices > div > ul.zoomed > li:not(.zoom) {
+  cursor: -webkit-zoom-out;
+  cursor: -moz-zoom-out;
+}
+
+#invoices > div > ul > li {
+  position: relative;
+  display: inline-block;
+  margin: 15em 10em 5em;
+  padding: 2.5em 5em;
+  width: 75em;
+  height: 100em;
+  border-radius: 4px;
+  background: #ffffff;
+  text-align: center;
+  vertical-align: top;
+  opacity: 1;
+  transition: opacity .2s ease-out;
+  -moz-transition: opacity .2s ease-out;
+  -webkit-transition: opacity .2s ease-out;
+  text-align: left;
+  box-shadow: 0 0 2em 1em #DDE8CE;
+  cursor: default;
+}
+#invoices > div > ul > li#invoice_new {
+  opacity: .8;
+}
+#invoices > div > ul.zoomed > li:not(.zoom),
+#invoices > div > ul.zoomed > li#invoice_new:not(.zoom) {
+  opacity: 0;
+}
+#slide.show #invoices > div > ul:not(.zoomed) > li {
+  cursor: pointer;
+  cursor: -webkit-zoom-in;
+  cursor: -moz-zoom-in;
+}
+
+#invoices header,
+#invoices section {
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+#invoices header,
+#invoices header > details,
+#invoices section {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+#invoices header {
+  border-bottom: 2px solid #efefef;
+}
+
+#invoices header h3,
+#invoices li header h3 + input[type="text"],
+#invoices header p,
+#invoices header p input[type="text"],
+#invoices section h4,
+#invoices section h4 + p {
+  color: #527c22;
+}
+
+#invoices li header h3 + input[type="text"]::-webkit-input-placeholder,
+#invoices li header h3 + input[type="text"]:-moz-placeholder,
+#invoices li header h3 + input[type="text"]::-moz-placeholder,
+#invoices li header h3 + input[type="text"]:-ms-input-placeholder {
+  color: #2A4012 !important;
+}
+
+#invoices section h4 + p {
+  margin-top: 0;
+}
+
+#invoices header h3,
+#invoices header p {
+  width: 45%;
+}
+
+#invoices header p:first-child {
+  float: right;
+  width: calc(50% - 40px);
+  font-size: 2.5em;
+  white-space: pre-line;
+}
+
+#invoices header h3 {
+  font-size: 5em;
+  line-height: 1em;
+}
+
+#invoices li#invoice_new {
+  box-shadow: 0 0 2em 1em #99cccc;
+}
+
+#invoices li#invoice_new header h3 {
+  display: none;
+}
+
+#invoices header p {
+  font-size: 2.5em;
+}
+
+#invoices li header h3 + input[type="text"] {
+  font-size: 2em;
+  display: inline-block;
+  border: 0;
+}
+
+#invoices li header h3 + input[type="text"] {
+  box-shadow: none;
+  outline: medium none;
+}
+
+
+#invoices li#invoice_new header h3 + input[type="text"] {
+  margin: 1em 0px;
+  padding: 0.5em 1em 0.5em 0.7em;
+  border-style: solid;
+  border-color: #666;
+  border-width: 0px 0px 0.1em;
+}
+
+#invoices header p > input[type="text"] {
+  display: inline-block;
+  width: 6em;
+  border: 0;
+  outline: medium none;
+}
+
+
+#invoices li#invoice_new header {
+  position: relative;
+}
+
+#invoices li#invoice_new header:before {
+  content: 'Description';
+  position: absolute;
+  top: 1em;
+  font-size: 1.5em;
+  color: #333;
+}
+
+#invoices header + section {
+  float: left;
+  width: calc(50% - 40px);
+}
+
+#invoices section + section {
+  padding-left: calc(50% + 20px);
+}
+
+#invoices section h4 {
+  font-size: 3.3em;
+  font-weight: bold;
+}
+
+#invoices section h4:before {
+  color: #999999;
+  font-size: .6em;
+  line-height: 1.2em;
+  display: block;
+  font-weight: normal;
+}
+
+#invoices header + section h4:before {
+  content: 'Attention'
+}
+
+#invoices section + section h4:before {
+  content: 'Pay to the order of'
+}
+
+#invoices section p {
+  white-space: pre-line;
+}
+
+#invoices section p {
+  font-size: 2.25em;
+  line-height: 1.1em;
+  margin-top: .6em;
+}
+
+#invoices li > main {
+  border-top: 2px solid #efefef;
+  border-bottom: 2px solid #efefef;
+  min-height: 55%;
+  position: relative;
+}
+
+#invoices li > main > ul {
+  position: absolute;
+  padding-top: 4em;
+  height: calc(100% - 4em);
+  padding-right: .5em;
+  width: calc(100% - .5em);
+  overflow-y: scroll;
+}
+
+#invoices li > main > ul > li {
+  position: relative;
+}
+
+#invoices li > main > ul > li:after {
+  content: '\00a0';
+  position: absolute;
+  width: 0px;
+  top: 0;
+  height: 100%;
+  border-right: 2px solid #efefef;
+  right: 21.1%;
+}
+
+#invoices li > main .submit {
+  display: none;
+}
+
+#invoices main > ul section {
+  padding: .5em 0;
+}
+
+#invoices .task_container:nth-child(odd):not(.sortable-ghost) {
+  background-color: #f8f7e9;
+}
+
+#invoices .task,
+#invoices footer p {
+  font-size: 2.5em;
+}
+
+#invoices .task {
+  padding-top: .1em;
+  padding-bottom: 0;
+}
+
+#invoices .task > span {
+  height: auto;
+  padding-top: 0;
+}
+
+#invoices .task .external,
+#invoices .task .status,
+#invoices .task .start,
+#invoices .task .rate,
+#invoices .task .external_bars {
+  display: none;
+}
+
+#invoices .task .description,
+#invoices .task .earnings,
+#invoices .task .duration {
+  min-width: inherit;
+  position: relative;
+}
+
+#invoices .task .description {
+  width: 48%;
+}
+
+body:not(.dnd) #invoices .task_container:first-child .description:before,
+body:not(.dnd) #invoices .task_container:first-child .earnings:before,
+body:not(.dnd) #invoices .task_container:first-child .duration:before {
+  font-style: italic;
+  position: absolute;
+  margin-top: -1.8em;
+  padding-top: .3em;
+  color: #666666;
+}
+
+body:not(.dnd) #invoices .task_container:first-child .description:before {
+  content: 'Description';
+}
+
+body:not(.dnd) #invoices .task_container:first-child .earnings:before {
+  content: 'Total';
+}
+
+body:not(.dnd) #invoices .task_container:first-child .duration:before {
+  content: 'Time';
+}
+
+#invoices .task .earnings,
+#invoices .task .duration {
+  width: 23%;
+}
+
+#invoices .task .duration {
+  vertical-align: top;
+}
+
+#invoices .task_container:first-child .duration:before,
+#invoices .task_container:first-child .earnings:before {
+  width: 5em;
+  margin-left: -5em;
+  right: 0;
+}
+
+#invoices .task .earnings {
+  float: right;
+}
+
+
+#invoices footer p {
+  text-align: right;
+}
+
+#invoices footer p:first-child {
+  padding: .5em 1.2em;
+  width: calc(77% - 1.2em * 2 - 2px);
+  border-right: 2px solid #efefef;
+  border-bottom: 2px solid #efefef;
+  color: #666666;
+}
+
+#invoices footer p:last-child {
+  margin-left: calc(77% - 1.2em * 2 - 2px);
+  color: #444444;
+  padding-right: 1em;
+}
+
+#invoices footer p:last-child strong {
+  display: block;
+  font-size: 1.5em;
+}
+
+#invoices li > fieldset {
+  position: absolute;
+  top: 0;
+  width: 15em;
+  right: -18em;
+  transition: opacity .2s ease-out;
+  -moz-transition: opacity .2s ease-out;
+  -webkit-transition: opacity .2s ease-out;
+}
+
+#invoices li#invoice_new > fieldset {
+  display: none;
+}
+
+#invoices > div > ul:not(.zoomed) li > fieldset {
+  opacity: 0;
+}
+
+#invoices li > fieldset > a {
+  display: block;
+  padding: .3em .2em;
+  font-size: 3em;
+  border: 1px solid #527C22;
+  color: #527C22;
+  text-align: center;
+  border-radius: .2em;
+  text-decoration: none;
+  margin-bottom: .5em;
+}
+
+#invoices li > fieldset > a:hover,
+#invoices li > fieldset > a:active,
+#invoices li > fieldset > a:focus {
+  box-shadow: 0 0 5px 5px #DDE8CE;
+  font-weight: bold;
+}
+
+/* client form styling     */
+#invoices li > header + section,
+#invoices li > header + section > fieldset {
+  position: relative;
+}
+
+#invoices li > header + section > fieldset {
+  margin: 0 auto;
+  padding: 0 0 1em 0;
+  text-align: left;
+  font-size: 2.5em;
+}
+
+#invoices li > header + section > fieldset .submit {
+  display: none;
+}
+
+/* Question list style */
+#invoices li > header + section > fieldset ol {
   margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  -webkit-transition: height .1s;
+  transition: height .1s;
 }
 
-@media screen and (max-width: 50em) {
-  .list__item {
-    font-size: 1.5em;
+#invoices li > header + section > fieldset ol:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2.35em;
+}
+
+#invoices li > header + section > fieldset .questions li {
+  z-index: 100;
+  position: relative;
+  visibility: hidden;
+  height: 0;
+  -webkit-transition: visibility 0s .1s, height 0s .1s;
+  transition: visibility 0s .1s, height 0s .1s;
+}
+
+#invoices li > header + section > fieldset .questions li.current {
+  visibility: visible;
+  height: auto;
+  -webkit-transition: none;
+  transition: none;
+}
+
+/* Labels */
+#invoices li > header + section > fieldset .questions li > span {
+  display: block;
+  overflow: hidden;
+  font-size: .8em;
+  color: #333;
+}
+
+#invoices li > header + section > fieldset .questions li > span label {
+  display: block;
+  -webkit-transition: -webkit-transform .1s;
+  transition: transform .1s;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+#invoices li > header + section > fieldset .questions li.current > span label {
+  -webkit-transition: none;
+  transition: none;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+#invoices li > header + section > fieldset.show-next .questions li.current > span label {
+  -webkit-animation: moveUpFromDown .1s both;
+  animation: moveUpFromDown .1s both;
+}
+
+@-webkit-keyframes moveUpFromDown {
+  from { -webkit-transform: translateY(100%); }
+  to { -webkit-transform: translateY(0); }
+}
+
+@keyframes moveUpFromDown {
+  from { -webkit-transform: translateY(100%); transform: translateY(100%); }
+  to { -webkit-transform: translateY(0); transform: translateY(0); }
+}
+
+/* Input field */
+#invoices li > header + section > fieldset .questions input {
+  display: block;
+  margin: 0.3em 0 0 0;
+  padding: 0.5em 1em 0.5em 0.7em;
+  width: calc(100% - 2em);
+  border: none;
+  background: transparent;
+  font-size: 1em;
+  line-height: 1;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+
+#invoices li > header + section > fieldset .questions input:invalid {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#invoices li > header + section > fieldset .questions .current input {
+  opacity: 1;
+}
+
+#invoices li > header + section > fieldset .questions input:focus,
+#invoices li > header + section > fieldset button:focus {
+  outline: none;
+}
+
+/* Next question button */
+#invoices li > header + section > fieldset .next {
+  position: absolute;
+  right: 0;
+  bottom: 3em;
+  display: block;
+  padding: 0;
+  width: 2em;
+  height: 2em;
+  border: none;
+  background: none;
+  color: rgba(0,0,0,0.4);
+  text-align: center;
+  opacity: 0;
+  z-index: 100;
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
+  -webkit-transform: translateX(-20%);
+  transform: translateX(-20%);
+  pointer-events: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+#invoices li > header + section > fieldset .next:hover {
+  color: rgba(0,0,0,0.5);
+}
+
+#invoices li > header + section > fieldset .next::after {
+  position: absolute;
+  top: -.2em;
+  left: -.2em;
+  width: 100%;
+  height: 100%;
+  text-transform: none;
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-family: FontAwesome;
+  line-height: 1;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\f00d';
+  font-size: 1.5em;
+}
+
+#invoices li > header + section > fieldset:valid .next::after {
+  content: '\f061';
+}
+
+#invoices li > header + section > fieldset[state="new"]:valid .next::after {
+  content: '\f067';
+}
+
+#invoices li > header + section > fieldset .next.show {
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Progress bar */
+#invoices li > header + section > fieldset .progress {
+  width: 0%;
+  height: 0.25em;
+  background: #ddd;
+  -webkit-transition: width .1s ease-in-out;
+  transition: width .1s ease-in-out;
+}
+
+#invoices li > header + section > fieldset .progress::before {
+  position: absolute;
+  top: auto;
+  width: 100%;
+  height: inherit;
+  background: #999;
+  content: '';
+  z-index: -1;
+}
+
+/* Number indicator */
+#invoices li > header + section > fieldset .number {
+  position: absolute;
+  right: 0;
+  overflow: hidden;
+  margin: 0.4em 0;
+  width: 3em;
+  font-weight: 700;
+  font-size: .5em;
+}
+
+#invoices li > header + section > fieldset .number:after {
+  position: absolute;
+  left: 50%;
+  content: '/';
+  opacity: 0.4;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+#invoices li > header + section > fieldset .number span {
+  float: right;
+  width: 40%;
+  text-align: center;
+}
+
+#invoices li > header + section > fieldset .number .number-current {
+  float: left;
+}
+
+#invoices li > header + section > fieldset .number-next {
+  position: absolute;
+  left: 0;
+}
+
+#invoices li > header + section > fieldset.show-next .number-current {
+  -webkit-transition: -webkit-transform .1s;
+  transition: transform .1s;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+#invoices li > header + section > fieldset.show-next .number-next {
+  -webkit-animation: moveUpFromDown .1s both;
+  animation: moveUpFromDown .1s both;
+}
+
+/* Error and final message */
+#invoices li > header + section > fieldset .error-message,
+#invoices li > header + section > fieldset + span {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity .1s;
+  transition: opacity .1s;
+}
+
+#invoices li > header + section > fieldset .error-message {
+  position: absolute;
+  padding: 0.4em 3.5em 0 0;
+  width: 100%;
+  color: rgba(0,0,0,0.7);
+  font-style: italic;
+  font-size: .5em;
+}
+
+#invoices li > header + section > fieldset + span {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+  padding-bottom: .5em;
+}
+
+#invoices li > header + section > fieldset + span.show {
+  -webkit-transition: opacity .3s .3s, visibility .3s .3s;
+  transition: opacity .3s .3s, visibility .3s .3s;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+}
+
+#invoices li > header + section > fieldset .error-message.show,
+#invoices li > header + section > fieldset + span.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#invoices li > header + section > fieldset + span.show {
+  -webkit-transition-delay: 0.5s;
+  transition-delay: 0.5s;
+}
+
+#invoices li > header + section > fieldset + span > .controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#invoices li > header + section > fieldset + span > .controls button {
+  border: 0 none;
+  background: transparent none;
+  padding: 0;
+  color: #999999;
+  cursor: pointer;
+}
+#invoices li > header + section > fieldset + span > .controls button:before {
+  font-family: FontAwesome;
+  font-size: 2em;
+}
+#invoices li > header + section > fieldset + span > .controls button.edit:before {
+  content: '\f044';
+}
+#invoices li > header + section > fieldset + span > .controls button.change:before {
+  content: '\f00d';
+}
+
+/* Final hiding of form / showing message */
+#invoices li > header + section > fieldset.hide {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity .3s, visibility .3s 0;
+  transition: opacity .3s, visibility .3s 0;
+  position: absolute;
+}
+
+/* Remove IE clear cross */
+#invoices li > header + section > fieldset input::-ms-clear {
+  display: none;
+}
+
+/* Adjust form for smaller screens */
+@media screen and (max-width: 44.75em) {
+  #invoices li > header + section > fieldset {
+    font-size: 1.8em;
   }
 }
 
-@media screen and (max-width: 25.5em) {
-  .grid {
-    padding: 0 2em;
-
+@media screen and (max-width: 33.5625em) {
+  #invoices li > header + section > fieldset {
+    font-size: 1.2em;
   }
 }
-

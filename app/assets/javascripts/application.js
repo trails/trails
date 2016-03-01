@@ -4,17 +4,27 @@
 //= require scriptaculous
 //= require slider
 //= require Sortable
+//= require stepsForm
 
 //= require controller
-//= require controller/task
 //= require controller/actions
-//= require controller/task_list
+
+//= require controller/task
 //= require controller/task_form
+
+//= require controller/task_list
 //= require controller/task_list_form
+
+//= require controller/invoice
+//= require controller/invoice_form
+
+//= require controller/client
+//= require controller/client_form
 
 var Application = {
   init: function() {
-    Application.extendElementMethods();
+    Application.extendElement();
+    Application.CSRFAjax()
 
     Application.initDragAndDrop();
     Application.initSliders();
@@ -22,29 +32,50 @@ var Application = {
     //Initialize clockTicking
     $showTick = false;
     setInterval(Application.clockTick, 500);
-    
+
     //check if totals need to be shown for each list
     Application.toggleTotals();
-
     Application.attachEventHandlers();
+
+    Invoice.init();
+    setInterval(Task.renderDurationBars, 200);
   },
 
-  extendElementMethods: function() {
+  CSRFAjax: function() {
+    if (0 == $$('meta[name=csrf-token]').length) {
+      return;
+    }
+    Ajax.Base.prototype.initialize = Ajax.Base.prototype.initialize.wrap(
+      function (original, options) {
+        var headers = options.requestHeaders || {},
+            token = $$('meta[name=csrf-token]')[0].readAttribute('content');
+        headers["X-CSRF-Token"] = token;
+        options.requestHeaders = headers;
+        return original(options);
+      }
+    );
+  },
+
+  extendElement: function() {
     Element.addMethods({
-      recordID: function (element) {
-        do {
+      recordID: function (element, prefix) {
+        var ret = null;
+        while (element) {
+          var matchRegEx = new RegExp((prefix ? prefix : '') + '\\_(\\d+|new)(?:$|\\_.+)');
+          var match;
+          if (element.id && matchRegEx.test(element.id)) {
+            match = matchRegEx.exec(element.id);
+          }
+          if (element.href && matchRegEx.test(element.href)) {
+            match = matchRegEx.exec(element.href);
+          }
+          if (match) {
+            ret = match[1];
+            break;
+          }
           element = element.parentNode;
-        } while (!element.id && !element.href);
-
-        if (element.id) {
-          var match = element.id.match(/\d+/);
-          if(!match) return "new";
-          return parseInt(match[0]);
         }
-
-        if (element.href) {
-          return parseInt(element.href.match(/\d+/).last());
-        }
+        return ret;
       },
 
       fadeDelete: function (element) { //fades element, then deletes it
@@ -69,26 +100,26 @@ var Application = {
   },
 
   attachEventHandlers: function() {
-    $$("th.title").each(function(element) {
-      element.insert(" <small>-</small>");
+    $$('section.task_list > .title').each(function(element) {
+      element.insert({top: '<i class="fa fa-caret-down"></i>'});
     });
     $("task_form").observe("submit", Application.formSubmitHandler);
-    $S(".task .toolbar .edit").observe("click", function(event) {
+    $S(".task .toolbar .edit, .task .toolbar .edit > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task(id).edit(event);
     });
 
-    $S(".task .toolbar .delete").observe("click", function(event) {
+    $S(".task .toolbar .delete, .task .toolbar .delete > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task(id).remove(event);
     });
 
-    $S('th.title').observe('click', function(event) {
-      var currentTh = $(Event.element(event));
+    $S('.task_list > .title > i').observe('click', function(event) {
+      var currentTh = $(Event.element(event)).up('.title');
       trTitleId = currentTh.up().identify();
       currentList = $(trTitleId).next(2);
       currentTotal = currentTh.up().next('.total');
@@ -99,11 +130,11 @@ var Application = {
       addTotalTo = currentTitleTr.down(('.new_task'));
       currentList.toggle();
       if (currentList.visible()) {
-        $(currentTh).down().update("-");
+        $(currentTh).down('i').removeClassName('fa-caret-right').addClassName('fa-caret-down');
         addTotalTo.down('span').remove();
         currentTotal.show();
       } else {
-        $(currentTh).down().update("+");
+        $(currentTh).down('i').removeClassName('fa-caret-down').addClassName('fa-caret-right');
         addTotalTo.update('<span>' + currentEarnings + ' ' + currentDuration + '</span> ' + newTaskLink);
         currentTotal.hide();
       }
@@ -134,19 +165,19 @@ var Application = {
       task(id).actions().reopen(event);
     });
 
-    $S(".new_task a").observe("click", function(event) {
+    $S(".new_task a, .new_task a > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task_list(id).task_form().show(event);
     });
-    $S(".task_list .toolbar .edit").observe("click", function(event) {
+    $S(".task_list .toolbar .edit, .task_list .toolbar .edit > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
       task_list(id).edit(event);
     });
-    $S(".task_list .toolbar .delete").observe("click", function(event) {
+    $S(".task_list .toolbar .delete, .task_list .toolbar .delete > i").observe("click", function(event) {
       if (event.stopped || !event.isLeftClick()) return;
       event.stop();
       var id = event.element().recordID();
@@ -168,7 +199,7 @@ var Application = {
 
     $S(".task.new .submit input[type=submit]").observe("click", function(event) {
       var element = event.element();
-      var id = element.recordID();
+      var id = element.parentNode.recordID('task_list');
       element.form.responder = task_list(id).task_form();
     });
 
@@ -216,7 +247,7 @@ var Application = {
 
     $S("input[type=submit][method]").observe("click", function(event) {
       var element = event.element();
-      element.form.overrideMthod = element.readAttribute("method");
+      element.form.overrideMethod = element.readAttribute("method");
     });
 
     $S('.task.form .default_rate_check > input[type="checkbox"]').observe('change', function(event) {
@@ -233,37 +264,113 @@ var Application = {
         }
       }
     });
+    $S('#slide > form > h2').observe('click', function(event) {
+      var item = event.target,
+          parent = item.parentNode;
+      $$('#slide > form.current').invoke('removeClassName' ,'current');
+      parent.addClassName('current');
+      if (!item.readAttribute('id') == 'invoices') {
+        Invoice.zoomOut();
+      }
+      $('slide').addClassName('show');
+    });
+    $S('#slide.show #invoices > div > ul:not(.zoomed) > li, #slide.show #invoices > div > ul:not(.zoomed) > li *').observe('click', function(event) {
+      var id = event.element().recordID('invoice');
+      invoice(id).zoomIn();
+    });
+    $S('#slide.show #invoices, #slide.show #invoices > div, #slide.show #invoices > div > ul.zoomed, #invoices > div > ul.zoomed > li:not(.zoom) *').observe('click', function(event) {
+      Invoice.zoomOut();
+    });
+    $S('#slide.show > a:last-child > i').observe('click', function(event) {
+      event.preventDefault();
+      $('slide').removeClassName('show');
+      return false;
+    });
+
+    $S('#settings > ul > li:nth-child(2) h3 a > i').observe('click', function(event) {
+      event.preventDefault();
+      if (!navigator.geolocation) {
+        return false;
+      }
+      navigator.geolocation.getCurrentPosition(function(position) {
+        var lat = position.coords.latitude,
+            lon = position.coords.longitude;
+
+        new Ajax.Request("/users/me", {
+          method: 'put',
+          parameters: {
+            "user[latitude]": lat,
+            "user[longitude]": lon
+          },
+          onSuccess: function (transport) {
+            var json = transport.responseJSON;
+            if (json.country) $('user_country').value = json.country;
+            if (json.state) $('user_state').value = json.state;
+            if (json.city) $('user_city').value = json.city;
+            if (json.address) $('user_address').value = json.address;
+            if (json.zip) $('user_zip').value = json.zip;
+          }
+        });
+      });
+      return false;
+    });
+    $("settings").observe("submit", Application.formSubmitHandler);
+
+    window.addEventListener('resize', Application.handleResize, false);
+    window.addEventListener('keyup', Application.handleKeyUp);
+  },
+
+  handleKeyUp: function (event) {
+    switch(event.keyCode) {
+      case 27:
+        Application.handleEscKey(event);
+        break;
+    }
+  },
+
+  handleEscKey: function(event) {
+    var element = document.activeElement;
+    if (element == $$('body')[0]) {
+      if (Invoice.isActiveTab() && Invoice.isZoomed()) {
+        Invoice.zoomOut();
+      } else if ($('slide').hasClassName('show')) {
+        $('slide').removeClassName('show');
+      }
+    } else {
+      var cancelLink = element.up('section') ? element.up('section').down('a[href="#cancel"]') : false;
+      if (cancelLink) {
+        cancelLink.click();
+      } else {
+        element.blur();
+      }
+    }
+  },
+
+  handleResize: function () {
+    if (!$('slide').hasClassName('show')) {
+      return;
+    }
+    if ($$('#invoices > div > ul')[0].hasClassName('zoomed')) {
+      var id = $$('#invoices > div > ul > li.zoom')[0].recordID();
+      invoice(id).zoomIn();
+    }
   },
 
   formSubmitHandler: function (event) {
     event.stop();
-    var options = {
-      requestHeaders: {
-      "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
-      }
-    };
-    // Setup before request
-    if (this.overrideAction) {
-      var defaultAction = this.action;
-      this.action = this.overrideAction;
-    }
-    if (this.overrideMthod) {
-      var defaultMethod = this.method;
-      this.method = this.overrideMthod;
-    }
-    if (this.responder) {
-      if(this.responder.onSuccess) options.onSuccess = this.responder.onSuccess.bind(this.responder)
+    var action = this.overrideAction ? this.overrideAction : this.action,
+        method = this.overrideMethod ? this.overrideMethod : this.method,
+        options = {
+          method: method,
+          parameters: this.serialize()
+        };
+
+    if (this.responder && this.responder.onSuccess) {
+      options.onSuccess = this.responder.onSuccess.bind(this.responder);
     }
     // Perform request!
-    this.request(options);
+    var request = new Ajax.Request(action, options); //this.request(options);
 
-    // Clean up
-    if (this.overrideAction) {
-      this.action = defaultAction;
-    }
-    if (this.overrideMthod) {
-      this.method = defaultMethod;
-    }
     this.responder = null;
   },
 
@@ -279,47 +386,22 @@ var Application = {
     $sortable_containers.each(function (container) {
       Application.dragAndDropTaskList(container);
     });
-
-    //Application.initDropAreaDnD();
   },
 
-  /*
-  initDropAreaDnD: function() {
-    $$(".drop-only-area .droppable").each(function (container) {
-      Sortable.create(container, {
-        group: {
-          name: 'dropArea',
-          pull: false,
-          put: ['taskList']
-        },
-        sort: false,
-        onAdd: function(evt) {
-        }
-      });
-    });
-  },
-  */
-
-  dragAndDropTaskList: function(task_list_container) {
-    var task_list_id = task_list_container.identify().replace(/task_list_container_/gi, '');
+  dragAndDropTaskList: function (task_list_container) {
+    var task_list_id = Application.strip_id(task_list_container);
     var tl = task_list(task_list_id);
     tl.sortable =  Sortable.create(task_list_container, {
       draggable: 'li.task_container',
-      group: 'taskList',
-      animation: 100,
-      onEnd: function(evt) {
-        /*
-        var afterDropFn = function() {
-          $$('body')[0].removeClassName('drag-active');
-          $$('.drop-only-area').each(function (element) {
-            element.removeClassName('show');
-          });
-        };
-        clearTimeout(Application.dropAreaTimeout);
-        Application.dropAreaTimeout = setTimeout(afterDropFn, 400);
-        */
+      group: {
+        name: 'taskList',
+        pull: true,
+        put: ['invoices']
       },
-      onStart: function(evt) {
+      animation: 100,
+      onStart: function (evt) {
+        $$('body')[0].addClassName('dnd');
+
         var item = evt.item;
         var parent = item.parentNode;
         var id = item.identify().replace(/task_container_/gi, '');
@@ -327,61 +409,52 @@ var Application = {
         var t = task(id);
         t.taskListBeforeDnD = list_id;
 
-        $$('body')[0].addClassName('drag-active');
-        /*
-        $$('.drop-only-area').each(function (element) {
-          element.addClassName('show');
-        });
-        clearTimeout(Application.dropAreaTimeout);
-        */
+        Application.invoicesShownBeforeDnD = $('slide').hasClassName('show');
+        $('slide').addClassName('show');
+        clearTimeout(Application.invoicesDnDTimeout);
       },
-      onAdd: function(evt) {
-        Application.updateTasksOrder(evt.target.parentNode);
-      },
-      onUpdate: function(evt) {
-        Application.updateTasksOrder(evt.target);
-      },
-      onRemove: function(evt) {
-        var item = evt.item,
-            parent = item.parentNode,
-            id = item.identify().replace(/task_container_/gi, '');
-            tl = task(id).taskListBeforeDnD;
-            tl_selector = '#task_list_container_' + tl;
-        if (parent.hasClassName('list_container')) {
-          // task was moved to another list, let's update changes
-          Application.updateTasksOrder(evt.target);
-        }
-        /*
-        if (parent.hasClassName('droppable')) {
-          // moved to the drop area, let's revert moving the
-          // task in the DOM for the moment, we'll run the proper
-          // action from drop area sortable's onAdd event
-          var siblingsCount = $$(tl_selector + ' > li').length;
-          if (0 == siblingsCount || evt.oldIndex >= siblingsCount) {
-            $$(tl_selector)[0].appendChild(item);
-          } else {
-            var before = $$(tl_selector + ' > li:nth-child(' + (evt.oldIndex +1) + ')')[0];
-            before.parentNode.insertBefore(item, before);
+      onEnd: function (evt) {
+        var afterDropFn = function() {
+          if (!Application.invoicesShownBeforeDnD) {
+            $('slide').removeClassName('show');
           }
-          task(id).taskListBeforeDnD = null;
-        }
-        */
+          $$('body')[0].removeClassName('dnd');
+        };
+        clearTimeout(Application.invoicesDnDTimeout);
+        Application.invoicesDnDTimeout = setTimeout(afterDropFn, 400);
+      },
+      onAdd: function (evt) {
+        Application.updateListTasksOrder(evt.target.parentNode);
+      },
+      onUpdate: function (evt) {
+        Application.updateListTasksOrder(evt.target);
       }
     });
   },
 
-  updateTasksOrder: function(container) {
-    var task_list_id = container.identify().replace(/task_list_container_/gi, '');
+  updateListTasksOrder: function(container) {
+    var task_list_id = Application.strip_id(container);
     var tl = task_list(task_list_id);
-    var seq = Application.getSequence(container.identify());
+    var seq = Application.getSequence(container);
     tl.setTaskSequence(seq);
   },
 
   getSequence: function(element) {
-    element = $(element);
     return $(Element.findChildren(element, 'li') || []).map( function(item) {
       var matchre = /^[^_\-](?:[A-Za-z0-9\-\_]*)[_](.*)$/;
       return item.id.match(matchre) ? item.id.match(matchre)[1] : '';
+    });
+  },
+
+  getEarningsSequence: function(element) {
+    return $(Element.findChildren(element, 'li') || []).map( function(item) {
+      return parseFloat(item.down('.task > .earnings').innerHTML.trim().replace(/[^0-9.]/g, ''));
+    });
+  },
+
+  getDurationSequence: function(element) {
+    return $(Element.findChildren(element, 'li') || []).map( function(item) {
+      return parseFloat(item.down('.task > .duration').getAttribute('duration'));
     });
   },
 
@@ -402,51 +475,37 @@ var Application = {
       method: "put",
       onSuccess: function (transport) {
         //read json response
-        var json = transport.responseText.evalJSON();
-        var jsonTaskLists = json.tasklists.evalJSON();
-        var jsonTasks = json.tasks.evalJSON();
+        var json = transport.responseJSON;
+        var lists = json.tasklists;
+        var tasks = json.tasks;
 
         //update tasks
-        for (var i = 0; i < jsonTasks.length; i++) {
-          var id = jsonTasks[i].id;
-          var t = task(id);
-          t.earnings().update(jsonTasks[i].task_earnings);
-          t.duration().update(jsonTasks[i].task_duration);
-          t.durationBar().replace(jsonTasks[i].task_duration_bar);
-        }
-        var maxDuration = 0;
-        $$('.duration_bar').each(function (element) {
-          var duration = parseInt(element.readAttribute('duration'));
-          if (duration > maxDuration) {
-            maxDuration = duration;
-          }
-        });
-        $$('.duration_bar').each(function (element) {
-          var duration = parseInt(element.readAttribute('duration'));
-          element.setStyle({
-            width: (duration * 100 / maxDuration) + '%'
+        for (var i = 0; i < tasks.length; i++) {
+          var id = tasks[i].id;
+          task(id).update({
+            earnings: '$' + tasks[i].task_earnings,
+            duration: tasks[i].running_time
           });
-        });
+        }
 
         //update taskLists
-        for (var i = 0; i < jsonTaskLists.length; i++) {
-          var id = jsonTaskLists[i].id;
+        for (var i = 0; i < lists.length; i++) {
+          var id = lists[i].id;
           var l = task_list(id);
-          l.earnings().update(jsonTaskLists[i].task_list_earnings);
-          l.duration().update(jsonTaskLists[i].task_list_duration);
+          l.earnings().update(lists[i].task_list_earnings);
+          l.duration().update(lists[i].task_list_duration);
         }
 
         //update grand total
         $("grand_total_earnings").update(json.total_earnings);
         $("grand_total_duration").update(json.total_duration);
 
-        setTimeout(Application.updateTasks, 10000);
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
+        Application.toggleTotals();
+
+        setTimeout(Application.updateTasks, 2000);
       }
     };
-    new Ajax.Request("/task_lists/refresh", options);
+    return new Ajax.Request("/task_lists/refresh", options);
   },
 
   //this method called every 1000ms to show/hide clock colons.
@@ -473,40 +532,18 @@ var Application = {
   },
 
   toggleTotals: function() {
-    $sortable_containers =  $$(".list_container");
-    $sortable_containers.each(function (s) {
+    $$(".list_container").each(function (s) {
       var l = task_list(Application.strip_id(s));
       l.checkIfTotalNeeded();
     });
   },
 
-  hideTaskForms: function() {
-    //lists (task_form + task_list_form)
-    $lists = $$(".list_container");
-    $lists.each(function (s) {
-      var tl = task_list(Application.strip_id(s));
-      tl.task_form().hide();
-      tl.task_list_form().hide();
-    });
-    //tasks (task_form)
-    $tasks = $$(".task_container");
-    $tasks.each(function (s) {
-      var t = task(Application.strip_id(s));
-      t.task_form().hide();
-    });
-    //task_list_Create
-    var taskListCreator = $("task_list_new");
-    taskListCreator.hide();
-    $A(taskListCreator.getElementsByTagName("INPUT")).invoke("disable");
-  },
-
   formattedTime: function(t) {
-    var res = (total < 0) ? '-' : '+';
-    var mins = Math.abs(t % 60);
+    var mins = parseInt(Math.abs(t % 60));
     if(mins < 10) {
       mins = '0' + mins;
     }
-    res += Math.floor(Math.abs(t / 60)) + ':' + mins;
+    res = Math.floor(Math.abs(t / 60)) + ':' + mins;
     return res;
   },
 

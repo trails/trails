@@ -22,3 +22,6 @@
 /vendor/*
 Gemfile.lock
 /node_modules
+
+# instance-specific configuration (credentials)
+/config/local.yml

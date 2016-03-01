@@ -1,4 +1,4 @@
-@import 'yosemite-base';
+@import 'yosemite-base.css.scss';
 
 $form_invalid_input_bgcolor: #f2eded;
 
@@ -28,7 +28,7 @@ body > header > nav ul > li > a {
 
 /* navbar icons are all FontAwesome ones */
 body > header > nav ul > li > a:before {
-    font-family: FontAwesome;    
+    font-family: FontAwesome;
 }
 
 /* twitter icons */

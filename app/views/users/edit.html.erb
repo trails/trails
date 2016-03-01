@@ -1,0 +1,11 @@
+<%= form_for @user do |form| %>
+  <fieldset>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </fieldset>
+  <fieldset>
+    <%= form.label :email %>
+    <%= form.text_field :email %>
+  </fieldset>
+  <%= form.submit 'Save', :method=>'put' %>
+<% end %>

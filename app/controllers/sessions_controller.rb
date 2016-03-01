@@ -5,22 +5,37 @@ class SessionsController < ApplicationController
   def new
     render :layout => 'yosemite'
   end
-  
+
   def create
-    info = params[:session]
-    user = User.authenticate(info[:email], info[:password])
-    if user
-      session[:user_id] = user.id
+    auth = request.env['omniauth.auth']
+
+    @identity = Identity.find_with_omniauth(auth)
+    if @identity.nil?
+      # create new identity if unknown
+      @identity = Identity.create_with_omniauth(auth)
+    else
+      @identity.update_with_omniauth(auth)
+    end
+
+    if signed_in?
+      if @identity.user != current_user
+        # identity is not associated with current_user: link them
+        @identity.user = current_user
+        @identity.save()
+      end
       redirect_to :controller => 'tasks'
     else
-      session[:user_id] = nil
-      flash[:notice] = "Incorrect user name or password."
-      redirect_to :controller => "sessions", :action => "new"
+      if !@identity.user.present?
+        @identity.user = User.create_with_omniauth(auth)
+      end
+      @identity.save()
+      self.current_user = @identity.user
+      redirect_to :controller => 'tasks'
     end
   end
-  
+
   def destroy
-    reset_session
-    redirect_to '/'
+    self.current_user = nil
+    redirect_to root_url
   end
 end

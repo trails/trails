@@ -1,3 +1,38 @@
+<% if task.id %>
 <li class="task_container" id="task_container_<%= task.id %>">
-  <%= render :partial=>"tasks/content", :object=>task %>
+  <section class="<%= "#{task.class.name.underscore} #{task.status}" %>"
+   id="<%= "#{task.class.name.underscore}_#{task.id}" %>">
+    <span class="toolbar external">
+      <%= link_to "#delete", class: 'delete' do %>
+        <i class="fa fa-trash-o"></i>
+      <% end %>
+      <%= link_to "#edit", class: 'edit' do %>
+        <i class="fa fa-pencil-square"></i>
+      <% end %>
+      <img class="taskhandle" src="images/task_handle.png"/>
+    </span>
+    <span class="status">
+      <%= task_status(task) %>
+    </span>
+    <span class="start border">
+      <%= raw task_action_button(task) %>
+    </span>
+    <span class="description border">
+      <%= task.description %>
+    </span>
+    <span class="rate border">
+      <%= task_rate(task) %>
+    </span>
+    <span class="earnings border">
+      <%= task.task_earnings %>
+    </span>
+    <span class="duration border" duration="<%= task.duration %>">
+      <%= raw task.formatted_duration %>
+    </span>
+    <span class="external_bars">
+      <div class="duration_bar" duration="<%= raw task.running_time %>"></div>
+    </span>
+  </section>
+  <%= render :partial=>"tasks/edit", :object=>task %>
 </li>
+<% end %>

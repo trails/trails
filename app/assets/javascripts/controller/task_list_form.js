@@ -4,7 +4,7 @@ TaskListForm.cache = {};
 
 TaskListForm.addMethods({
   show: function() {
-    Application.hideTaskForms();
+    TaskForm.hideAll();
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     var titleInput = this.element().down(".title").down("input");
@@ -27,20 +27,19 @@ TaskListForm.addMethods({
     if (this.task_list) {
       this.task_list.element().remove();
     }
-    var element = this.element();
+    var element = this.element().up();
     element.insert({
       after: transport.responseText
     });
     var tList = element.next(".task_list");
     //get newly created TaskList's Id
-    var newId = Application.strip_id(tList);
+    var newId = tList.recordID('task_list');
     if (this.task_list) {
       element.remove();
     } else {
       this.hide();
       //new task list needs to be DnD enabled
       newTaskList = task_list(newId);
-      newTaskList.sortable.destroy();
       Application.dragAndDropTaskList($('task_list_container_' + newId));
       //new list needs to hide total
       newTaskList.checkIfTotalNeeded();

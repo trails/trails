@@ -23,16 +23,26 @@ Task.addMethods({
 
   edit: function() {
     this.task_form().show();
-    this.element().hide();
     this.getSlider().setValue(0, 0);
     this.getSlider().setValue(0, 1);
   },
 
   remove: function() {
-    var response = confirm("Are you sure you want to delete task?");
-    if (response) {
-      this.ajaxAction("remove",{method:"delete"});
-    }
+    var self = this;
+    swal({
+      title: "Delete task",
+      text: "Are you sure you want to delete task?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: true
+    },
+    function(response){
+      if (response) {
+        self.ajaxAction("remove", {method:"delete"});
+      }
+    });
   },
 
   afterRemove: function(name, transport) {
@@ -62,7 +72,8 @@ Task.addMethods({
         var diffTime = $("diffTime_"+this.myId);
         var diffTimeInput = $("diffTime_input_"+this.myId);
         total = Math.floor(hours)*60  + mins;
-        diffTime.innerHTML = Application.formattedTime(total);
+        var sign = (total < 0) ? '-' : '+';
+        diffTime.innerHTML = sign + Application.formattedTime(total);
         diffTimeInput.value = total;
       }
     });
@@ -82,18 +93,96 @@ Task.addMethods({
     return task_list(Application.strip_id(elem));
   },
 
-  durationBar: function() {
-    return this.element().down(".duration_bar");
+  earnings: function(earnings) {
+    var elem = this.element().down(".earnings");
+    if (typeof earnings != 'undefined') {
+      elem.update(earnings);
+    }
+    return elem;
   },
 
-  earnings: function() {
-    return this.element().down(".earnings");
+  duration: function(duration) {
+    var elem = this.element().down('.duration');
+    if (typeof duration != 'undefined') {
+      elem.update(Task.HTMLDuration(duration));
+      elem.setAttribute('duration', duration);
+      this.durationBar(duration);
+    }
+    return elem;
   },
 
-  duration: function() {
-    return this.element().down(".duration");
+  durationBar: function(duration) {
+    var elem = this.element().down(".duration_bar");
+    if (typeof duration != 'undefined') {
+      elem.writeAttribute('duration', duration)
+    }
+    return elem;
+  },
+
+  description: function(description) {
+    var elem = this.element().down(".description");
+    if (typeof description != 'undefined') {
+      elem.update(description);
+    }
+    return elem;
+  },
+
+  update: function(json) {
+    if (json.description) {
+      this.description(json.description);
+    }
+    if (json.duration) {
+      this.duration(json.duration);
+    }
+    if (json.earnings) {
+      this.earnings(json.earnings);
+    }
   }
 });
+
+Task.HTMLDuration = function(seconds) {
+  if (seconds > 60) {
+    var minutes = ("00" + parseInt((parseInt(seconds / 60) % 60))).substr(-2),
+        hours   = ("00" + parseInt((parseInt(seconds / 60) / 60))).substr(-2),
+        ret = hours + '<span class="colon">:</span>' + minutes;
+    return ret.replace(/[0:]+/g, function($1) {
+      return '<span class="fade">' + $1 + '</span>';
+    });
+  } else {
+    return Math.floor(seconds) + '<span class="fade">s</span>';
+  }
+};
+
+Task.maxDuration = function() {
+  var maxDuration = .0;
+  $$('.duration_bar').each(function (element) {
+    if (!element.up('.list_container')) {
+      return;
+    }
+    var duration = parseFloat(element.readAttribute('duration'));
+    if (duration > maxDuration) {
+      maxDuration = duration;
+    }
+  });
+  return maxDuration;
+};
+
+Task.renderDurationBars = function () {
+  var maxDuration = Task.maxDuration();
+  $$('.duration_bar').each(function (element) {
+    if (!element.up('.list_container')) {
+      return;
+    }
+    var duration = parseFloat(element.readAttribute('duration')),
+        relative = (maxDuration / 60) > $$('.external_bars:first')[0].getLayout().get('width');
+
+    var w = relative ? (duration * 100 / maxDuration) + '%' : (duration / 60) + 'px';
+
+    element.setStyle({
+      width: w
+    });
+  });
+};
 
 var task = function (id) {
   var instance = Task.cache[id];

@@ -1,23 +1,22 @@
 <%= fields_for edit do |form| %>
-  <tr style="display:none"
-    id="<%= (edit.new_record? ? '' : "edit_") << edit.class.name.underscore << '_' << (edit.new_record? ? 'new' : edit.id.to_s) %>"
-    class="form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %> task_form">
-    <td class="external"></td>
-    <td class="title" colspan="3">
-      <%= form.text_field   :title, :disabled=>true %>
-    </td>
-    <td class="default_rate" colspan="3">
-      <%= "$" %>
-      <%= form.text_field :default_rate, :disabled=>true %>
-      <%= "/h" %>
-    </td>
-    <td class="submit external">
-      <% if edit.new_record? %>
-        <%= form.submit "Create task list" , :action => task_lists_path, :disabled=>true %>
-      <% else %>
-        <%= form.submit "Save task list", :action => task_list_path(edit), :method=>"put", :disabled=>true %>
-      <% end %>
-      <%= link_to "Cancel", "#cancel" %>
-    </td>
-  </tr>
+  <section>
+    <fieldset class="form <%= edit.new_record? ? 'new' : 'edit' %> <%= edit.class.name.underscore %> task_list_form"
+     id="<%= (edit.new_record? ? '' : "edit_") << edit.class.name.underscore << '_' << (edit.new_record? ? 'new' : edit.id.to_s) %>"
+     style="display:none">
+      <span class="title">
+        <%= form.text_field   :title, :disabled=>true %>
+      </span>
+      <span class="default_rate">
+        $ <%= form.text_field :default_rate, :disabled=>true %> /h
+      </span>
+      <span class="submit external">
+        <% if edit.new_record? %>
+          <%= form.submit "Create task list" , :action => task_lists_path, :disabled=>true %>
+        <% else %>
+          <%= form.submit "Save task list", :action => task_list_path(edit), :method=>"put", :disabled=>true %>
+        <% end %>
+        <%= link_to "Cancel", "#cancel" %>
+      </span>
+    </fieldset>
+  </section>
 <% end %>

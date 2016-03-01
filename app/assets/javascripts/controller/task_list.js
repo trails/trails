@@ -26,12 +26,9 @@ TaskList.addMethods({
       method: "put",
       parameters: {
         tasks: seq.toString()
-      },
-      requestHeaders: {
-        "X-CSRF-Token": $$('meta[name=csrf-token]')[0].readAttribute('content')
       }
     };
-    new Ajax.Request(this.url() + "setsequence", options);
+    new Ajax.Request(this.url() + '/setSequence', options);
   },
 
   listContainer: function() {
@@ -44,7 +41,22 @@ TaskList.addMethods({
   },
 
   remove: function() {
-    this.ajaxAction("remove",{method:"delete"});
+    var self = this;
+    swal({
+      title: "Delete list",
+      text: "Are you sure you want to delete list?",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, delete it!",
+      closeOnConfirm: true
+    },
+    function(response){
+      if (response) {
+        self.ajaxAction("remove", {method:"delete"});
+      }
+    });
+
   },
 
   afterRemove: function(name, transport) {
@@ -86,7 +98,7 @@ TaskList.addMethods({
 
   checkIfTotalNeeded: function() {
     var n = this.numTasks();
-    if (n < 2){
+    if (n < 2) {
       this.hideTotal();
     } else {
       this.showTotal();

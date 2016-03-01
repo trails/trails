@@ -1,0 +1,6 @@
+<%= fields_for edit, authenticity_token: false do |form| %>
+  <ul>
+    <%= render :partial=>edit.tasks %>
+  </ul>
+  <button class="submit" type="submit">Save</button>
+<% end %>

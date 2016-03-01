@@ -1,12 +1,16 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.13'
+gem 'rails', '4.1.9'
 gem 'json'
 gem 'jquery-rails'
 gem 'money'
 gem 'pg'
 gem 'font-awesome-rails'
 gem 'bower-rails'
+gem 'omniauth-google-oauth2'
+gem 'prawn'
+gem 'prawn-table'
+gem 'curb'
 
 group :assets do
   gem 'sass-rails'

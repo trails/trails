@@ -1,0 +1,27 @@
+<li id='<%= "#{invoice.class.name.underscore}_" + (invoice.id ? "#{invoice.id}" : 'new') %>'>
+  <header>
+    <p>totaling $<span><%= invoice.total %></span>
+      &amp; due <input type="text" name="invoice[due]" value="<%= (invoice.due or Time.now + 2592000).strftime('%Y-%m-%d') %>" />
+    </p>
+    <h3>Invoice #<%= invoice.id ? invoice.number : '' %></h3>
+    <input type="text" name="invoice[description]" value="<%= invoice.description %>" placeholder="descriptive text" />
+  </header>
+  <%= render :partial => invoice.client ? invoice.client : Client.new,
+    :locals => {prefix: 'invoice_' + (invoice.id ? "#{invoice.id}" : 'new') } %>
+  <section>
+    <h4><%= user.name %></h4>
+    <p><%= user.email %></p>
+  </section>
+  <main>
+    <%= render :partial => 'invoices/edit', :object => invoice %>
+  </main>
+  <footer>
+    <p>Total time <span><%= raw html_duration(invoice.duration) %></span></p>
+    <p>Total due <strong>$<span><%= invoice.total %></span></strong></p>
+  </footer>
+  <fieldset>
+    <a href="/invoices/<%= invoice.id %>.pdf">Print</a>
+    <a href="#">Send</a>
+    <a href="#">Delete</a>
+  </fieldset>
+</li>
