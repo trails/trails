@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   before_filter :check_rights, :only => [:update, :destroy]
   def index
     @task_lists = TaskList.order(updated_at: :desc).where({owner_id: current_user.id})
-    @invoices = Invoice.joins(:client).order("invoices.updated_at DESC").where({"clients.user_id" => current_user.id})
+    @invoices = Invoice.includes(:client).order("invoices.updated_at DESC").where(user_id: current_user.id)
     @user = current_user
   end
 
