@@ -40,13 +40,10 @@ class Task < ActiveRecord::Base
     reload
   end
 
-  def last_entry
-    log_entries.last
-  end
-
   def status
-    return :stopped unless last_entry
-    STATUS_MAP[log_entries.first.action]
+    le = log_entries.last
+    return :stopped unless le
+    STATUS_MAP[le.action]
   end
 
   def completed?
@@ -96,7 +93,11 @@ class Task < ActiveRecord::Base
   end
 
   def running_time
-    Time.now - last_start.created_at + duration if running? else duration
+    if(running?)
+      (Time.now - last_start.created_at + duration).to_i
+    else
+      duration.to_i
+    end
   end
 
   def updateDiffTime(difftime)
