@@ -15,7 +15,9 @@ TheApp::Application.routes.draw do
 
   resources :users,
             :clients,
-            :invoices
+            :invoices,
+            :task_lists
+
 
   resources :task_lists do
     resources :tasks
