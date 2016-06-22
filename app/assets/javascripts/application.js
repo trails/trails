@@ -4,7 +4,7 @@
 //= require scriptaculous
 //= require slider
 //= require Sortable
-//= require stepsForm
+//= require stepForm
 
 //= require controller
 //= require controller/actions
@@ -39,6 +39,7 @@ var Application = {
 
     Invoice.init();
     setInterval(Task.renderDurationBars, 200);
+    Application.initSettings();
   },
 
   CSRFAjax: function() {
@@ -287,35 +288,6 @@ var Application = {
       return false;
     });
 
-    $S('#settings > ul > li:nth-child(2) h3 a > i').observe('click', function(event) {
-      event.preventDefault();
-      if (!navigator.geolocation) {
-        return false;
-      }
-      navigator.geolocation.getCurrentPosition(function(position) {
-        var lat = position.coords.latitude,
-            lon = position.coords.longitude;
-
-        new Ajax.Request("/users/me", {
-          method: 'put',
-          parameters: {
-            "user[latitude]": lat,
-            "user[longitude]": lon
-          },
-          onSuccess: function (transport) {
-            var json = transport.responseJSON;
-            if (json.country) $('user_country').value = json.country;
-            if (json.state) $('user_state').value = json.state;
-            if (json.city) $('user_city').value = json.city;
-            if (json.address) $('user_address').value = json.address;
-            if (json.zip) $('user_zip').value = json.zip;
-          }
-        });
-      });
-      return false;
-    });
-    $("settings").observe("submit", Application.formSubmitHandler);
-
     window.addEventListener('resize', Application.handleResize, false);
     window.addEventListener('keyup', Application.handleKeyUp);
   },
@@ -371,7 +343,7 @@ var Application = {
     // Perform request!
     var request = new Ajax.Request(action, options); //this.request(options);
 
-    this.responder = null;
+    //this.responder = null;
   },
 
   initDragAndDrop: function () {
@@ -467,6 +439,179 @@ var Application = {
         currentTask = task(id);
         currentTask.initSlider();
       }
+    });
+  },
+
+  initSettings: function() {
+    var
+      settingsBox = document.querySelector('#settings'),
+      settingsButton = document.querySelector('#settings > button'),
+      snap = Snap(settingsBox.querySelector('svg')),
+      settingsSVGPath = snap.select('path'),
+      settingsInnerBox = settingsBox.querySelector('#settings > button + div'),
+      closeButton = settingsInnerBox.querySelector('#settings button.close');
+
+    // switch settings when button is pressed
+    settingsButton.addEventListener('click', function() {
+      var
+        tabs = document.querySelectorAll('#settings > ul > li');
+        currentTab = document.querySelector('#settings > ul > li.current'),
+        currentTabPos = Array.prototype.indexOf.call(tabs, currentTab) + 1,
+        pathAttr = 'data-path-tab' + currentTabPos,
+        pathData = settingsBox.getAttribute(pathAttr);
+      settingsSVGPath.stop().animate({'path': pathData}, 300, mina.easeinout, function() {
+        $(settingsBox).removeClassName('hidden');
+        $$('body')[0].addClassName('settings');
+      });
+      $(settingsButton).addClassName('hidden');
+    });
+
+    // close event
+    closeButton.addEventListener('click', function () {
+      $(settingsBox).addClassName('hidden');
+      settingsSVGPath.stop().animate({'path': settingsBox.getAttribute('data-path-button')}, 300, mina.easeinout, function() {
+        $(settingsButton).removeClassName('hidden');
+        $(settingsButton).addClassName('start');
+        $$('body')[0].removeClassName('settings');
+      });
+    });
+
+    // tab switching behavior
+    var tabs = document.querySelectorAll('#settings > ul > li');
+    Array.prototype.forEach.call(tabs, function(tab) {
+      var tabPos = Array.prototype.indexOf.call(tabs, tab) + 1;
+      tab.querySelector('li[tab] > a').addEventListener('click', function() {
+        var
+          currentTab = document.querySelector('#settings > ul > li.current'),
+          self = this,
+          pathAttr = 'data-path-tab' + tabPos,
+          pathData = settingsBox.getAttribute(pathAttr);
+        settingsSVGPath.stop().animate({'path': pathData}, 100, mina.easeinout, function() {
+          currentTab.removeClassName('current');
+          self.up().addClassName('current');
+        });
+      });
+    });
+
+    // location stepForm
+    var wizard = $$('#settings li[tab="user"] fieldset')[0];
+    wizard.form.observe('submit', Application.formSubmitHandler);
+    wizard.form.responder = {
+      onSuccess: function() {
+        Application.refreshLocation();
+        wizard.stepForm.reset();
+        wizard.addClassName('hidden');
+      }
+    }
+    wizard.stepForm = new stepForm(wizard);
+    wizard.addClassName('hidden');
+    Application.refreshLocation();
+
+    var contactsTab = $$('#settings li[tab="contacts"]')[0];
+    var refreshContactsView = function() {
+      if ($('contacts').empty()) {
+        new Ajax.Request("/contacts", {
+          method: 'get',
+          onSuccess: function (transport) {
+            var contacts = transport.responseJSON;
+            if (contacts.length == 1 && !contacts[0]) {
+              $('contacts').addClassName('hidden');
+            } else {
+              $('contacts').removeClassName('hidden');
+              var html = '';
+              for (var i = 0; i < contacts.length; i++) {
+                var contact = contacts[i];
+                html +=
+                  '<li>' +
+                  '  <figure><img src="/contacts/' + contacts.email + '/avatar" /></figure>' +
+                  '  <h4>' + (contact.name ? contact.name : '') + '&nbsp;</h4>' +
+                  '  <p>' + contact.email + '</p>' +
+                  '</li>';
+              }
+              $('contacts').update(html);
+            }
+          }
+        });
+      }
+    };
+    contactsTab.querySelector('li[tab] > a').addEventListener('click', refreshContactsView);
+    contactsTab.querySelector('#contacts + p > a').addEventListener('click', function() {
+      var w=500, h=450;
+      var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+      var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+      var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+      var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+      var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+      var top = ((height / 2) - (h / 2)) + dualScreenTop;
+      var popupSettings = 'width=' + w + ', height=' + h + ', top=' + (top <= 40 ? 40 : top) + ', left=' + left;
+      var popup = window.open('/auth/google_contacts', "Trails Permissions", popupSettings);
+      var parser = document.createElement('a');
+      var pollTimer = window.setInterval(function() {
+        try {
+          var url =   popup.document.URL;
+          parser.href = url;
+          if (parser.pathname == '/auth/google_contacts/callback') {
+            window.clearInterval(pollTimer);
+            popup.close();
+            refreshContactsView();
+          }
+        } catch(e) {
+        }
+      }, 50);
+      return false;
+    });
+  },
+
+  GEOLocate: function() {
+    if (!navigator.geolocation) {
+      return false;
+    }
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var lat = position.coords.latitude,
+          lon = position.coords.longitude;
+
+      new Ajax.Request("/users/me", {
+        method: 'put',
+        parameters: {
+          "user[latitude]": lat,
+          "user[longitude]": lon
+        },
+        onSuccess: function (transport) {
+          var json = transport.responseJSON;
+          if (json.country) $('user_country').value = json.country;
+          if (json.state) $('user_state').value = json.state;
+          if (json.city) $('user_city').value = json.city;
+          if (json.address) $('user_address').value = json.address;
+          if (json.zip) $('user_zip').value = json.zip;
+          Application.refreshLocation();
+        }
+      });
+    });
+  },
+
+  refreshLocation: function() {
+    var
+      pEl = $$('#settings li[tab="user"] ul > li:nth-child(2) > h3 + p')[0],
+      empty = !($('user_country').value || $('user_state').value || $('user_city').value || $('user_address').value || $('user_zip').value),
+      html =
+        empty
+          ? 'No location entered. <a href="#" class="geolocate" title="GEOLocate">Guess</a> or <a href="#" class="edit" title="Edit">fill it</a>.'
+          :
+            $('user_address').value + ', ' + $('user_city').value + ($('user_zip').value ? ' ' + $('user_zip').value : '')
+            + ', ' + $('user_state').value + ', ' + $('user_country').value + ' '
+            + '<a href="#" class="edit" title="Fill/edit location"><i class="fa fa-edit"></i></a> '
+            + '<a href="#" class="geolocate" title="GEOLocate (guess location)"><i class="fa fa-location-arrow"></i></a>'
+    pEl.update(html).removeClassName('hidden');
+    $$('#settings li[tab="user"] .geolocate')[0].observe('click', function(event) {
+      event.preventDefault();
+      Application.GEOLocate();
+      return false;
+    });
+    $$('#settings li[tab="user"] .edit')[0].observe('click', function(event) {
+      event.preventDefault();
+      $$('#settings li[tab="user"] ul > li:nth-child(2) > h3 + p')[0].update('').addClassName('hidden');
+      $$('#settings li[tab="user"] fieldset')[0].removeClassName('hidden');
+      return false;
     });
   },
 

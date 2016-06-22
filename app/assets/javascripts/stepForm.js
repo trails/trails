@@ -1,7 +1,8 @@
 ;( function( window ) {
   'use strict';
 
-  var transEndEventNames = {
+  var
+    transEndEventNames = {
       'WebkitTransition': 'webkitTransitionEnd',
       'MozTransition': 'transitionend',
       'OTransition': 'oTransitionEnd',
@@ -20,24 +21,30 @@
     return a;
   }
 
-  function clientForm( el, options ) {
+  function stepForm( el, options ) {
     this.el = el;
     this.options = extend( {}, this.options );
     extend( this.options, options );
     this._init();
   }
 
-  clientForm.prototype.options = {
-    onSubmit : function() { return false; }
+  stepForm.prototype.options = {
+    onSubmit : function(el) {
+      var submit = el.querySelector('[type="submit"]');
+      if (submit) {
+        submit.click();
+      }
+      return false;
+    }
   };
 
-  clientForm.prototype._init = function() {
+  stepForm.prototype._init = function() {
     this.reset();
     // init events
     this._initEvents();
   };
 
-  clientForm.prototype.reset = function() {
+  stepForm.prototype.reset = function() {
     // current question
     this.current = 0;
 
@@ -75,7 +82,7 @@
     firstElInput.addEventListener( 'focus', onFocusStartFn );
   };
 
-  clientForm.prototype._initEvents = function() {
+  stepForm.prototype._initEvents = function() {
     var self = this;
 
     // show next question
@@ -109,20 +116,20 @@
     });
   };
 
-  clientForm.prototype._queryID = function() {
+  stepForm.prototype._queryID = function() {
     var question = this.questions[ 0 ];
     if (typeof this.options.onIDQuery == 'undefined' || this.options.onIDQuery(question)) {
       return this.nextQuestion();
     };
   };
 
-  clientForm.prototype.nextQuestion = function() {
-    if( !this._validate() ) {
+  stepForm.prototype.nextQuestion = function() {
+    if (this.current > this.questionsCount -1 || !this._validate()) {
       return false;
     }
 
     // check if form is filled
-    if( this.current === this.questionsCount - 1 ) {
+    if (this.current === this.questionsCount -1) {
       this.isFilled = true;
     }
 
@@ -130,51 +137,48 @@
     this._clearError();
 
     // current question
-    var currentQuestion = this.questions[ this.current ];
+    var currentQuestion = this.questions[this.current];
 
     // increment current question iterator
     ++this.current;
 
-    if( !this.isFilled ) {
+    if (this.isFilled) {
+      this._submit();
+    } else {
       // add class "show-next" to form element (start animations)
       this.el.addClassName('show-next');
 
       // remove class "current" from current question and add it to the next one
       // current question
-      var nextQuestion = this.questions[ this.current ];
+      var nextQuestion = this.questions[this.current];
       currentQuestion.removeClassName('current');
       nextQuestion.addClassName('current');
-    }
 
-    if( this.isFilled ) {
-      this._submit();
-    } else {
       this.el.removeClassName('show-next');
       // force the focus on the next input
-      nextQuestion.querySelector( 'input' ).focus();
+      nextQuestion.querySelector('input').focus();
     }
   }
 
   // submits the form
-  clientForm.prototype._submit = function() {
-    this.options.onSubmit( this.el );
+  stepForm.prototype._submit = function() {
+    this.options.onSubmit(this.el);
   }
 
   // TODO (next version..)
   // the validation function
-  clientForm.prototype._validate = function() {
+  stepForm.prototype._validate = function() {
     // current question´s input
-    var input = this.questions[ this.current ].querySelector( 'input' ).value;
-    if( input === '' ) {
-      this._showError( 'EMPTYSTR' );
+    var input = this.questions[this.current].querySelector('input').value;
+    if (input === '') {
+      this._showError('EMPTYSTR');
       return false;
     }
-
     return true;
   }
 
   // TODO (next version..)
-  clientForm.prototype._showError = function( err ) {
+  stepForm.prototype._showError = function( err ) {
     var message = '';
     switch( err ) {
       case 'EMPTYSTR' :
@@ -190,11 +194,11 @@
   }
 
   // clears/hides the current error message
-  clientForm.prototype._clearError = function() {
+  stepForm.prototype._clearError = function() {
     this.error.removeClassName('show');
   }
 
   // add to global namespace
-  window.clientForm = clientForm;
+  window.stepForm = stepForm;
 
 })( window );

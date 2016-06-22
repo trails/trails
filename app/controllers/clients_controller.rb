@@ -1,4 +1,6 @@
+
 class ClientsController < ApplicationController
+
   def show
     if (true if Float params[:id] rescue false)
       @client = Client.find(params[:id], :conditions=> {:user_id => current_user.id})
@@ -32,5 +34,4 @@ class ClientsController < ApplicationController
     def client_params
       params.require(:client).permit(:email, :name)
     end
-
 end
