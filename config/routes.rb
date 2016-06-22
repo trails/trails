@@ -12,6 +12,7 @@ TheApp::Application.routes.draw do
   get 'thanks' => 'pages#thanks'
 
   resource :sessions, only: [:create, :destroy]
+  resources :contacts, only: [:index]
 
   resources :users,
             :clients,

@@ -1,6 +1,5 @@
 @import 'reset-fonts.css.scss';
 @import 'font-awesome.css';
-@import 'simform.css';
 
 $left-margin: 70px;
 $invoices-scale: .2;
@@ -56,6 +55,22 @@ body > svg:first-child {
 
 #task_form {
   width: 100%;
+}
+
+#task_form::after {
+  content: '';
+  position: absolute;
+  background: rgba(50,50,50, .5);
+  top: 0;
+  left: 0;
+}
+
+body.settings #task_form::after {
+  content: '';
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
 }
 
 #task_lists {
@@ -763,19 +778,9 @@ input[name='task_list[title]'] {
   transform: rotate(180deg);
 }
 
-#settings,
-#settings > h2:before {
-  background-color: #f5f5f5;
-}
-
 #invoices,
 #invoices > h2:before {
   background-color: #f3f7ee;
-}
-
-#clients,
-#clients > h2:before {
-  background-color: #f7f7e7;
 }
 
 #slide > form > h2 {
@@ -822,29 +827,13 @@ input[name='task_list[title]'] {
   box-shadow: -.2em 0 0 0 #DDE8CE;
 }
 
-#settings > h2:before {
-  content: '\f013';
-}
-
 #invoices > h2:before {
-  top: 63px;
+  top: 11px;
   content: '\f0f6';
 }
 
-#clients > h2:before {
-  top: 115px;
-  content: '\f007';
-}
-
-
 #slide > form > h2:first-child + ul {
   position: absolute;
-}
-
-#settings > ul {
-  width: calc(100% - 1.2em * 2);
-  height: calc(100% - 5em);
-  padding: 4.5em 1.2em .5em;
 }
 
 #invoices > div {
@@ -872,89 +861,6 @@ input[name='task_list[title]'] {
 #slide.show #invoices > div > ul:not(.zoomed) {
   overflow-x: hidden;
   overflow-y: scroll;
-}
-
-#settings > ul > li:first-child {
-  margin-bottom: 6em;
-}
-
-#settings > ul > li h3 {
-  font-size: 1.8em;
-  color: #666;
-  margin-left: .7em;
-}
-
-#settings > ul > li h3 a {
-  color: #999;
-}
-
-#settings > ul > li h3 + img {
-  float: left;
-  width: 150px;
-  border-radius: 75px;
-  margin: 2em 3em;
-}
-
-#settings > ul > li fieldset {
-  margin-top: 2em;
-}
-
-#settings > ul > li fieldset > label,
-#settings > ul > li fieldset > input[type="text"],
-#settings > ul > li fieldset > input[type="email"] {
-  display: block;
-}
-
-#settings > ul > li fieldset > label {
-  font-size: 1.3em;
-  color: #999;
-}
-
-#settings > ul > li fieldset > input[type="text"],
-#settings > ul > li fieldset > input[type="email"] {
-  font-size: 2em;
-  padding: .1em .4em;
-  color: #666;
-}
-
-#settings > ul > li fieldset > input[type="text"]:focus,
-#settings > ul > li fieldset > input[type="email"]:focus {
-  color: #333;
-}
-
-#settings > ul > li:first-child fieldset > input[type="text"],
-#settings > ul > li:first-child fieldset > input[type="email"] {
-  width: 40%;
-}
-
-#settings > ul > li:nth-child(2) fieldset > input[type="text"] {
-  width: 95%;
-}
-
-#settings > ul > li:nth-child(2) > fieldset {
-  width: calc(33% - 4em);
-  display:inline-block;
-  padding: .5em 1em .5em 3em;
-  vertical-align: bottom;
-}
-
-#settings > ul > li:last-child {
-  position: absolute;
-  bottom: 1em;
-  right: 1em;
-}
-
-#settings input[type="submit"] {
-  float: right;
-  padding: 0.3em 0.8em;
-  font-size: 1.5em;
-  margin-top: 0.5em;
-}
-
-#settings > ul > li:last-child > a {
-  font-size: 1.5em;
-  color: #666;
-  text-decoration: none;
 }
 
 #invoices > div,
@@ -1663,4 +1569,644 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
   #invoices li > header + section > fieldset {
     font-size: 1.2em;
   }
+}
+
+/* settings area */
+#settings {
+	position: fixed;
+  left: 0;
+  padding-left: 70px;
+  bottom: 10px;
+	width: 420px;
+	height: 350px;
+	margin: 0 auto;
+  z-index: 99;
+  text-align: center;
+}
+
+#settings svg {
+  z-index: 1;
+  margin-bottom: -10px;
+}
+
+#settings.hidden,
+#settings.hidden svg {
+  pointer-events: none
+}
+
+#settings.hidden button {
+  pointer-events: all;
+}
+
+#settings svg > path {
+    fill: #f1f1d3;
+    stroke: #dddd99;
+}
+
+#settings button {
+	font-weight: bold;
+	position: absolute;
+	padding: 0;
+	text-align: center;
+	color: #aaaaaa;
+	border: none;
+	background: none;
+	-webkit-transition: opacity 0.3s;
+	transition: opacity 0.3s;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  z-index: 99;
+}
+
+#settings button:hover,
+#settings button:focus {
+	outline: none;
+	color: #999999;
+}
+
+#settings button.close {
+	z-index: 10;
+	top: 0px;
+	right: 0px;
+	left: auto;
+	width: 40px;
+	height: 40px;
+	padding: 10px;
+	color: #666;
+  pointer-events: all;
+}
+
+#settings button.close:hover,
+#settings button.close:focus {
+	color: #333;
+}
+
+#settings button.hidden {
+	pointer-events: none;
+	opacity: 0;
+}
+
+#settings > button {
+  margin: 0 188px;
+  width: 44px;
+  height: 44px;
+  border-radius: 20px;
+  bottom: 12px;
+	left: 70px;
+}
+
+#settings > div,
+#settings > ul,
+#settings > ul > li > div {
+  position: absolute;
+}
+
+#settings > ul > li > div,
+#settings > div {
+  text-align: left;
+  padding: 1em 1.5em;
+	-webkit-transition: opacity .05s;
+	transition: opacity .05s;
+}
+
+#settings > div {
+	top: 3px;
+	right: 0;
+	bottom: 57px;
+	left: 71px;
+  pointer-events: none;
+}
+
+#settings > ul > li > div {
+  top: -304px;
+  width: 387px;
+  height: 282px;
+  opacity: 0;
+  z-index: -1;
+  left: 0;
+}
+
+#settings > ul > li.current > div {
+  z-index: 10;
+  opacity: 1;
+}
+
+#settings h3 {
+  font-size: 1.8em;
+  color: #aaaa70;
+}
+
+#settings li:first-child > h3 {
+  padding-bottom: 15px;
+}
+
+#settings > button.start::after {
+  content: '';
+	position: absolute;
+  box-shadow: 1px 3px 10px 0 #ccc;
+  z-index: -10;
+}
+
+#settings.hidden > div,
+#settings.hidden > ul {
+	pointer-events: none;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s;
+	transition: opacity 0.2s;
+}
+
+#settings > ul {
+  bottom: 0;
+}
+
+#settings > ul > li {
+  display: inline-block;
+  height: 40px;
+  padding-top: 7px;
+  width: 91px;
+  margin-right: 3px;
+}
+
+#settings > ul > li a {
+  color: #CECE99;
+}
+
+#settings > ul > li > a {
+  font-size: 2.5em;
+}
+
+#settings > ul > li:not(.current) > a:hover {
+  color: #ccc;
+}
+
+#settings > ul > li > div a:hover,
+#settings > ul > li.current > a {
+  color: #669966;
+}
+
+#settings > ul > li[tab="user"] ul > li:first-child h3 + img {
+  float: left;
+  width: 120px;
+  border-radius: 75px;
+  margin: -5px 0 0 12px;
+}
+
+#settings > ul > li[tab="user"] ul > li:first-child p {
+  text-align: left;
+  font-size: 18px;
+  line-height: 18px;
+  padding: 37px 0 0 154px;
+}
+
+#settings > ul > li[tab="user"] ul > li:first-child p + p {
+  padding-top: 6px;
+  padding-bottom: 48px;
+  color: #666;
+}
+
+#settings > ul > li[tab="user"] ul > li:nth-child(2) p {
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 1.3em;
+  padding-top: 1em;
+}
+
+#settings > ul > li[tab="user"] ul > li:nth-child(2) > h3 + p {
+  color: #aaa;
+}
+
+#settings > ul > li[tab="user"] ul > li:nth-child(2) > h3 + p.hidden {
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#settings li[tab="user"] > ul > li:nth-child(2),
+#settings li[tab="user"] fieldset {
+  position: relative;
+}
+
+#settings li[tab="user"] fieldset {
+  margin: 0 auto;
+  padding: 0 0 1em 0;
+  text-align: left;
+  font-size: 1.5em;
+}
+
+#settings li[tab="user"] fieldset .submit {
+  display: none;
+}
+
+/* Question list style */
+#settings li[tab="user"] fieldset ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+  -webkit-transition: height .1s;
+  transition: height .1s;
+}
+
+#settings li[tab="user"] fieldset ol:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2.35em;
+}
+
+#settings li[tab="user"] fieldset .questions li {
+  z-index: 100;
+  position: relative;
+  visibility: hidden;
+  height: 0;
+  -webkit-transition: visibility 0s .1s, height 0s .1s;
+  transition: visibility 0s .1s, height 0s .1s;
+}
+
+#settings li[tab="user"] fieldset .questions li.current {
+  visibility: visible;
+  height: auto;
+  -webkit-transition: none;
+  transition: none;
+}
+
+/* Labels */
+#settings li[tab="user"] fieldset .questions li > span {
+  display: block;
+  overflow: hidden;
+  font-size: .8em;
+  color: #333;
+}
+
+#settings li[tab="user"] fieldset .questions li > span label {
+  display: block;
+  -webkit-transition: -webkit-transform .1s;
+  transition: transform .1s;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+#settings li[tab="user"] fieldset .questions li.current > span label {
+  -webkit-transition: none;
+  transition: none;
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+#settings li[tab="user"] fieldset.show-next .questions li.current > span label {
+  -webkit-animation: moveUpFromDown .1s both;
+  animation: moveUpFromDown .1s both;
+}
+
+@-webkit-keyframes moveUpFromDown {
+  from { -webkit-transform: translateY(100%); }
+  to { -webkit-transform: translateY(0); }
+}
+
+@keyframes moveUpFromDown {
+  from { -webkit-transform: translateY(100%); transform: translateY(100%); }
+  to { -webkit-transform: translateY(0); transform: translateY(0); }
+}
+
+/* Input field */
+#settings li[tab="user"] fieldset .questions input {
+  display: block;
+  margin: 0.3em 0 0 0;
+  padding: 0.5em 1em 0.5em 0.7em;
+  width: calc(100% - 2em);
+  border: none;
+  background: transparent;
+  font-size: 1em;
+  line-height: 1;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+
+#settings li[tab="user"] fieldset .questions input:invalid {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
+#settings li[tab="user"] fieldset .questions .current input {
+  opacity: 1;
+}
+
+#settings li[tab="user"] fieldset .questions input:focus,
+#settings li[tab="user"] fieldset button:focus {
+  outline: none;
+}
+
+/* Next question button */
+#settings li[tab="user"] fieldset .next {
+  position: absolute;
+  right: 0;
+  bottom: 3em;
+  display: block;
+  padding: 0;
+  width: 2em;
+  height: 2em;
+  border: none;
+  background: none;
+  color: rgba(0,0,0,0.4);
+  text-align: center;
+  opacity: 0;
+  z-index: 100;
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
+  -webkit-transform: translateX(-20%);
+  transform: translateX(-20%);
+  pointer-events: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+#settings li[tab="user"] fieldset .next:hover {
+  color: rgba(0,0,0,0.5);
+}
+
+#settings li[tab="user"] fieldset .next::after {
+  position: absolute;
+  top: -.2em;
+  left: -.2em;
+  width: 100%;
+  height: 100%;
+  text-transform: none;
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-family: FontAwesome;
+  line-height: 1;
+  speak: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\f00d';
+  font-size: 1.5em;
+}
+
+#settings li[tab="user"] fieldset:valid .next::after {
+  content: '\f061';
+}
+
+#settings li[tab="user"] fieldset[state="new"]:valid .next::after {
+  content: '\f067';
+}
+
+#settings li[tab="user"] fieldset .next.show {
+  opacity: 1;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Progress bar */
+#settings li[tab="user"] fieldset .progress {
+  width: 0%;
+  height: 0.25em;
+  background: #ddd;
+  -webkit-transition: width .1s ease-in-out;
+  transition: width .1s ease-in-out;
+}
+
+#settings li[tab="user"] fieldset .progress::before {
+  position: absolute;
+  top: auto;
+  width: 100%;
+  height: inherit;
+  background: #999;
+  content: '';
+  z-index: -1;
+}
+
+/* Number indicator */
+#settings li[tab="user"] fieldset .number {
+  position: absolute;
+  right: 0;
+  overflow: hidden;
+  margin: 0.4em 0;
+  width: 3em;
+  font-weight: 700;
+  font-size: .5em;
+}
+
+#settings li[tab="user"] fieldset .number:after {
+  position: absolute;
+  left: 50%;
+  content: '/';
+  opacity: 0.4;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+#settings li[tab="user"] fieldset .number span {
+  float: right;
+  width: 40%;
+  text-align: center;
+}
+
+#settings li[tab="user"] fieldset .number .number-current {
+  float: left;
+}
+
+#settings li[tab="user"] fieldset .number-next {
+  position: absolute;
+  left: 0;
+}
+
+#settings li[tab="user"] fieldset.show-next .number-current {
+  -webkit-transition: -webkit-transform .1s;
+  transition: transform .1s;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+#settings li[tab="user"] fieldset.show-next .number-next {
+  -webkit-animation: moveUpFromDown .1s both;
+  animation: moveUpFromDown .1s both;
+}
+
+/* Error and final message */
+#settings li[tab="user"] fieldset .error-message,
+#settings li[tab="user"] fieldset + span {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity .1s;
+  transition: opacity .1s;
+}
+
+#settings li[tab="user"] fieldset .error-message {
+  position: absolute;
+  padding: 0.4em 3.5em 0 0;
+  width: 100%;
+  color: rgba(0,0,0,0.7);
+  font-style: italic;
+  font-size: .5em;
+}
+
+#settings li[tab="user"] fieldset + span {
+  position: relative;
+  width: 100%;
+  display: inline-block;
+  padding-bottom: .5em;
+}
+
+#settings li[tab="user"] fieldset + span.show {
+  -webkit-transition: opacity .3s .3s, visibility .3s .3s;
+  transition: opacity .3s .3s, visibility .3s .3s;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+}
+
+#settings li[tab="user"] fieldset .error-message.show,
+#invoices li > header + section > fieldset + span.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+#settings li[tab="user"] fieldset + span.show {
+  -webkit-transition-delay: 0.5s;
+  transition-delay: 0.5s;
+}
+
+#settings li[tab="user"] fieldset + span > .controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#settings li[tab="user"] fieldset + span > .controls button {
+  border: 0 none;
+  background: transparent none;
+  padding: 0;
+  color: #999999;
+  cursor: pointer;
+}
+#settings li[tab="user"] fieldset + span > .controls button:before {
+  font-family: FontAwesome;
+  font-size: 2em;
+}
+#settings li[tab="user"] fieldset + span > .controls button.edit:before {
+  content: '\f044';
+}
+#settings li[tab="user"] fieldset + span > .controls button.change:before {
+  content: '\f00d';
+}
+
+/* Final hiding of form / showing message */
+#settings li[tab="user"] fieldset.hidden {
+  visibility: hidden;
+  opacity: 0;
+  -webkit-transition: opacity .3s, visibility .3s 0;
+  transition: opacity .3s, visibility .3s 0;
+  position: absolute;
+  pointer-events: none;
+  z-index: -10;
+}
+
+/* Remove IE clear cross */
+#settings li[tab="user"] fieldset input::-ms-clear {
+  display: none;
+}
+
+
+#settings li[tab="preferences"] label {
+  font-size: 1.3em;
+  color: #999;
+  line-height: 1.5em;
+}
+
+#settings li[tab="preferences"] label + input {
+  float: right;
+}
+
+#contacts {
+  overflow-y: scroll;
+  height: 235px;
+}
+
+#contacts.hidden {
+  display: none;
+}
+
+#contacts > li {
+  padding: 2px .1em;
+  cursor: pointer;
+}
+
+#contacts > li:nth-child(2n+1) {
+  background-color: #ededd7;
+}
+
+#contacts > li > figure {
+  float: left;
+  width: 48px;
+  height: 48px;
+  background-color: gray;
+}
+
+#contacts > li > figure img {
+  width: 100%;
+}
+
+#contacts > li > figure,
+#contacts > li > figure img {
+  border-radius: 25px;
+}
+
+#contacts > li > h4 {
+  font-size: 2em;
+  padding-top: .6em;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+#contacts > li > h4 + p {
+  font-size: 1.2em;
+  padding-bottom: .8em;
+}
+
+#contacts + p {
+  font-size: 2em;
+}
+
+#contacts:not(.hidden) + p {
+  display: none;
 }

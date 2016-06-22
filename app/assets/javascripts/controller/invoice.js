@@ -54,7 +54,12 @@ Invoice.addMethods({
               pull: true,
               put: ['taskList']
             },
-            onAdd: Invoice.updateTasksOrder,
+            onStart: function() {
+              $$('body')[0].addClassName('dnd');
+            },
+            onEnd: function() {
+              $$('body')[0].removeClassName('dnd');
+            },            onAdd: Invoice.updateTasksOrder,
             onUpdate: Invoice.updateTasksOrder,
             onRemove: Invoice.updateTasksOrder
           });
@@ -153,6 +158,12 @@ Invoice.initDnD = function () {
         name: 'invoices',
         pull: true,
         put: ['taskList']
+      },
+      onStart: function() {
+        $$('body')[0].addClassName('dnd');
+      },
+      onEnd: function() {
+        $$('body')[0].removeClassName('dnd');
       },
       onAdd: Invoice.updateTasksOrder,
       onUpdate: Invoice.updateTasksOrder,

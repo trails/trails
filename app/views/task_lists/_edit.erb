@@ -11,9 +11,9 @@
       </span>
       <span class="submit external">
         <% if edit.new_record? %>
-          <%= form.submit "Create task list" , :action => task_lists_path, :disabled=>true %>
+          <%= form.submit "Create" , :action => task_lists_path, :disabled=>true %>
         <% else %>
-          <%= form.submit "Save task list", :action => task_list_path(edit), :method=>"put", :disabled=>true %>
+          <%= form.submit "Save", :action => task_list_path(edit), :method=>"put", :disabled=>true %>
         <% end %>
         <%= link_to "Cancel", "#cancel" %>
       </span>

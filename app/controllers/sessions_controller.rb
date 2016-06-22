@@ -23,14 +23,27 @@ class SessionsController < ApplicationController
         @identity.user = current_user
         @identity.save()
       end
-      redirect_to :controller => 'tasks'
+      case @identity.provider
+      when 'google'
+        redirect_to :controller => 'tasks'
+      when 'google_contacts'
+        render json: [{success: true}]
+      end
     else
       if !@identity.user.present?
-        @identity.user = User.create_with_omniauth(auth)
+        @identity.user = User.find_by_email(auth.info.email)
+        if !@identity.user.present?
+          @identity.user = User.create_with_omniauth(auth)
+        end
       end
       @identity.save()
       self.current_user = @identity.user
-      redirect_to :controller => 'tasks'
+      case @identity.provider
+      when 'google'
+        redirect_to :controller => 'tasks'
+      when 'google_contacts'
+        render json: [{success: true}]
+      end
     end
   end
 

@@ -9,12 +9,11 @@ ClientForm.addMethods({
     $A(invoice(invoice_id).element().getElementsByTagName("INPUT")).invoke("enable");
     var clientLayout = wizard.next('span');
     clientLayout.removeClassName('show');
-    wizard.removeClassName('hide');
+    wizard.removeClassName('hidden');
   },
 
   onSuccess: function(transport) {
     var wizard = this.client.form,
-        status = wizard.readAttribute('status'),
         invoice_id = wizard.recordID('invoice'),
         data = transport.responseJSON;
     Client.render(data, this.form);
@@ -31,9 +30,8 @@ ClientForm.init = function (newInvoiceOnly) {
   $$(selector).each(function (wizard) {
     wizard.observe("submit", Application.formSubmitHandler);
 
-    wizard.stepForm = new clientForm(wizard, {
+    wizard.stepForm = new stepForm(wizard, {
       onSubmit: function () {
-        var status = wizard.readAttribute('status');
         wizard.form.responder = client(0, wizard).client_form();
         wizard.form.overrideAction = '/clients';
         wizard.form.overrideMethod = 'post';
@@ -63,11 +61,9 @@ ClientForm.init = function (newInvoiceOnly) {
     wizard.next('span').down('button.change').observe('click', function(ev) {
       ev.stop();
       var id = wizard.readAttribute('client');
-      wizard.writeAttribute('status', 'select');
       client(id, wizard).client_form().show(wizard);
     });
     var id = parseInt(wizard.readAttribute('client'));
-    wizard.writeAttribute('status', id ? 'display' : 'select');
     if (id) {
       client(id, wizard).show()
     }
