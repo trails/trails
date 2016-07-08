@@ -357,7 +357,7 @@ td.status {
   content: '\00a0';
   display: block;
   position: absolute;
-  border: 2px dashed #99CC99;
+  border: 2px dashed #669966;
   top: 1px;
   opacity: 0;
   transition: opacity .3s ease-out;
@@ -1571,6 +1571,26 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
   }
 }
 
+/* contacts dropables */
+#invoices > div > ul > li > ul:last-child {
+  top: 0;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0;
+  width: 100%;
+  z-index: -1;
+  pointer-events: none
+}
+
+body.dnd-contacts #invoices li[id^="invoice_"] > ul:last-child {
+  z-index: 99;
+  pointer-events: all;
+  background-color: rgba(235,235,235,.3);
+  font-size: 8em;
+  border: 10px dashed #669966;
+}
+
 /* settings area */
 #settings {
 	position: fixed;
@@ -1590,11 +1610,13 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
 }
 
 #settings.hidden,
-#settings.hidden svg {
+#settings.hidden > svg,
+#settings.hidden > div {
   pointer-events: none
 }
 
-#settings.hidden button {
+#settings.hidden > button {
+  z-index: 99;
   pointer-events: all;
 }
 
@@ -1614,7 +1636,6 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
 	-webkit-transition: opacity 0.3s;
 	transition: opacity 0.3s;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  z-index: 99;
 }
 
 #settings button:hover,
@@ -2175,30 +2196,39 @@ body:not(.dnd) #invoices .task_container:first-child .duration:before {
   background-color: #ededd7;
 }
 
-#contacts > li > figure {
+#contacts > li figure {
   float: left;
   width: 48px;
   height: 48px;
   background-color: gray;
 }
 
-#contacts > li > figure img {
+#contacts > li figure img {
   width: 100%;
 }
 
-#contacts > li > figure,
-#contacts > li > figure img {
+#contacts > li figure,
+#contacts > li figure img {
   border-radius: 25px;
 }
 
-#contacts > li > h4 {
-  font-size: 2em;
-  padding-top: .6em;
+#contacts > li figure img:not()[avatar="none"] {
+  font-family: FontAwesome;
+  content: '\f007';
+}
+
+#contacts > li h4,
+#contacts > li p {
   white-space: nowrap;
   overflow-x: hidden;
 }
 
-#contacts > li > h4 + p {
+#contacts > li h4 {
+  font-size: 2em;
+  padding-top: .6em;
+}
+
+#contacts > li h4 + p {
   font-size: 1.2em;
   padding-bottom: .8em;
 }

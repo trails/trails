@@ -47,24 +47,27 @@ Invoice.addMethods({
           $(element).down('header:first-child > h3').innerHTML = 'Invoice #' + data.number;
           $(element).down('input[name="invoice[description]"]').value = data.description;
           $(element).down('fieldset > a:first-child').setAttribute('href', '/invoices/' + data.id + '.pdf');
-          Sortable.create($$("#invoice_" + data.id + " main > ul")[0], {
-            draggable: 'li.task_container',
-            group: {
-              name: 'invoices',
-              pull: true,
-              put: ['taskList']
-            },
-            onStart: function() {
-              $$('body')[0].addClassName('dnd');
-            },
-            onEnd: function() {
-              $$('body')[0].removeClassName('dnd');
-            },            onAdd: Invoice.updateTasksOrder,
-            onUpdate: Invoice.updateTasksOrder,
-            onRemove: Invoice.updateTasksOrder
-          });
           var clone = Invoice.newInvoiceClone.clone(true);
           element.insert({before: clone});
+          $$("#invoice_new main > ul, #invoice_" + data.id + " main > ul").each(function(el) {
+            Sortable.create(el, {
+              draggable: 'li.task_container',
+              group: {
+                name: 'invoices',
+                pull: true,
+                put: ['taskList']
+              },
+              onStart: function() {
+                $$('body')[0].addClassName('dnd');
+              },
+              onEnd: function() {
+                $$('body')[0].removeClassName('dnd');
+              },
+              onAdd: Invoice.updateTasksOrder,
+              onUpdate: Invoice.updateTasksOrder,
+              onRemove: Invoice.updateTasksOrder
+            });
+          });
           ClientForm.init(true);
           invoice(data.id).zoomIn();
         }
@@ -152,6 +155,9 @@ Invoice.init = function () {
 
 Invoice.initDnD = function () {
   $$("#invoices li main > ul").each(function (container) {
+    var
+      invoiceEl = $(container).up('#invoices > div > ul > li'),
+      dropableList = $(invoiceEl).down('footer + fieldset + ul');
     Sortable.create(container, {
       draggable: 'li.task_container',
       group: {
@@ -168,6 +174,17 @@ Invoice.initDnD = function () {
       onAdd: Invoice.updateTasksOrder,
       onUpdate: Invoice.updateTasksOrder,
       onRemove: Invoice.updateTasksOrder
+    });
+    Sortable.create(dropableList, {
+      draggable: 'li.contact',
+      group: {
+        name: 'invoice',
+        pull: false,
+        put: ['contact']
+      },
+      onAdd: function(event) {
+        // link invoice to contact, overwrite current client if present
+      }
     });
   });
 };

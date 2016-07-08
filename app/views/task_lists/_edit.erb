@@ -4,10 +4,10 @@
      id="<%= (edit.new_record? ? '' : "edit_") << edit.class.name.underscore << '_' << (edit.new_record? ? 'new' : edit.id.to_s) %>"
      style="display:none">
       <span class="title">
-        <%= form.text_field   :title, :disabled=>true %>
+        <%= form.text_field   :title, disabled: true, placeholder: 'List name', value: (edit.new_record? ? '' : edit.title)  %>
       </span>
       <span class="default_rate">
-        $ <%= form.text_field :default_rate, :disabled=>true %> /h
+        $ <%= form.text_field :default_rate, disabled: true, placeholder: '0.00' %> /h
       </span>
       <span class="submit external">
         <% if edit.new_record? %>
