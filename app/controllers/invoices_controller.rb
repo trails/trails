@@ -16,6 +16,15 @@ class InvoicesController < ApplicationController
   def create
     @invoice = Invoice.create!(invoice_params.merge(:user_id => session[:user_id]))
 
+    @tasks = params[:tasks].split(",")
+    @tasks.to_enum.with_index.each do |task_id, index|
+      @task = Task.find(task_id)
+      @task.task_list_id = 0
+      @task.invoice_id = @invoice.id
+      @task.sort_order = @tasks.length - index
+      @task.save
+    end
+
     render json: @invoice
   end
 

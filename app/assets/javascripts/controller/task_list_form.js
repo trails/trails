@@ -8,7 +8,7 @@ TaskListForm.addMethods({
     $A(this.element().getElementsByTagName("INPUT")).invoke("enable");
     this.element().show();
     var titleInput = this.element().down(".title").down("input");
-    titleInput.value = "";
+    //titleInput.value = "";
     titleInput.focus();
     titleInput.select();
   },

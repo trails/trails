@@ -301,19 +301,19 @@ var Application = {
   },
 
   handleEscKey: function(event) {
-    var element = document.activeElement;
-    if (element == $$('body')[0]) {
+    var
+      parentSection = document.activeElement.up('section')
+      closeSection = parentSection ? parentSection.down('a[href="#cancel"]') : null;
+    if (closeSection) {
+      closeSection.click();
+    } else {
+      var slide = document.querySelector('#slide');
       if (Invoice.isActiveTab() && Invoice.isZoomed()) {
         Invoice.zoomOut();
-      } else if ($('slide').hasClassName('show')) {
-        $('slide').removeClassName('show');
-      }
-    } else {
-      var cancelLink = element.up('section') ? element.up('section').down('a[href="#cancel"]') : false;
-      if (cancelLink) {
-        cancelLink.click();
-      } else {
-        element.blur();
+      } else if (slide.hasClassName('show')) {
+        slide.removeClassName('show');
+      } else if (document.querySelector('body').hasClassName('settings')) {
+        document.querySelector('#settings button.close').click();
       }
     }
   },
@@ -508,33 +508,12 @@ var Application = {
     Application.refreshLocation();
 
     var contactsTab = $$('#settings li[tab="contacts"]')[0];
-    var refreshContactsView = function() {
+    contactsTab.querySelector('li[tab] > a').addEventListener('click', function() {
       if ($('contacts').empty()) {
-        new Ajax.Request("/contacts", {
-          method: 'get',
-          onSuccess: function (transport) {
-            var contacts = transport.responseJSON;
-            if (contacts.length == 1 && !contacts[0]) {
-              $('contacts').addClassName('hidden');
-            } else {
-              $('contacts').removeClassName('hidden');
-              var html = '';
-              for (var i = 0; i < contacts.length; i++) {
-                var contact = contacts[i];
-                html +=
-                  '<li>' +
-                  '  <figure><img src="/contacts/' + contacts.email + '/avatar" /></figure>' +
-                  '  <h4>' + (contact.name ? contact.name : '') + '&nbsp;</h4>' +
-                  '  <p>' + contact.email + '</p>' +
-                  '</li>';
-              }
-              $('contacts').update(html);
-            }
-          }
-        });
+        Application.getContacts(1);
       }
-    };
-    contactsTab.querySelector('li[tab] > a').addEventListener('click', refreshContactsView);
+      return false;
+    });
     contactsTab.querySelector('#contacts + p > a').addEventListener('click', function() {
       var w=500, h=450;
       var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
@@ -559,6 +538,98 @@ var Application = {
         }
       }, 50);
       return false;
+    });
+
+    var contactList = contactsTab.querySelector('#contacts');
+    contactList.observe('scroll', function() {
+      var
+        threshold = 250,
+        viewport = {
+          top: contactList.offsetTop,
+          height: contactList.offsetHeight,
+          scroll: contactList.scrollTop,
+          contentHeight: contactList.scrollHeight
+        };
+
+      // avatar lazy load behavior avoids flooding with
+      // requests for images that are not going to be displayed
+      $$('#contacts figure > img[avatar]').each(function (el) {
+        var
+          aboveViewport = el.offsetTop - viewport.top < viewport.scroll - threshold,
+          belowViewport = el.offsetTop - viewport.top > viewport.scroll + viewport.height + threshold;
+        if (aboveViewport || belowViewport) return;
+        el.writeAttribute('src', el.readAttribute('avatar'));
+        el.removeAttribute('avatar');
+      });
+
+      // on scroll pagination: fetch more contacts if
+      // scrolled down close to the bottom of the list
+      var requestingNewPage = false;
+      if (viewport.scroll + viewport.height + threshold >= viewport.contentHeight) {
+        if (!$('contacts').empty() && !requestingNewPage) {
+          requestingNewPage = true;
+          Application.getContacts(parseInt($('contacts').readAttribute('pages')) + 1, function() {
+            requestingNewPage = false;
+          });
+        }
+      }
+    });
+  },
+
+  getContacts: function(page, callback) {
+    new Ajax.Request("/contacts?page=" + page, {
+      method: 'get',
+      onSuccess: function (transport) {
+        var contacts = transport.responseJSON;
+        if (page == 1 && contacts.length == 1 && !contacts[0]) {
+          $('contacts').addClassName('hidden');
+        } else {
+          $('contacts').removeClassName('hidden');
+          var html = '';
+          for (var i = 0; i < contacts.length; i++) {
+            var contact = contacts[i];
+            html +=
+              '<li class="contact">' +
+              '  <figure><img ' + (contact.avatar ? 'avatar="/contacts/' + contact.id + '"' : '') + ' /></figure>' +
+              '  <h4>' + (contact.name ? contact.name : '') + '&nbsp;</h4>' +
+              '  <p>' + contact.email + '</p>' +
+              '</li>';
+          }
+          if (!page || page == 1) {
+            $('contacts').update(html);
+          } else {
+            $('contacts').insert(html);
+          }
+          $('contacts').writeAttribute('pages', page);
+        }
+        Sortable.create($('contacts'), {
+          draggable: 'li.contact',
+          sort: false,
+          group: {
+            name: 'contact',
+            pull: 'clone',
+            put: false
+          },
+          onStart: function (evt) {
+            $$('body')[0].addClassName('dnd-contacts');
+            Application.invoicesShownBeforeDnD = $('slide').hasClassName('show');
+            $('slide').addClassName('show');
+          },
+          onEnd: function (evt) {
+            var afterDropFn = function() {
+              if (!Application.invoicesShownBeforeDnD) {
+                $('slide').removeClassName('show');
+              }
+              $$('body')[0].removeClassName('dnd-contacts');
+            };
+            clearTimeout(Application.contactsDnDTimeout);
+            Application.contactsDnDTimeout = setTimeout(afterDropFn, 400);
+          }
+        });
+        if (callback) {
+          callback();
+        }
+      }
     });
   },
 
