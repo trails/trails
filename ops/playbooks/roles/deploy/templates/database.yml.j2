@@ -1,0 +1,11 @@
+common: &common
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  host: {{ db.host }}
+
+production:
+  <<: *common
+  username: {{ db.creds.user }}
+  password: {{ db.creds.password }}
+  database: {{ db.name}}

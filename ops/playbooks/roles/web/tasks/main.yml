@@ -1,0 +1,62 @@
+- name: install rvm
+  include_role:
+    name: rvm_io.ruby
+
+- name: install APT dependencies
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - apache2
+    - libpq-dev
+    - build-essential
+    - libcurl4-openssl-dev
+    - apache2-threaded-dev
+    - libapr1-dev
+    - libaprutil1-dev
+    - nodejs
+    - nodejs-legacy
+
+- name: check if extra swap has been already set
+  stat: path=/extraswap
+  register: swapfile
+
+- name: declare whether extra swap exists
+  set_fact:
+    need_swap: "{{ swapfile.stat.exists == false }}"
+
+- name: allocate space for extra swap
+  command: dd if=/dev/zero of=/extraswap bs=1M count=1024
+  when: need_swap == true
+
+- name: set extra swap on allocated space
+  command: mkswap /extraswap
+  when: need_swap == true
+
+- name: make sure that extra swap is loaded on boot
+  action: lineinfile dest=/etc/fstab regexp="extraswap" line="/extraswap none swap sw 0 0" state=present
+  when: need_swap == true
+
+- name: load extra swap
+  command: swapon -a
+  when: need_swap == true
+
+- name: install passenger gem
+  command: gem install passenger
+
+- name: build passenger module
+  command: bash -lc 'passenger-install-apache2-module --auto'
+
+- name: install passenger module
+  command: bash -lc 'passenger-install-apache2-module --snippet > /etc/apache2/mods-available/passenger.load'
+
+- name: enable required apache modules
+  apache2_module: name={{ item }} state=present
+  with_items:
+    - passenger
+    - ssl
+  notify:
+    - restart apache2
+
+- name: ensures that apache certs dir exists
+  file: path=/etc/apache2/ssl owner=root mode=0700 state=directory
+
+- file: state=link src=/vagrant path=/var/www/{{ domain }}

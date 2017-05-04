@@ -1,0 +1,43 @@
+---
+- name: check current timezone
+  shell: cat /etc/timezone
+  register: current_zone
+  changed_when: current_zone.stdout != timezone
+
+- name: set timezone variables
+  copy: >
+    content=timezone
+    dest=/etc/timezone
+    owner=root
+    group=root
+    mode=0644
+    backup=yes
+  when: current_zone.stdout != timezone
+  notify:
+    - update timezone
+
+- name: update APT cache
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: install APT dependencies
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - vim
+    - language-pack-en
+
+- name: localization data
+  locale_gen: name={{ item }} state=present
+  with_items:
+    - en_US
+    - en_US.UTF-8
+
+- name: ease sudo command usage
+  lineinfile: "dest=/etc/sudoers.d/10-sudo-group regexp='NOPASSWD:ALL$' line='%sudo ALL=(ALL) NOPASSWD:ALL' create=yes"
+
+- name: set IP address on local/virtual network
+  copy: src=eth1.cfg dest=/etc/network/interfaces.d/ owner=root mode=0644
+  notify:
+    - restart network
+    - ifup eth1
+
+- meta: flush_handlers

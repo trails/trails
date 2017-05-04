@@ -1,0 +1,28 @@
+<VirtualHost *:80>
+  ServerName {{ domain }}
+  ServerAlias {{ domain }} www.{{ domain }}
+  ErrorLog ${APACHE_LOG_DIR}/{{ domain }}-error.log
+  CustomLog ${APACHE_LOG_DIR}/{{ domain }}-access.log combined
+  Redirect permanent / https://{{ domain }}
+</VirtualHost>
+
+<VirtualHost *:443>
+  SSLEngine On
+  SSLCertificateFile /etc/apache2/ssl/ssl.crt
+  SSLCertificateKeyFile /etc/apache2/ssl/ssl.key
+
+  SetEnv GOOGLE_OAUTH2_CLIENT_ID {{ google.oauth2.client.id }}
+  SetEnv GOOGLE_OAUTH2_CLIENT_SECRET {{ google.oauth2.client.secret }}
+
+  ErrorLog ${APACHE_LOG_DIR}/{{ domain }}-ssl-error.log
+  CustomLog ${APACHE_LOG_DIR}/{{ domain }}-ssl-access.log combined
+
+  ServerName {{ domain }}
+  ServerAlias {{ domain }} www.{{ domain }}
+  DocumentRoot /var/www/{{ domain }}/public
+  <Directory /var/www/{{ domain }}/public>
+    PassengerRuby /usr/local/rvm/wrappers/ruby-2.2.2/ruby
+    AllowOverride all
+    Options -Multiviews
+  </Directory>
+</VirtualHost>

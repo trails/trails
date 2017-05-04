@@ -1,0 +1,7 @@
+---
+  rvm1_rubies:
+    - 'ruby-2.2.2'
+  rvm1_gpg_key_server: 'hkp://pgp.mit.edu'
+  rvm1_install_path: '/usr/local/rvm'
+  rvm1_install_flags: ''
+  rvm1_user: 'root'

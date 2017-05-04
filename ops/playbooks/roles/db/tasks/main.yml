@@ -1,0 +1,28 @@
+---
+- name: install PostgreSQL
+  apt: name={{ item }} state=latest
+  with_items:
+    - postgresql-{{ postgresql.version | default('9.3') }}
+    - postgresql-contrib-{{ postgresql.version | default('9.3') }}
+    - postgresql-server-dev-{{ postgresql.version | default('9.3') }}
+    - python-psycopg2
+
+- name: ensure postgresql is running
+  service: name=postgresql state=restarted
+
+- name: check if default PostgreSQL cluster exists
+  stat: path=/var/lib/postgresql/{{ postgresql.version | default('9.3') }}/main/postmaster.opts
+  register: postgresql_install_main
+
+- name: create default cluster if not exist
+  command: pg_createcluster --start {{ postgresql.version | default('9.3') }} main
+  when: postgresql_install_main is not defined or postgresql_install_main.stat.exists != True
+
+- name: create database
+  sudo_user: postgres
+  postgresql_db:
+    name: "{{ db.name }}"
+
+- name: create postgres user for trails
+  sudo_user: postgres
+  postgresql_user: db="{{ db.name }}" name="{{ db.creds.user }}" password="{{ db.creds.password }}" priv=ALL

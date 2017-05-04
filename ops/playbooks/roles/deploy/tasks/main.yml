@@ -1,0 +1,43 @@
+---
+- name: ensure gems are installed
+  command: bundle install chdir=/var/www/{{ domain }}
+
+- name: rails: setup database connection
+  template: src=database.yml.j2 dest=/var/www/{{ domain }}/config/database.yml
+
+- name: load db schema
+  become_user: postgres
+  command: bundle exec rake db:schema:load chdir=/var/www/{{ domain }}
+  environment:
+    RAILS_ENV: production
+
+- name: migrate db if needed
+  command: bundle exec rake db:migrate chdir=/var/www/{{ domain }}
+  environment:
+    RAILS_ENV: production
+
+- name: ensure assets are precompiled
+  command: rake assets:precompile chdir=/var/www/{{ domain }}
+
+- name: restart live app
+  command: touch /var/www/{{ domain }}/tmp/restart.txt
+
+#- file: path=/var/www owner=www-data group=www-data recurse=yes mode=0775 state=directory
+
+- name: ensures that apache certs dir exists
+  file: path=/etc/apache2/ssl owner=root mode=0700 state=directory
+
+- name: copy ssl certificates into apache
+  copy: src={{ domain }}/ dest=/etc/apache2/ssl owner=root mode=0700
+
+- name: copy virtualhost.conf
+  template: src=virtualhost.conf.j2 dest=/etc/apache2/sites-available/{{ domain }}.conf
+  notify:
+    - restart apache2
+
+- name: enable vhost {{ domain }}
+  command: a2ensite {{ domain }}
+  args:
+    creates: /etc/apache2/sites-enabled/{{ domain }}.conf
+  notify:
+    - restart apache2

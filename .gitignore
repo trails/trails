@@ -25,3 +25,7 @@ Gemfile.lock
 
 # instance-specific configuration (credentials)
 /config/local.yml
+
+# vagrant instance data
+/.vagrant/
+/vconfig.yml
