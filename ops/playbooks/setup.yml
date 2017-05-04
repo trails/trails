@@ -4,19 +4,14 @@
   become: yes
   become_method: sudo
   vars:
-    timezone: 'America/Los_Angeles'
-    db:
-      name: "{{ config.db.name | default('trails') }}"
-      host: "{{ config.db.host | default('localhost') }}"
-      creds:
-        user: "{{ config.db.creds.user | default('trails') }}"
-        password: "{{ config.db.creds.password | default('ins3curE') }}"
+    timezone: "{{ config.timezone | default('America/Los_Angeles') }}"
     domain: "{{ config.domain | default('trails.dev') }}"
-    google:
-      oauth2:
-        client:
-          id: "{{ config.google.oauth2.client.id | default('') }}"
-          secret: ""{{ config.google.oauth2.client.secret | default('') }}""
+    db_name: "{{ config.db_name | default('trails') }}"
+    db_host: "{{ config.db_host | default('localhost') }}"
+    db_user: "{{ config.db_user | default('trails') }}"
+    db_password: "{{ config.db_password | default('ins3curE') }}"
+    google_oauth2_client_id: "{{ config.google_oauth2_client_id | default('') }}"
+    google_oauth2_client_secret: "{{ config.google_oauth2_client_secret | default('') }}"
   roles:
     - common
     - db

@@ -29,3 +29,4 @@ Gemfile.lock
 # vagrant instance data
 /.vagrant/
 /vconfig.yml
+/ops/playbooks/setup.retry

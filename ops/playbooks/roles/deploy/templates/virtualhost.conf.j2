@@ -11,8 +11,8 @@
   SSLCertificateFile /etc/apache2/ssl/ssl.crt
   SSLCertificateKeyFile /etc/apache2/ssl/ssl.key
 
-  SetEnv GOOGLE_OAUTH2_CLIENT_ID {{ google.oauth2.client.id }}
-  SetEnv GOOGLE_OAUTH2_CLIENT_SECRET {{ google.oauth2.client.secret }}
+  SetEnv GOOGLE_OAUTH2_CLIENT_ID {{ google_oauth2_client_id }}
+  SetEnv GOOGLE_OAUTH2_CLIENT_SECRET {{ google_oauth2_client_secret }}
 
   ErrorLog ${APACHE_LOG_DIR}/{{ domain }}-ssl-error.log
   CustomLog ${APACHE_LOG_DIR}/{{ domain }}-ssl-access.log combined

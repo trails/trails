@@ -1,3 +1,4 @@
+---
 - name: install rvm
   include_role:
     name: rvm_io.ruby

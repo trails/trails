@@ -1,14 +1,15 @@
 require 'yaml'
-settings = YAML.load_file 'vconfig.yml'
+vconfig = YAML.load_file 'vconfig.yml'
 
 Vagrant.configure("2") do |config|
   config.vm.define "dev"
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ops/playbooks/setup.yml"
     ansible.groups = {
-      "webservers" => ["dev"],
-      "dbservers" => ["dev"]
+      webservers: ["dev"],
+      dbservers: ["dev"]
     }
+    ansible.extra_vars = { config: vconfig }
   end
   config.vm.provider :virtualbox do |vb,override|
     override.vm.box = 'ubuntu/trusty32'

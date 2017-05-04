@@ -2,7 +2,7 @@
 - name: ensure gems are installed
   command: bundle install chdir=/var/www/{{ domain }}
 
-- name: rails: setup database connection
+- name: setup rails database connection
   template: src=database.yml.j2 dest=/var/www/{{ domain }}/config/database.yml
 
 - name: load db schema

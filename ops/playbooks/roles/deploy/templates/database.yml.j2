@@ -2,10 +2,10 @@ common: &common
   adapter: postgresql
   encoding: unicode
   pool: 5
-  host: {{ db.host }}
+  host: {{ db_host }}
 
 production:
   <<: *common
-  username: {{ db.creds.user }}
-  password: {{ db.creds.password }}
-  database: {{ db.name}}
+  username: {{ db_user }}
+  password: {{ db_password }}
+  database: {{ db_name}}
